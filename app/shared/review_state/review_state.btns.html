@@ -1,0 +1,30 @@
+<button type="button" class="btn btn-success" aria-hidden="true"
+        data-ng-if="ctrl.check_transitions('receive')">
+    <span class="glyphicon glyphicon-download-alt"
+          data-ng-click="ctrl.change_review_state('receive')">&nbsp;Receive&nbsp;sample
+    </span>
+</button>
+<button type="button" class="btn btn-default" aria-hidden="true"
+        ng-if="ctrl.check_transitions('close')">
+    <span class="glyphicon glyphicon-folder-close"
+          data-ng-click="ctrl.change_review_state('close')">&nbsp;Close
+    </span>
+</button>
+<button type="button" class="btn btn-default" aria-hidden="true"
+        data-ng-if="ctrl.check_transitions('open')">
+    <span class="glyphicon glyphicon-folder-open"
+          data-ng-click="ctrl.change_review_state('open')">&nbsp;Open
+    </span>
+</button>
+<button type="button" class="btn btn-warning" aria-hidden="true"
+        data-ng-if="ctrl.check_transitions('reinstate')">
+    <span class="glyphicon glyphicon-retweet"
+          data-ng-click="ctrl.change_review_state('reinstate')">&nbsp;Reinstate
+    </span>
+</button>
+<button type="button" class="btn btn-danger" aria-hidden="true"
+        data-ng-if="ctrl.check_transitions('cancel')">
+    <span class="glyphicon glyphicon-trash"
+          data-ng-click="ctrl.change_review_state('cancel')">&nbsp;Cancel
+    </span>
+</button>

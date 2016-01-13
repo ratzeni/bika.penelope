@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Penelope</title>
+    <link rel="stylesheet" href="./assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <!--<link rel="stylesheet" href="./assets/bower_components/bootstrap/dist/css/themes/spacelab/bootstrap.min.css">-->
+    <!--<link rel="stylesheet/less" href="./assets/bower_components/bootstrap/dist/css/themes/spacelab/variables.less">-->
+    <!--<link rel="stylesheet/less" href="./assets/bower_components/bootstrap/dist/css/themes/spacelab/bootwatch.less">-->
+    <link rel="stylesheet" href="./assets/bower_components/quantumui/dist/css/addon/effect-light.min.css">
+    <link rel="stylesheet" href="./assets/bower_components/quantumui/dist/css/quantumui.min.css">
+
+    <link rel="stylesheet" href="./assets/bower_components/ng-table/dist/ng-table.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <script src="./assets/bower_components/underscore/underscore.js"></script>
+    <script src="./assets/bower_components/angular/angular.min.js"></script>
+    <script src="./assets/bower_components/angular-nojq/angular-nojq.min.js"></script>
+    <script src="./assets/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="./assets/bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="./assets/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+    <script src="./assets/bower_components/moment/moment.js"></script>
+    <script src="./assets/bower_components/angular-moment/angular-moment.min.js"></script>
+    <script src="./assets/bower_components/ng-table/dist/ng-table.min.js"></script>
+    <script src="./assets/bower_components/angular-bootstrap-file-field/dist/angular-bootstrap-file-field.min.js"></script>
+    <script src="./assets/js/pagination/dirPagination.js"></script>
+    <script src="./assets/js/ng-csv/ng-csv.min.js"></script>
+    <!--<script src="./assets/bower_components/ngCart/dist/ngCart.min.js"></script>-->
+    <script src="./assets/bower_components/quantumui/dist/js/quantumui.min.js"></script>
+    <script src="./assets/bower_components/quantumui/config/icons.js"></script>
+
+    <script src="./app/shared/config/config.module.js"></script>
+    <script src="./app/shared/api_rest/bika_api_rest.module.js"></script>
+    <script src="./app/shared/utility/utility.module.js"></script>
+    <script src="./app/shared/login/login.module.js"></script>
+    <script src="./app/shared/dashboard/dashboard.module.js"></script>
+    <script src="./app/components/home/home.module.js"></script>
+    <script src="./app/components/arimport/arimport.module.js"></script>
+    <script src="./app/components/batches/batches.module.js"></script>
+    <script src="./app/components/analysis_requests/analysis_requests.module.js"></script>
+    <script src="./app/app.module.js"></script>
+    <script src="./app/app.route.js"></script>
+
+</head>
+<body ng-app="MainApp" data-ng-controller="MainCtrl as main">
+<div id="main" class="container">
+    <header>
+        <div class="navbar navbar-inverse navbar-fixed-top" style="margin:0;"
+             role="navigation" ng-show="$state.current.name!=='login'">
+            <div class="container-fluid">
+                <div class="pull-right" style="">
+                    <ul class="nav navbar-nav pull-left" >
+                        <li>
+                    </ul>
+                </div>
+                <div class="navbar-header-right">
+                    <button type="button" class="navbar-toggle" data-nq-collapse="" data-target-id=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" ng-click="logout()"
+                       style="padding:15px 15px;">
+                        <span class="glyphicon glyphicon-log-out"
+                              data-qo-theme="info" data-qo-placement="bottom"
+                              data-nq-tooltip="" data-qs-title="Logout"></span>
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar-main">
+                    <ul class="nav navbar-nav">
+                        <li  ng-class="getClass('home')"><a ui-sref="home">Home</a></li>
+                        <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
+                        <li  ng-class="getClass('batches')"><a ui-sref="batches">Batches</a></li>
+                        <li  ng-class="getClass('worksheet')"><a ui-sref="worksheet">Worksheet</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <ng-include ng-if="$state.current.name!=='login'" src="'app/shared/dashboard/dashboard.view.html'"></ng-include>
+    </header>
+    <div ui-view></div>
+</div>
+</body>
+</html>

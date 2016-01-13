@@ -1,0 +1,40 @@
+<span>
+    <button type="button" class="btn btn-primary btn-xs" aria-hidden="true"
+        data-ng-if="ctrl.check_transitions('assign', a.transitions)">
+        <span class="glyphicon glyphicon-list-alt"
+              data-qo-theme="info" data-qo-placement="right"
+              data-nq-tooltip="" data-qs-title="Assign to a worksheet"
+              data-ng-click="ctrl.change_workflow_review_state('assign', row.id, a.id)">
+        </span>
+    </button>
+</span>
+<span>
+    <button type="button" class="btn btn-primary btn-xs" aria-hidden="true"
+            data-ng-if="ctrl.check_transitions('submit', a.transitions)">
+        <span class="glyphicon glyphicon-new-window"
+              data-qo-theme="info" data-qo-placement="right"
+              data-nq-tooltip="" data-qs-title="Submit for verification"
+              data-ng-click="ctrl.change_workflow_review_state('submit', row.id, a.id)">
+        </span>
+    </button>
+</span>
+<span>
+    <button type="button" class="btn btn-success btn-xs" aria-hidden="true"
+            data-ng-if="ctrl.check_transitions('verify', a.transitions)">
+        <span class="glyphicon glyphicon-check"
+              data-qo-theme="info" data-qo-placement="right"
+              data-nq-tooltip="" data-qs-title="Verify"
+              data-ng-click="ctrl.change_workflow_review_state('verify', row.id, a.id)">
+        </span>
+    </button>
+</span>
+<span>
+    <button type="button" class="btn btn-success btn-xs" aria-hidden="true"
+            data-ng-if="ctrl.check_transitions('publish', a.transitions)">
+        <span class="glyphicon glyphicon-globe"
+              data-qo-theme="info" data-qo-placement="right"
+              data-nq-tooltip="" data-qs-title="Publish result"
+              data-ng-click="ctrl.change_workflow_review_state('publish', row.id, a.id)">
+        </span>
+    </button>
+</span>

@@ -1,0 +1,124 @@
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div class="col-sm-12 controls" >
+            <div class="col-sm-4 controls" >
+                <table class="table table-striped table-hover table-responsive">
+                    <tr>
+                        <td>Analysis Request:</td>
+                        <td>{{analysis_request.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>Batch:</td>
+                        <td><p>{{analysis_request.batch_title}}</p><p>{{analysis_request.batch_id}}</p></td>
+                    </tr>
+                    <tr>
+                        <td>Client:</td>
+                        <td>{{analysis_request.client}}</td>
+                    </tr>
+                    <tr>
+                        <td>Client Contact:</td>
+                        <td>{{analysis_request.contact}}</td>
+                    </tr>
+                    <tr>
+                        <td>CCContact:</td>
+                        <td>
+                            <div data-ng-repeat="c in analysis_request.cccontact">{{c}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Creator:</td>
+                        <td>{{analysis_request.creator}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-4 controls" >
+                <table class="table table-striped table-hover table-responsive">
+                    <tr>
+                        <td>Sample:</td>
+                        <td>{{analysis_request.sample_id}}</td>
+                    </tr>
+                    <tr>
+                        <td>Client Sample ID:</td>
+                        <td>{{analysis_request.client_sample_id}}</td>
+                    </tr>
+                    <tr>
+                        <td>Sample Type:</td>
+                        <td>{{analysis_request.sample_type}}</td>
+                    </tr>
+                    <tr data-ng-repeat="p in analysis_request.params" data-ng-if="analysis_request.params.length > 0">
+                        <td>{{p.label}}</td>
+                        <td>{{p.value}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-4 controls" >
+                <table class="table table-striped table-hover table-responsive">
+                    <tr>
+                        <td>State:</td>
+                        <td>{{ctrl.format_review_state(analysis_request.review_state)}}</td>
+                    <tr>
+                        <td>Creation Date</td>
+                        <td ng-if="analysis_request.date_created!=='None'">{{ctrl.format_date(analysis_request.date_created)}}</td>
+                        <td ng-if="analysis_request.date_created==='None'"><span class="glyphicon glyphicon-remove"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Date Received</td>
+                        <td ng-if="analysis_request.date_received!=='None'">{{ctrl.format_date(analysis_request.date_received)}}</td>
+                        <td ng-if="analysis_request.date_received==='None'"><span class="glyphicon glyphicon-remove"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Date Published</td>
+                        <td ng-if="analysis_request.date_published!=='None'">{{ctrl.format_date(analysis_request.date_published)}}</td>
+                        <td ng-if="analysis_request.date_published==='None'"><span class="glyphicon glyphicon-remove"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Last Update</td>
+                        <td ng-if="analysis_request.date!=='None'">{{ctrl.format_date(analysis_request.date)}}</td>
+                        <td ng-if="analysis_request.date==='None'"><span class="glyphicon glyphicon-remove"></span></td>
+                    </tr>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div class="col-sm-12 controls" >
+            <table class="table table-bordered table-striped table-hover table-responsive">
+                <thead>
+                    <tr class="alert alert-success">
+                        <th>Analysis</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Result</th>
+                        <th>Date Result</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                </thead>
+                <tbody ng-if="analysis_request.analyses.length > 0">
+                    <tr data-ng-repeat="row in analysis_request.analyses">
+                        <td>{{row.keyword}}</td>
+                        <td>{{row.title}}</td>
+                        <td>{{row.category}}</td>
+                        <td ng-class="{'alert alert-warning': row.result.length == 0,'alert alert-success': row.result == '1', 'alert alert-danger': row.result == '0' }">
+                            {{ctrl.format_result(row.result)}}
+                        </td>
+                        <td>{{ctrl.format_date(row.date_result)}}</td>
+                        <td>{{ctrl.format_review_state(row.review_state)}}</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>
+<div class="panel panel-primary" data-ng-if="analysis_request.results_interpretation!==''">
+    <div class="panel-body">
+        <div class="col-sm-12 controls" >
+            {{analysis_request.results_interpretation}}
+        </div>
+    </div>
+</div>
