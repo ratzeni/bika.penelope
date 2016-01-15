@@ -55,7 +55,7 @@ login_module.factory('AuthInterceptor', function($rootScope, $q, Session, AUTH_E
 });
 
 login_module.factory('Auth',
-	function(BikaService, Utility, $http, $state, $rootScope, $window, Session, AUTH_EVENTS) {
+	function(BikaService, Utility, $http, $state, $rootScope, $window, Session, AUTH_EVENTS, ngCart) {
 		var authService = {};
 		//the login function
 		authService.login = function(user, success, error) {
@@ -109,6 +109,7 @@ login_module.factory('Auth',
 		//log out the user and broadcast the logoutSuccess event
 		authService.loading = Utility.loading({busyText: 'Logout...', theme: 'danger', showBar: false, delayHide: 500});
 		authService.logout = function(){
+			ngCart.empty();
 			authService.loading.show();
 			Session.destroy();
 			$window.sessionStorage.removeItem("userInfo");

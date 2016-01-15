@@ -33,10 +33,12 @@
                         <th ng-click="sort('date')">Date
                             <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
+                        <!--<th>Samples</th>-->
                         <th ng-click="sort('review_state')">State
                             <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
-                        <th></th>
+                        <th><span class="fic glyphicon glyphicon-wrench" ></span></th>
+                        <!--<th><span class="fic glyphicon glyphicon-blackboard" ></span></th>-->
                     </tr>
                     </thead>
                     <tbody ng-if="batches.length > 0">
@@ -49,22 +51,24 @@
                             </div>
                         </td>
                         <td>
-                            <a class="btn btn-success btn-xs pull-left" ui-sref="batch({batch_id: row.id})">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </a>&nbsp;
-                            {{row.id}}
+                            <a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
+                                <span>{{row.id}}</span>
+                            </a>
+
                         </td>
                         <td>
-                            <a class="btn btn-success btn-xs pull-left" ui-sref="batch({batch_id: row.id})">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </a>&nbsp;
-                            {{row.title}}
+                            <a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
+                                <span>{{row.title}}</span>
+                            </a>
+
                         </td>
                         <td>{{row.description}}</td>
                         <td>{{row.client}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
+                        <!--<td>{{row.analysis_requests.length}}</td>-->
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
+                        <!--<td><ng-include src="'app/shared/blackboard/toggle.btns.mini.html'"></ng-include></td>-->
                     </tr>
                     </tbody>
                 </table>
@@ -80,6 +84,7 @@
             </div>
             <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="batches.length > 0">
                 <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
+                <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
             </div>
         </div>
     </div>

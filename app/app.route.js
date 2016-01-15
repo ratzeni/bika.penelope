@@ -11,17 +11,28 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             }
 
         })
+//        .state('analysis_requests', {
+//            url: '/analysis_requests',
+//            templateUrl: 'app/components/analysis_requests/analysis_requests.home.view.html',
+//
+//            data: {
+//                authorizedRoles: [USER_ROLES.user]
+//            }
+//
+//        })
         .state('analysis_requests', {
-            url: '/analysis_requests',
+            url: '/analysis_requests/:review_state',
             templateUrl: 'app/components/analysis_requests/analysis_requests.home.view.html',
-
+			controller: function($stateParams) {
+				$stateParams.review_state
+			},
             data: {
                 authorizedRoles: [USER_ROLES.user]
             }
 
         })
         .state('analysis_request', {
-            url: '/analysis_requests/:analysis_request_id',
+            url: '/analysis_request/:analysis_request_id',
             templateUrl: 'app/components/analysis_requests/analysis_request.home.view.html',
 			controller: function($stateParams) {
 				$stateParams.analysis_request_id
@@ -60,6 +71,13 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
                 authorizedRoles: [USER_ROLES.user]
             }
 
+        })
+        .state('blackboard', {
+            url: '/blackboard',
+            templateUrl: 'app/components/blackboard/blackboard.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.user]
+            }
         })
         .state('worksheet', {
             url: '/worksheet',

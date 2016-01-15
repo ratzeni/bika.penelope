@@ -28,7 +28,8 @@
     <script src="./assets/bower_components/angular-bootstrap-file-field/dist/angular-bootstrap-file-field.min.js"></script>
     <script src="./assets/js/pagination/dirPagination.js"></script>
     <script src="./assets/js/ng-csv/ng-csv.min.js"></script>
-    <!--<script src="./assets/bower_components/ngCart/dist/ngCart.min.js"></script>-->
+
+    <script src="./assets/bower_components/ngCart/dist/ngCart.min.js"></script>
     <script src="./assets/bower_components/quantumui/dist/js/quantumui.min.js"></script>
     <script src="./assets/bower_components/quantumui/config/icons.js"></script>
 
@@ -41,12 +42,13 @@
     <script src="./app/components/arimport/arimport.module.js"></script>
     <script src="./app/components/batches/batches.module.js"></script>
     <script src="./app/components/analysis_requests/analysis_requests.module.js"></script>
+    <script src="./app/components/blackboard/blackboard.module.js"></script>
     <script src="./app/app.module.js"></script>
     <script src="./app/app.route.js"></script>
 
 </head>
 <body ng-app="MainApp" data-ng-controller="MainCtrl as main">
-<div id="main" class="container">
+<div id="main" class="container bg-700">
     <header>
         <div class="navbar navbar-inverse navbar-fixed-top" style="margin:0;"
              role="navigation" ng-show="$state.current.name!=='login'">
@@ -74,13 +76,19 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-main">
                     <ul class="nav navbar-nav">
-                        <li  ng-class="getClass('home')"><a ui-sref="home">Home</a></li>
-                        <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
+                        <!--<li  ng-class="getClass('home')"><a ui-sref="home">Home</a></li>-->
                         <li  ng-class="getClass('batches')"><a ui-sref="batches">Batches</a></li>
-                        <li  ng-class="getClass('worksheet')"><a ui-sref="worksheet">Worksheet</a></li>
+                        <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
+                        <!--<li  ng-class="getClass('worksheet')"><a ui-sref="worksheet">Worksheet</a></li>-->
+                        <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
+
+                        <li>
+                            <a ui-sref="blackboard" ng-class="getClass('blackboard')" style="padding: 10px 10px 0 0;">
+                                <ngcart-summary></ngcart-summary>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -89,5 +97,6 @@
     </header>
     <div ui-view></div>
 </div>
+ <ng-include src="'app/shared/footer/footer.view.html'"></ng-include>
 </body>
 </html>

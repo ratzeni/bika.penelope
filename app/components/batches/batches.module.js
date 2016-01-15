@@ -5,11 +5,16 @@ batches_module.run(function($rootScope){
 });
 
 batches_module.controller('BatchesCtrl',
-	function(BikaService, Utility, DashboardService, config, $scope, $rootScope) {
+	function(BikaService, Utility, DashboardService, config, ngCart, $scope, $rootScope) {
 
 		$scope.loading_search = Utility.loading({
             busyText: 'Wait while searching batches...',
             delayHide: 500,
+        });
+
+        $scope.loading_blackboard = Utility.loading({
+            busyText: 'Wait while updating board...',
+            delayHide: 100000,
         });
 
         $scope.loading_change_review_state =
@@ -152,11 +157,47 @@ batches_module.controller('BatchesCtrl',
 					 $scope.reinstateBatch(batch_id);
 				}
 			}
+
+		this.add_to_blackboard =
+			function(batch_ids) {
+
+				_.each(batch_ids,function(batch_id) {
+					$scope.loading_blackboard.show();
+					params = {title: batch_id};
+					BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+						var analysis_requests = data.result;
+						_.each(analysis_requests, function(ar) {
+							if (ngCart.getItemById(ar.id) === false ) {
+								ngCart.addItem(ar.id,ar.id,1,1,ar);
+							}
+						});
+						$scope.loading_blackboard.hide();
+					})
+				});
+				$scope.checked_list = [];
+			}
+
+		this.remove_from_blackboard =
+			function(batch_ids) {
+				_.each(batch_ids,function(batch_id) {
+					params = {title: batch_id};
+					BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+						var analysis_requests = data.result;
+						_.each(analysis_requests, function(ar) {
+							if (ngCart.getItemById(ar.id) !== false ) {
+								ngCart.removeItemById(ar.id);
+							}
+						});
+					})
+				});
+				$scope.checked_list = [];
+			}
+
 });
 
 
 batches_module.controller('BatchDetailsCtrl',
-	function(BikaService, Utility, DashboardService, $stateParams, config, $scope, $rootScope) {
+	function(BikaService, Utility, DashboardService, ngCart, $stateParams, config, $scope, $rootScope) {
 
 		$scope.batch = [];
 		$scope.analyses = []
@@ -212,7 +253,7 @@ batches_module.controller('BatchDetailsCtrl',
                     $scope.transitions = transitions;
                     $scope.loading_ars.hide();
                     if (print_stickers !==undefined && print_stickers === true) {
-                    	Utility.print_stickers($scope.batch.path,$scope.stickers.id);
+                    	Utility.print_stickers($scope.stickers.id, $scope.batch.path);
                     }
                     $rootScope.counter = DashboardService.update_dashboard();
                 });
@@ -343,10 +384,32 @@ batches_module.controller('BatchDetailsCtrl',
 					return $scope.analysis_requests[0].sample_type === 'FLOWCELL';
 				}
 			}
+
+		this.add_to_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					if (ngCart.getItemById(id) === false ) {
+						var ar = _.findWhere($scope.analysis_requests, {'id': id});
+						if (ar !== undefined) {ngCart.addItem(id,id,1,1,ar);}
+					}
+				});
+				$scope.checked_list = [];
+			}
+
+		this.remove_from_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					if (ngCart.getItemById(id) !== false ) {
+						//var ar = _.findWhere($scope.analysis_requests, {'id': id});
+						ngCart.removeItemById(id);
+					}
+				});
+				$scope.checked_list = [];
+		}
 });
 
 batches_module.controller('BatchBookCtrl',
-	function(BikaService, Utility, DashboardService, $stateParams, config, $scope, $modal, $rootScope) {
+	function(BikaService, Utility, DashboardService, ngCart, $stateParams, config, $scope, $modal, $rootScope) {
 
 		//$scope.batch = [];
 		$scope.analyses = []
@@ -397,7 +460,7 @@ batches_module.controller('BatchBookCtrl',
                     //console.log($scope.transitions);
                     //console.log($scope.workflow_transitions);
                     if (print_stickers !==undefined && print_stickers === true) {
-                    	Utility.print_stickers($scope.batch.path,$scope.stickers.id);
+                    	Utility.print_stickers($scope.stickers.id, $scope.batch.path);
                     }
                     $rootScope.counter = DashboardService.update_dashboard();
                 });
@@ -567,6 +630,7 @@ batches_module.controller('BatchBookCtrl',
 			function(request_id, analysis_id) {
 				return $scope.analysis_results[request_id][analysis_id].toString();
 			}
+
         this.check_transitions = function(id_transition, transitions) {
 			if (transitions === undefined) {
 				var transitions = $scope.transitions;
@@ -627,5 +691,27 @@ batches_module.controller('BatchBookCtrl',
 				}
 				//console.log($scope.checked_list);
 			}
+
+		this.add_to_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					if (ngCart.getItemById(id) === false ) {
+						var ar = _.findWhere($scope.analysis_requests, {'id': id});
+						if (ar !== undefined) {ngCart.addItem(id,id,1,1,ar);}
+					}
+				});
+				$scope.checked_list = [];
+			}
+
+		this.remove_from_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					if (ngCart.getItemById(id) !== false ) {
+						//var ar = _.findWhere($scope.analysis_requests, {'id': id});
+						ngCart.removeItemById(id);
+					}
+				});
+				$scope.checked_list = [];
+		}
 
 });

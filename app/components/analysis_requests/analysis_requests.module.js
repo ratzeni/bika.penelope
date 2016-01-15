@@ -5,12 +5,13 @@ analysis_requests_module.run(function($rootScope){
 });
 
 analysis_requests_module.controller('AnalysisRequestsCtrl',
-	function(BikaService, DashboardService, Utility, config, $scope, $rootScope) {
+	function(BikaService, DashboardService, Utility, config, ngCart, $scope, $stateParams, $rootScope) {
 
 		$scope.analyses = []
 		$scope.analysis_requests = [];
 		$scope.checked_list = [];
-		$scope.review_state = 'sample_due';
+		$scope.review_state = ($stateParams.review_state!==undefined && $stateParams.review_state!=='')?$stateParams.review_state:'sample_due';
+		$scope.buttons = {radio: $scope.review_state};
 		$scope.stickers={id:null};
 
         $scope.loading_ars = Utility.loading({
@@ -30,10 +31,12 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 
 		$scope.getAnalysisRequests =
             function(review_state, print_stickers) {
+
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
                 params = {sort_on: 'Date', sort_order: 'descending', review_state: review_state};
+
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
                     $scope.analysis_requests = data.result;
                     transitions = Array();
@@ -44,7 +47,8 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
                     $scope.transitions = transitions;
                     $scope.loading_ars.hide();
                     if (print_stickers !==undefined && print_stickers === true) {
-                    	Utility.print_stickers($scope.batch.path,$scope.stickers.id);
+
+                    	Utility.print_stickers($scope.stickers.id);
                     }
                     $rootScope.counter = DashboardService.update_dashboard();
                 });
@@ -79,17 +83,6 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 			return Utility.check_transitions(id_transition, transitions);
 		}
 
-		this.toggle = function(id) {
-				var idx = $scope.checked_list.indexOf(id);
-				if (idx > -1) {
-					$scope.checked_list.splice(idx, 1);
-				}
-				else {
-					$scope.checked_list.push(id);
-				}
-				//console.log($scope.checked_list);
-			}
-
 		$scope.cancelAnalysisRequest =
 			function(id) {
 				$scope.loading_change_review_state('deleting analysis requests').show();
@@ -106,6 +99,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 			function(id) {
 				$scope.loading_change_review_state('reinstating analysis requests').show();
 				params = {ids: id};
+
 				BikaService.reinstateAnalysisRequest(params).success(function (data, status, header, config){
 				 	$scope.checked_list = [];
 				 	$scope.loading_change_review_state('reinstating analysis requests').hide();
@@ -119,6 +113,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 				$scope.loading_change_review_state('receiving samples').show();
 				params = {ids: id};
 				$scope.stickers.id=id;
+
 				BikaService.receiveSample(params).success(function (data, status, header, config){
 					//console.log(data);
 					$scope.checked_list = [];
@@ -131,6 +126,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 
 		this.change_review_state =
 			function (action, id) {
+
 				if (id === undefined) {
 					var id = $scope.checked_list.join('|');
 				}
@@ -145,6 +141,41 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 				}
 			}
 
+		this.add_to_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					if (ngCart.getItemById(id) === false ) {
+						var ar = _.findWhere($scope.analysis_requests, {'id': id});
+						if (ar !== undefined) {ngCart.addItem(id,id,1,1,ar);}
+					}
+				});
+				$scope.checked_list = [];
+			}
+
+		this.remove_from_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					if (ngCart.getItemById(id) !== false ) {
+						//var ar = _.findWhere($scope.analysis_requests, {'id': id});
+						ngCart.removeItemById(id);
+					}
+				});
+				$scope.checked_list = [];
+		}
+
+		this.toggle = function(id) {
+
+				var idx = $scope.checked_list.indexOf(id);
+				if (idx > -1) {
+					$scope.checked_list.splice(idx, 1);
+				}
+				else {
+					$scope.checked_list.push(id);
+				}
+				console.log($scope.checked_list);
+
+		}
+
 	});
 
 analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
@@ -152,20 +183,52 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 
 		$scope.state = {analysis_request_id: $stateParams.analysis_request_id};
 		$scope.analysis_request = null;
+		$scope.stickers = {id: null};
+
+		$scope.analysis_results = [];
+		$scope.submit_params = {analyses: []};
+		$scope.verify_params = {analyses: []};
+		$scope.publish_params = {analyses: []};
+		$scope.analyses = []
 
 		$scope.loading_ars = Utility.loading({
             busyText: 'Wait while loading analyses...',
             delayHide: 500,
         });
 
+        $scope.loading_change_review_state =
+        	function(text) {
+        		params = {
+	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
+            		delayHide: 500,
+            		theme: 'warning',
+        		}
+        		return Utility.loading(params);
+        	};
+
 		$scope.getAnalysisRequests =
-            function(analysis_request_id) {
+            function(analysis_request_id, print_stickers) {
             	$scope.loading_ars.show();
                 params = {id: analysis_request_id};
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
                     $scope.analysis_request = data.result[0];
+                    $scope.transitions = $scope.analysis_request.transitions;
+
+                    workflow_transitions = Array()
+                    $scope.analysis_results[analysis_request_id] = [];
+					_.each($scope.analysis_request.analyses, function(obj) {
+						Utility.merge(workflow_transitions, obj.transitions, 'id');
+						$scope.analysis_results[analysis_request_id][obj.id] = (obj.review_state === 'sample_received')?1:obj.result;
+					});
+					$scope.analyses = $scope.analysis_request.analyses;
+					$scope.workflow_transitions = workflow_transitions;
                     $scope.loading_ars.hide();
-                    //$rootScope.counter = DashboardService.update_dashboard();
+                    if (print_stickers !==undefined && print_stickers === true) {
+                    	Utility.print_stickers($scope.stickers.id);
+                    }
+                    $rootScope.counter = DashboardService.update_dashboard();
+
+
                 });
             };
 
@@ -185,5 +248,225 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 			function(result) {
 				return Utility.format_result(result);
 			}
+
+		$scope.cancelAnalysisRequest =
+			function(id) {
+				$scope.loading_change_review_state('deleting analysis requests').show();
+				params = {ids: id};
+				BikaService.cancelAnalysisRequest(params).success(function (data, status, header, config){
+					$scope.checked_list = [];
+					$scope.loading_change_review_state('deleting analysis requests').hide();
+					$scope.getAnalysisRequests($scope.state.analysis_request_id);
+				});
+
+			}
+
+		$scope.reinstateAnalysisRequest =
+			function(id) {
+				$scope.loading_change_review_state('reinstating analysis requests').show();
+				params = {ids: id};
+				BikaService.reinstateAnalysisRequest(params).success(function (data, status, header, config){
+				 	$scope.checked_list = [];
+				 	$scope.loading_change_review_state('reinstating analysis requests').hide();
+				 	$scope.getAnalysisRequests($scope.state.analysis_request_id);
+				 });
+
+			}
+
+		$scope.receiveSample =
+			function(id) {
+				$scope.loading_change_review_state('receiving samples').show();
+				params = {ids: id};
+				$scope.stickers.id=id;
+				BikaService.receiveSample(params).success(function (data, status, header, config){
+					//console.log(data);
+					$scope.checked_list = [];
+					$scope.loading_change_review_state('receiving samples').hide();
+					$scope.getAnalysisRequests($scope.state.analysis_request_id, true);
+
+				});
+
+			}
+
+		this.change_review_state =
+			function (action, id) {
+				if (id === undefined) {
+					var id = $scope.state.analysis_request_id;
+				}
+				if (action === 'receive') {
+					$scope.receiveSample(id);
+				}
+				else if (action === 'cancel') {
+					 $scope.cancelAnalysisRequest(id);
+				}
+				else if (action === 'reinstate') {
+					 $scope.reinstateAnalysisRequest(id);
+				}
+			}
+
+
+		$scope.submit =
+			function(request_id, analysis_id) {
+				if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to submit<br/>', content:'Please select at least a Sample', alertType:'warning'});
+					return;
+				}
+				if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to submit<br/>', content:'Please select at least a Analysis', alertType:'warning'});
+					return;
+				}
+				$scope.loading_change_review_state('submitting').show();
+				params = {input_values: $scope._get_input_values(request_id, analysis_id)};
+				//console.log(params);
+				BikaService.setAnalysesResults(params).success(function (data, status, header, config){
+				 	result = data.result;
+				 	//console.log(result);
+				 	if (result.success === 'True') {
+				 		params = {f: $scope._get_action_params(request_id, analysis_id)}
+				 		//console.log(params);
+
+				 		BikaService.submit(params).success(function (data, status, header, config){
+				 			result = data.result;
+				 			//console.log(result);
+				 			$scope.checked_list = [];
+				 			$scope.submit_params = {analyses: []};
+				 			$scope.loading_change_review_state('submitting').hide();
+				 			$scope.getAnalysisRequests($scope.state.analysis_request_id);
+				 		});
+				 	}
+				});
+			}
+
+		$scope.verify =
+			function(request_id, analysis_id) {
+				if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to verify<br/>', content:'Please select at least a Sample', alertType:'warning'});
+					return;
+				}
+				if (Array.isArray(analysis_id) && analysis_id.length == 0) {
+					Utility.alert({title:'Nothing to verify<br/>', content:'Please select at least a Analysis', alertType:'warning'});
+					return;
+				}
+				$scope.loading_change_review_state('verifying').show();
+				params = {f: $scope._get_action_params(request_id, analysis_id)}
+				//console.log(params);
+
+				BikaService.verify(params).success(function (data, status, header, config){
+					result = data.result;
+					//console.log(result);
+					$scope.checked_list = [];
+					$scope.verify_params = {analyses: []};
+					$scope.loading_change_review_state('verifying').hide();
+					$scope.getAnalysisRequests($scope.state.analysis_request_id);
+				 });
+			}
+
+		$scope.publish =
+			function(request_id, analysis_id) {
+				if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to publish<br/>', content:'Please select at least a Sample', alertType:'warning'});
+					return;
+				}
+				if (Array.isArray(analysis_id) && analysis_id.length == 0) {
+					Utility.alert({title:'Nothing to publish<br/>', content:'Please select at least a Analysis', alertType:'warning'});
+					return;
+				}
+				$scope.loading_change_review_state('publishing').show();
+				params = {f: $scope._get_action_params(request_id, analysis_id,'publish')}
+				//console.log(params);
+
+				BikaService.publish(params).success(function (data, status, header, config){
+					result = data.result;
+					//console.log(result);
+					$scope.checked_list = [];
+					$scope.publish_params = {analyses: []};
+					$scope.loading_change_review_state('publishing').hide();
+					$scope.getAnalysisRequests($scope.state.analysis_request_id);
+				 });
+			}
+
+		$scope._get_action_params =
+			function(request_id, analysis_id, action) {
+				if (!Array.isArray(request_id) && !Array.isArray(analysis_id)) {
+					var f = []
+					f.push($scope._get_analysis_path(request_id, analysis_id));
+					return JSON.stringify(f);
+				}
+				else if (!Array.isArray(request_id) && Array.isArray(analysis_id)) {
+					var f = []
+
+					if (action !== undefined && action=='publish') {
+						f.push($scope._get_analysis_path(request_id));
+					}
+					_.each(analysis_id,function(analysis_obj) {
+						f.push($scope._get_analysis_path(request_id, analysis_obj.id));
+					});
+
+					return JSON.stringify(f);
+				}
+
+			}
+
+		$scope._get_input_values =
+			function (request_id, analysis_id) {
+				var input_values = {};
+
+				if (!Array.isArray(analysis_id)) {
+					input_values[$scope._get_analysis_path(request_id,analysis_id)] = {Result: $scope._get_analysis_result(request_id, analysis_id)}
+				}
+				else if (Array.isArray(analysis_id)) {
+					_.each(analysis_id,function(analysis_obj) {
+						input_values[$scope._get_analysis_path(request_id,analysis_obj.id)] = {Result: $scope._get_analysis_result(request_id, analysis_obj.id)}
+					});
+				}
+				return JSON.stringify(input_values);
+			}
+
+		$scope._get_analysis_path =
+			function(request_id, analysis_id) {
+				request = $scope.analysis_request;
+				if (analysis_id === undefined) {
+					return request.path;
+				}
+				else {return request.path + "/" + analysis_id;}
+
+			}
+
+		$scope._get_analysis_result =
+			function(request_id, analysis_id) {
+				return $scope.analysis_results[request_id][analysis_id].toString();
+			}
+
+
+		this.change_workflow_review_state =
+			function (action, request_id, analysis_id) {
+
+				var request_id = $scope.state.analysis_request_id;
+
+
+				if (action === 'submit') {
+					 $scope.submit(request_id, analysis_id);
+				}
+				else if (action === 'verify') {
+					 $scope.verify(request_id, analysis_id);
+				}
+				else if (action === 'assign') {
+					 $scope.assign(request_id, analysis_id);
+				}
+				else if (action === 'publish') {
+					 $scope.publish(request_id, analysis_id);
+				}
+
+			}
+
+		this.check_transitions = function(id_transition, transitions) {
+			if (transitions === undefined) {
+				var transitions = $scope.transitions;
+			}
+			return Utility.check_transitions(id_transition, transitions);
+		}
+
+		this.results = config.legend.analysis_result;
+
 
 });

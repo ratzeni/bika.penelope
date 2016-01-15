@@ -37,10 +37,12 @@
                     <div class="list-group-heading" style="padding:10px 10px 10px 10px;" data-ng-if="counter.sample_due != 0">
                         <h4>
                             <span class="text">Sample Due</span>
-                            <span class="btn-default active badge pull-right"
-                                  data-ng-if="counter.sample_due > 0">{{counter.sample_due}}</span>
-                            <span class="btn-default active badge pull-right"
-                                  data-ng-if="counter.sample_due < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <a ui-sref="analysis_requests({review_state: 'sample_due'})">
+                                <span class="btn-default active badge pull-right"
+                                      data-ng-if="counter.sample_due > 0">{{counter.sample_due}}</span>
+                                <span class="btn-default active badge pull-right"
+                                      data-ng-if="counter.sample_due < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            </a>
                         </h4>
                     </div>
                 </div>
@@ -48,10 +50,13 @@
                     <div class="list-group-heading" style="padding:10px 10px 10px 10px;" data-ng-if="counter.sample_received != 0">
                         <h4>
                             <span class="text">Sample Received</span>
-                            <span class="btn-warning badge pull-right"
-                                  data-ng-if="counter.sample_received > 0">{{counter.sample_received}}</span>
-                             <span class="btn-warning badge pull-right"
-                                  data-ng-if="counter.sample_received < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <a ui-sref="analysis_requests({review_state: 'sample_received'})">
+                                <span class="btn-warning badge pull-right"
+                                      data-ng-if="counter.sample_received > 0">
+                                    {{counter.sample_received}}</span>
+                                 <span class="btn-warning badge pull-right"
+                                      data-ng-if="counter.sample_received < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            </a>
                         </h4>
                     </div>
                 </div>
@@ -59,10 +64,12 @@
                     <div class="list-group-heading" style="padding:10px 10px 10px 10px;" data-ng-if="counter.assigned != 0">
                         <h4>
                             <span class="text">Assigned</span>
-                            <span class="btn-danger badge pull-right"
-                                  data-ng-if="counter.assigned > 0">{{counter.assigned}}</span>
-                            <span class="btn-danger badge pull-right"
-                                  data-ng-if="counter.assigned < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <a ui-sref="analysis_requests({review_state: 'assigned'})">
+                                <span class="btn-danger badge pull-right"
+                                      data-ng-if="counter.assigned > 0">{{counter.assigned}}</span>
+                                <span class="btn-danger badge pull-right"
+                                      data-ng-if="counter.assigned < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            </a>
 
                         </h4>
                     </div>
@@ -71,10 +78,12 @@
                     <div class="list-group-heading" style="padding:10px 10px 10px 10px;" data-ng-if="counter.to_be_verified > 0">
                         <h4>
                             <span class="text">To be Verified</span>
-                            <span class="btn-info badge pull-right"
-                                  data-ng-if="counter.to_be_verified > 0">{{counter.to_be_verified}}</span>
-                            <span class="btn-warning badge pull-right"
-                                  data-ng-if="counter.to_be_verified < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <a ui-sref="analysis_requests({review_state: 'to_be_verified'})">
+                                <span class="btn-info badge pull-right"
+                                      data-ng-if="counter.to_be_verified > 0">{{counter.to_be_verified}}</span>
+                                <span class="btn-warning badge pull-right"
+                                      data-ng-if="counter.to_be_verified < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            </a>
                         </h4>
                     </div>
                 </div>
@@ -82,10 +91,12 @@
                     <div class="list-group-heading" style="padding:10px 10px 10px 10px;" data-ng-if="counter.verified != 0">
                         <h4>
                             <span class="text">To be Published</span>
-                            <span class="btn-primary badge pull-right"
-                                  data-ng-if="counter.verified > 0">{{counter.verified}}</span>
-                            <span class="btn-primary badge pull-right"
-                                  data-ng-if="counter.verified < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <a ui-sref="analysis_requests({review_state: 'verified'})">
+                                <span class="btn-primary badge pull-right"
+                                      data-ng-if="counter.verified > 0">{{counter.verified}}</span>
+                                <span class="btn-primary badge pull-right"
+                                      data-ng-if="counter.verified < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            </a>
                         </h4>
                     </div>
                 </div>
@@ -93,14 +104,15 @@
                     <div class="list-group-heading" style="padding:10px 10px 10px 10px;" data-ng-if="counter.published != 0">
                         <h4>
                             <span class="text">Published</span>
-                            <span class="btn-success badge pull-right"
-                                  data-ng-if="counter.published > 0">{{counter.published}}</span>
-                            <span class="btn-success badge pull-right"
-                                  data-ng-if="counter.published < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            <a ui-sref="analysis_requests({review_state: 'published'})">
+                                <span class="btn-success badge pull-right"
+                                      data-ng-if="counter.published > 0">{{counter.published}}</span>
+                                <span class="btn-success badge pull-right"
+                                      data-ng-if="counter.published < 0"><i class="glyphicon glyphicon-refresh"></i></span>
+                            </a>
                         </h4>
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="aside-footer" style="padding-left:20px; line-height:35px;">

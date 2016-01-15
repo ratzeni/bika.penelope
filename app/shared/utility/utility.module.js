@@ -113,8 +113,12 @@ utility_module.service('Utility',
 			return true;
 		}
 
-		this.print_stickers = function(batch_path, ids){
-			var url =  config.bikaApiRest.plone_url.develop+batch_path+'/'+config.stickers.path+"&items="+ids.replace(/\|/g, ',');
+		this.print_stickers = function(ids, stickers_path){
+
+			if (stickers_path===undefined) {
+				var stickers_path = config.stickers.stickers_path;
+			}
+			var url =  config.bikaApiRest.plone_url.develop+stickers_path+'/'+config.stickers.path+"&items="+ids.replace(/\|/g, ',');
 			$window.open(url);
 			//location.path(url);
 		}

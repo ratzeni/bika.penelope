@@ -65,6 +65,7 @@ angular
         	analysis_result_todo: "To do",
         },
         stickers: {
+        	stickers_path: '/CRS4/analysisrequests',
         	path: 'sticker?autoprint=1&template=Code_128_1x48mm.pt',
         }
 

@@ -9,6 +9,7 @@ var main_module = angular.module('MainApp',[
     'bootstrap.fileField',
     'angularMoment',
     'ngQuantum',
+    'ngCart',
     'ConfigModule',
     'BikaApiRestModule',
     'UtilityModule',
@@ -18,6 +19,7 @@ var main_module = angular.module('MainApp',[
     'ARImportModule',
     'BatchesModule',
     'AnalysisRequestsModule',
+    'BlackBoardModule',
 ]);
 
 // :: MAIN CONTROLLER

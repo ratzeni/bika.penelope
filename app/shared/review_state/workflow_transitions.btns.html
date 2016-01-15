@@ -1,27 +1,27 @@
 
 <button type="button" class="btn btn-primary" aria-hidden="true"
-        data-ng-if="ctrl.check_transitions('assign', workflow_transitions)">
-    <span class="glyphicon glyphicon-list-alt"
-          data-ng-click="ctrl.change_workflow_review_state('assign')">&nbsp;Assign <!--to a WorkSheet-->
-    </span>
+        data-ng-if="ctrl.check_transitions('assign', workflow_transitions)"
+        data-ng-click="ctrl.change_workflow_review_state('assign')">
+    <span class="glyphicon glyphicon-list-alt"> <!--to a WorkSheet-->
+    </span>&nbsp;Assign
 </button>
 <button type="button" class="btn btn-primary" aria-hidden="true"
         data-ng-show="ctrl.check_transitions('submit', workflow_transitions)"
         data-nq-collapse="" data-target-id="#collapseSubmitForm" data-collapsed="true">
-    <span class="glyphicon glyphicon-new-window">&nbsp;Submit</span>
+    <span class="glyphicon glyphicon-new-window"></span>&nbsp;Submit
 </button>
 <!--data-ng-click="ctrl.change_workflow_review_state('submit')"-->
 <button type="button" class="btn btn-success" aria-hidden="false"
         data-ng-show="ctrl.check_transitions('verify', workflow_transitions)"
         data-nq-collapse="" data-target-id="#collapseVerifyForm" data-collapsed="true">
-    <span class="glyphicon glyphicon-check">&nbsp;Verify
-    </span>
+    <span class="glyphicon glyphicon-check">
+    </span>&nbsp;Verify
 </button>
 <button type="button" class="btn btn-success" aria-hidden="true"
         data-ng-show="ctrl.check_transitions('publish', workflow_transitions)"
         data-nq-collapse="" data-target-id="#collapsePublishForm" data-collapsed="true">
-    <span class="glyphicon glyphicon-globe">&nbsp;Publish
-    </span>
+    <span class="glyphicon glyphicon-globe">
+    </span>&nbsp;Publish
 </button>
 
     <div id="collapseSubmitForm"  class="panel panel-default" style="margin-top:10px;">
