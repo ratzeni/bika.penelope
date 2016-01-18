@@ -100,12 +100,10 @@
                         <div class="popover controls" style="width:600px;">
                             <h3 class="popover-title">Analyses Report for sample:</br> {{row.sample_id}}</h3>
                             <div class="popover-content">
-                                <table>
-                                    <tr>
-                                        <td data-ng-repeat="a in row.analyses">{{a.keyword}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-ng-repeat="a in row.analyses">
+                                <table class="table table-striped">
+                                    <tr data-ng-repeat="a in row.analyses">
+                                        <td>
+                                            <h3 class="popover-title">{{a.keyword}}</h3>
                                             <div>
                                                 <div data-ng-if="a.review_state !== 'sample_received'">{{ctrl.format_result(a.result)}}</div>
                                                 <div data-ng-if="a.review_state === 'sample_received'">
