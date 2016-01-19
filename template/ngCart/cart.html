@@ -1,6 +1,6 @@
 <form class="form-inline">
             <div class="col-sm-12 controls" >
-                <input type="text" ng-model="search" class="form-control pull-right" placeholder="Search...">
+                <input type="text" ng-model="search" class="form-control pull-right" ng-if="ngCart.getTotalItems() > 0" placeholder="Search...">
             </div>
 </form>
 <div class="col-sm-12 controls" >
@@ -73,59 +73,38 @@
 
                     </td>
                     <td>{{row.sample_type}}</td>
-                   <!-- <td>
-                        <button type="button" data-nq-popover="" class="btn btn-primary btn-xs">
-                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;Results
-                        </button>
-                        <div class="popover col-sm-6 controls">
-                            <h3 class="popover-title">Analyses Report for sample:</br> {{row.sample_id}}</h3>
-                            <div class="popover-content">
-                                <table class="table table-striped">
-                                    <tr ng-repeat="a in row.analyses">
-                                        <td>{{a.keyword}}</td>
-                                        <td ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">
-                                            <span class="pull-right">
-                                                {{ctrl.format_result(a.result)}}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </td>-->
                     <td>
-                        <button type="button" data-nq-popover="" class="btn btn-primary btn-xs">
-                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;Results
-                        </button>
-                        <div class="popover controls" style="width:600px;">
-                            <h3 class="popover-title">Analyses Report for sample:</br> {{row.sample_id}}</h3>
-                            <div class="popover-content">
-                                <table class="table table-striped">
-                                    <tr data-ng-repeat="a in row.analyses">
-                                        <td>
-                                            <h3 class="popover-title">{{a.keyword}}</h3>
+                        <table>
+                            <tr data-ng-repeat="a in row.analyses">
+                                <td style="padding-top:5px;">
+                                     <button type="button" data-nq-popover="" class="btn btn-primary btn-xs col-sm-12 pull-left">
+                                        <span class="pull-left"> {{a.keyword}}</span>
+                                    </button>
+                                    <div class="popover controls">
+                                        <h3 class="popover-title">{{a.keyword}} for sample: {{row.sample_id}}</h3>
+                                        <div class="popover-content">
                                             <div>
-                                                <div data-ng-if="a.review_state !== 'sample_received'">{{ctrl.format_result(a.result)}}</div>
-                                                <div data-ng-if="a.review_state === 'sample_received'">
-                                                    <select class="input-sm" data-ng-model="analysis_results[row.id][a.id]">
-                                                        <option data-ng-selected="{{key}}"
-                                                                ng-repeat="(key,value) in ctrl.results"
-                                                                data-option-value="key" data-option-label="value" value="{{key}}">
-                                                            <span>{{value}}</span>
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <div style="margin-top:5px;">
-                                                    <ng-include src="'app/shared/review_state/workflow_transitions.btns.mini.html'"></ng-include>
-                                                </div>
+                                                    <div data-ng-if="a.review_state !== 'sample_received'"
+                                                         ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">{{ctrl.format_result(a.result)}}</div>
+                                                    <div data-ng-if="a.review_state === 'sample_received'">
+                                                        <select class="input-sm" data-ng-model="analysis_results[row.id][a.id]">
+                                                            <option data-ng-selected="{{key}}"
+                                                                    ng-repeat="(key,value) in ctrl.results"
+                                                                    data-option-value="key" data-option-label="value" value="{{key}}">
+                                                                <span>{{value}}</span>
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div style="margin-top:5px;">
+                                                        <ng-include src="'app/shared/review_state/workflow_transitions.btns.mini.html'"></ng-include>
+                                                    </div>
                                             </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
-
                     <td>
                         {{ctrl.format_date(row.date)}}
                         <span class="pull-right">
@@ -165,8 +144,8 @@
                     <td>{{ctrl.format_review_state(row.review_state)}}</td>
                     <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
                     <td>
-                        <button class="btn btn-danger btn-xs" ng-click="ngCart.removeItemById(row.getId())">
-                            <span class="glyphicon glyphicon-remove"></span>
+                        <button class="btn btn-danger btn-xs" ng-click="ctrl.remove_from_blackboard(row.id)">
+                            <span class="glyphicon glyphicon-minus-sign"></span>
                         </button>
                     </td>
 
@@ -181,6 +160,16 @@
                     class="pull-right"
                     style="margin-top: -25px">
             </dir-pagination-controls>
+            <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="ngCart.getTotalItems() > 0">
+                <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
+                <ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>
+                <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
+                <button type="button" class="btn btn-primary" aria-hidden="true"
+                        ng-csv="csv.sample_list" lazy-load="true"
+                        filename="{{ctrl.get_filename()}}" field-separator=",">
+                    <span class="glyphicon glyphicon-export"></span>&nbsp;Export&nbsp;SampleList
+                </button>
+            </div>
 </div>
 <style>
     .ngCart.cart span[ng-click] {

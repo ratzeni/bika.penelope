@@ -29,16 +29,37 @@ batches_module.controller('BatchesCtrl',
 
 		$scope.checked_list = [];
 		$scope.review_state = 'open';
+
+		$scope.pagination= {
+			page_nr: 0,
+			page_size: 10,
+			total: 0,
+			current: 1,
+			last: 0,
+		};
+
+		this.changePage = function(newPageNumber, oldPageNumber) {
+			if (newPageNumber !== undefined) {
+				$scope.pagination.page_nr = newPageNumber-1;
+				$scope.pagination.current = newPageNumber;
+			}
+			$scope.getBatches($scope.review_state);
+		}
+
 		// :: function :: getBatches()
         $scope.getBatches =
             function(review_state) {
             	$scope.loading_search.show();
             	$scope.review_state = review_state;
                 $scope.batches = [];
-                params = {sort_on: 'Date', sort_order: 'descending', review_state: review_state};
+                params = {sort_on: 'Date', sort_order: 'descending', review_state: review_state,
+                	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getBatches(params).success(function (data, status, header, config){
-                    $scope.batches = data.result;
+                    $scope.batches = data.result.objects;
+                    $scope.pagination.total = data.result.total;
+                    $scope.pagination.last = data.result.last;
+
 					transitions = Array();
 					_.each($scope.batches,function(obj) {
 						Utility.merge(transitions,obj.transitions,'id');
@@ -136,6 +157,17 @@ batches_module.controller('BatchesCtrl',
 				//console.log($scope.checked_list);
 			}
 
+		this.toggle_all = function() {
+				if ($scope.checked_list.length < $scope.batches.length) {
+					_.each($scope.batches,function(b) {
+						$scope.checked_list.push(b.id);
+					})
+				}
+				else {
+					$scope.checked_list = [];
+				}
+		}
+
 
 
 		this.change_review_state =
@@ -208,6 +240,22 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.state = {batch_id: $stateParams.batch_id};
 		$scope.attachment = {content: []};
 
+		$scope.pagination= {
+			page_nr: 0,
+			page_size: 10,
+			total: 0,
+			current: 1,
+			last: 0,
+		};
+
+		this.changePage = function(newPageNumber, oldPageNumber) {
+			if (newPageNumber !== undefined) {
+				$scope.pagination.page_nr = newPageNumber-1;
+				$scope.pagination.current = newPageNumber;
+			}
+			$scope.getAnalysisRequests($stateParams.batch_id, $stateParams.review_state);
+		}
+
 		$scope.loading_batch = Utility.loading({
             busyText: 'Wait while loading batch data...',
             delayHide: 500,
@@ -233,9 +281,13 @@ batches_module.controller('BatchDetailsCtrl',
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', title: batch_id, review_state: review_state};
+                params = {sort_on: 'Date', sort_order: 'descending', title: batch_id, review_state: review_state,
+                	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
+
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
-                    $scope.analysis_requests = data.result;
+                    $scope.analysis_requests = data.result.objects;
+                    $scope.pagination.total = data.result.total;
+                    $scope.pagination.last = data.result.last;
                     transitions = Array();
 					_.each($scope.analysis_requests,function(obj) {
 						if ($scope.attachment.content.length === 0 && obj.remarks != '') {
@@ -265,7 +317,7 @@ batches_module.controller('BatchDetailsCtrl',
             	$scope.loading_batch.show();
                 params = {sort_on: 'Date', sort_order: 'descending', id: batch_id};
                 BikaService.getBatches(params).success(function (data, status, header, config){
-                    $scope.batch = data.result[0];
+                    $scope.batch = data.result.objects[0];
                     $scope.loading_batch.hide();
                     $scope.getAnalysisRequests($scope.batch.id, $scope.review_state);
                 });
@@ -310,6 +362,17 @@ batches_module.controller('BatchDetailsCtrl',
 				}
 				//console.log($scope.checked_list);
 			}
+
+		this.toggle_all = function() {
+				if ($scope.checked_list.length < $scope.analysis_requests.length) {
+					_.each($scope.analysis_requests,function(ar) {
+						$scope.checked_list.push(ar.id);
+					})
+				}
+				else {
+					$scope.checked_list = [];
+				}
+		}
 
 		$scope.cancelAnalysisRequest =
 			function(id) {
@@ -422,6 +485,23 @@ batches_module.controller('BatchBookCtrl',
 		$scope.publish_params = {analyses: []};
 		$scope.stickers={id:null};
 
+		$scope.pagination= {
+			page_nr: 0,
+			page_size: 10,
+			total: 0,
+			current: 1,
+			last: 0,
+		};
+
+		this.changePage = function(newPageNumber, oldPageNumber) {
+			if (newPageNumber !== undefined) {
+				$scope.pagination.page_nr = newPageNumber-1;
+				$scope.pagination.current = newPageNumber;
+			}
+			$scope.getAnalysisRequests($stateParams.batch_id);
+		}
+
+
 		$scope.loading_change_review_state =
         	function(text) {
         		params = {
@@ -436,9 +516,13 @@ batches_module.controller('BatchBookCtrl',
 		$scope.getAnalysisRequests =
             function(batch_id, print_stickers) {
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', title: batch_id, review_state: 'active'};
+                params = {sort_on: 'Date', sort_order: 'descending', title: batch_id, cancelled_state: 'active',
+                	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
+
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
-                    $scope.analysis_requests = data.result;
+                    $scope.analysis_requests = data.result.objects;
+                    $scope.pagination.total = data.result.total;
+                    $scope.pagination.last = data.result.last;
 
                     transitions = Array();
                     workflow_transitions = Array()
@@ -692,6 +776,17 @@ batches_module.controller('BatchBookCtrl',
 				//console.log($scope.checked_list);
 			}
 
+		this.toggle_all = function() {
+				if ($scope.checked_list.length < $scope.analysis_requests.length) {
+					_.each($scope.analysis_requests,function(ar) {
+						$scope.checked_list.push(ar.id);
+					})
+				}
+				else {
+					$scope.checked_list = [];
+				}
+		}
+
 		this.add_to_blackboard =
 			function(ids) {
 				_.each(ids,function(id) {
@@ -714,4 +809,4 @@ batches_module.controller('BatchBookCtrl',
 				$scope.checked_list = [];
 		}
 
-});
+	});

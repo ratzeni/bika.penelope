@@ -7,12 +7,28 @@ analysis_requests_module.run(function($rootScope){
 analysis_requests_module.controller('AnalysisRequestsCtrl',
 	function(BikaService, DashboardService, Utility, config, ngCart, $scope, $stateParams, $rootScope) {
 
-		$scope.analyses = []
+		$scope.analyses = [];
 		$scope.analysis_requests = [];
 		$scope.checked_list = [];
 		$scope.review_state = ($stateParams.review_state!==undefined && $stateParams.review_state!=='')?$stateParams.review_state:'sample_due';
 		$scope.buttons = {radio: $scope.review_state};
 		$scope.stickers={id:null};
+
+		$scope.pagination= {
+			page_nr: 0,
+			page_size: 10,
+			total: 0,
+			current: 1,
+			last: 0,
+		};
+
+		this.changePage = function(newPageNumber, oldPageNumber) {
+			if (newPageNumber !== undefined) {
+				$scope.pagination.page_nr = newPageNumber-1;
+				$scope.pagination.current = newPageNumber;
+			}
+			$scope.getAnalysisRequests($scope.review_state);
+		}
 
         $scope.loading_ars = Utility.loading({
             busyText: 'Wait while loading analyses...',
@@ -35,10 +51,14 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', review_state: review_state};
+                params = {sort_on: 'Date', sort_order: 'descending', review_state: review_state,
+                		page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
-                    $scope.analysis_requests = data.result;
+                    $scope.analysis_requests = data.result.objects;
+                    $scope.pagination.total = data.result.total;
+                    $scope.pagination.last = data.result.last;
+
                     transitions = Array();
 					_.each($scope.analysis_requests,function(obj) {
 						Utility.merge(transitions,obj.transitions,'id');
@@ -172,8 +192,17 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 				else {
 					$scope.checked_list.push(id);
 				}
-				console.log($scope.checked_list);
+		}
 
+		this.toggle_all = function() {
+				if ($scope.checked_list.length < $scope.analysis_requests.length) {
+					_.each($scope.analysis_requests,function(ar) {
+						$scope.checked_list.push(ar.id);
+					})
+				}
+				else {
+					$scope.checked_list = [];
+				}
 		}
 
 	});
@@ -211,7 +240,7 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
             	$scope.loading_ars.show();
                 params = {id: analysis_request_id};
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
-                    $scope.analysis_request = data.result[0];
+                    $scope.analysis_request = data.result.objects[0];
                     $scope.transitions = $scope.analysis_request.transitions;
 
                     workflow_transitions = Array()

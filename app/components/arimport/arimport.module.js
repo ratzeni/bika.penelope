@@ -162,7 +162,7 @@ arimport_module.controller('ARImportCtrl',
                 $scope.batches = [];
                 params = {};
                 BikaService.getBatches(params).success(function (data, status, header, config){
-                    $scope.batches = data.result;
+                    $scope.batches = data.result.objects;
                 });
             };
 
@@ -172,7 +172,7 @@ arimport_module.controller('ARImportCtrl',
                 $scope.clients = [];
                 params = {};
                 BikaService.getClients(params).success(function (data, status, header, config){
-                    $scope.clients = data.result;
+                    $scope.clients = data.result.objects;
                 });
             };
 
@@ -182,7 +182,7 @@ arimport_module.controller('ARImportCtrl',
                 $scope.contacts = [];
                 params = arimport_params.selectedClient != null ? {client_id: arimport_params.selectedClient.id} : {}
                 BikaService.getContacts(params).success(function (data, status, header, config){
-                    $scope.contacts = data.result;
+                    $scope.contacts = data.result.objects;
                 });
             };
 
@@ -191,7 +191,7 @@ arimport_module.controller('ARImportCtrl',
             function(arimport_params) {
                 params = arimport_params.selectedClient != null ? {client_id: arimport_params.selectedClient.id} : {}
                 BikaService.getContacts(params).success(function (data, status, header, config){
-                    $scope.cc_contacts = data.result;
+                    $scope.cc_contacts = data.result.objects;
                 });
             };
 
@@ -200,7 +200,7 @@ arimport_module.controller('ARImportCtrl',
             function(arimport_params) {
                 params = {}
                 BikaService.getSampleTypes(params).success(function (data, status, header, config){
-                    $scope.sample_types = data.result;
+                    $scope.sample_types = data.result.objects;
                 });
             };
 
@@ -210,7 +210,7 @@ arimport_module.controller('ARImportCtrl',
             function(arimport_params) {
                 params = {}
                 BikaService.getAnalysisProfiles(params).success(function (data, status, header, config){
-                    $scope.analysis_profiles = data.result;
+                    $scope.analysis_profiles = data.result.objects;
                 });
             };
 
@@ -219,7 +219,7 @@ arimport_module.controller('ARImportCtrl',
             function(arimport_params) {
                 params = {}
                 BikaService.getAnalysisServices(params).success(function (data, status, header, config){
-                    $scope.analysis_services = data.result;
+                    $scope.analysis_services = data.result.objects;
                 });
             };
 
@@ -236,7 +236,7 @@ arimport_module.controller('ARImportCtrl',
                 if (_.size(arimport_params) === 0) {
                     $scope.getClients();
                     $scope.getSampleTypes();
-   					$scope.getAnalysisProfiles();
+   					//$scope.getAnalysisProfiles();
    					$scope.getAnalysisServices();
    					$scope.getBatches();
    					$scope.getExportMode();

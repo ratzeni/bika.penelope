@@ -3,7 +3,7 @@
 
         <form class="form-inline">
             <div class="col-sm-12 controls" >
-                <div class="btn-group  btn-group-reset" ng-model="buttons.radio" data-nq-radio-group="">
+                <div class="btn-group  btn-group-reset pull-left" ng-model="buttons.radio" data-nq-radio-group="">
                     <label title="sample_due" class="btn btn-primary"><input type="radio" value="sample_due" data-ng-click="getAnalysisRequests('sample_due')">Due</label>
                     <label title="sample_received" class="btn btn-primary"><input type="radio" value="sample_received" data-ng-click="getAnalysisRequests('sample_received')">Received</label>
                     <label title="to_be_verified" class="btn btn-primary"><input type="radio" value="to_be_verified" data-ng-click="getAnalysisRequests('to_be_verified')">To be verified</label>
@@ -11,7 +11,8 @@
                     <label title="published" class="btn btn-primary"><input type="radio" value="published" data-ng-click="getAnalysisRequests('published')">Published</label>
                     <label title="cancelled" class="btn btn-primary"><input type="radio" value="cancelled" data-ng-click="getAnalysisRequests('cancelled')">Cancelled</label>
                 </div>
-                <input type="text" ng-model="search" class="form-control pull-right" placeholder="Search...">
+                <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
+                <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
             </div>
         </form>
         <div class="col-sm-12 controls" style="margin-top:10px;">
@@ -19,7 +20,11 @@
                 <thead>
                 <tr class="alert alert-success">
                     <th>
-
+                        <div style="padding-left:10px;">
+                                <input type="checkbox"  value=""
+                                       data-ng-checked="checked_list.length == analysis_requests.length"
+                                       data-ng-click="ctrl.toggle_all()">
+                        </div>
                     </th>
                     <th ng-click="sort('id')">RequestID
                         <span class="glyphicon sort-icon" ng-show="sortKey=='id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -53,7 +58,9 @@
                 </tr>
                 </thead>
                 <tbody ng-if="analysis_requests.length > 0">
-                <tr dir-paginate="row in analysis_requests | orderBy:sortKey:reverse|filter:search|itemsPerPage:10">
+                <tr dir-paginate="row in analysis_requests | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
+                    total-items="pagination.total" current-page="pagination.current">
+
                     <td>
                          <div style="padding-left:10px;">
                                 <input type="checkbox"  value="{{row.id}}"
@@ -148,14 +155,18 @@
                 </tr>
                 </tbody>
             </table>
+            <div>
 
-            <dir-pagination-controls
+                <dir-pagination-controls
                     max-size="10"
                     direction-links="true"
                     boundary-links="true"
                     class="pull-right"
+                    on-page-change="ctrl.changePage(newPageNumber, oldPageNumber)"
                     style="margin-top: -25px">
             </dir-pagination-controls>
+            </div>
+
 
         </div>
          <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="analysis_requests.length > 0">
