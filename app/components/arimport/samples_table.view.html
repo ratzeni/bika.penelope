@@ -29,7 +29,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr dir-paginate="row in arimport_params.client_samples | orderBy:sortKey:reverse|filter:search|itemsPerPage:5">
+						<tr dir-paginate="row in arimport_params.client_samples | orderBy:sortKey:reverse|filter:search|itemsPerPage:250">
 							<td>{{row.index}}</td>
 							<td>{{row.sample}}</td>
 							<td data-ng-repeat="h in header">{{row[arimport_ctrl.format_csv_field(h)]}}</td>

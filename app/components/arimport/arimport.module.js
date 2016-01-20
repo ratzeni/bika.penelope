@@ -43,6 +43,12 @@ arimport_module.controller('ARImportCtrl',
 					Utility.alert({title:'There\'s been an error<br/>', content:'SampleType field required', alertType:'danger'});
 					return;
 				}
+				if (($scope.arimport_params.selectedSampleType.prefix === 'FC' || $scope.arimport_params.selectedSampleType.prefix === 'POOL')
+					&& $scope.arimport_params.attachment_content==null) {
+					Utility.alert({title:'There\'s been an error<br/>', content:'Missing attachment', alertType:'danger'});
+					return;
+				}
+
 				if ($scope.arimport_params.selectedAnalysisServices === null || $scope.arimport_params.selectedAnalysisServices === undefined) {
 					Utility.alert({title:'There\'s been an error<br/>', content:'Analysis Service field required', alertType:'danger'});
 					return;
@@ -63,6 +69,7 @@ arimport_module.controller('ARImportCtrl',
 
 					return;
 				}
+
 				//$scope.loading.hide();
 			};
 
@@ -87,10 +94,15 @@ arimport_module.controller('ARImportCtrl',
 
 				BikaService.createBatch(params).success(function (data, status, header, config){
 
-					function get_environmental_conditions(sample_data) {
+					function get_environmental_conditions(sample_data, selectedSampleType) {
 						values = [];
+						if ((selectedSampleType.prefix !== 'FC' && selectedSampleType.prefix !== 'POOL') || sample_data.index === 1) {
+							var sample_header = $scope.header;
+						}
+						else {var sample_header = $scope.attachment_header;}
+
 						if (_.size(sample_data) > 2) {
-							_.each($scope.header,function(obj) {
+							_.each(sample_header,function(obj) {
 								values.push($scope.format_csv_field(obj)+"="+sample_data[$scope.format_csv_field(obj)]);
 							});
 							return values.join('|');
@@ -99,34 +111,51 @@ arimport_module.controller('ARImportCtrl',
 
 					}
 
+					function get_remarks(sample_data, arimport_params) {
+						remarks = (arimport_params.attachment_content!=null && sample_data.index==1)?JSON.stringify(arimport_params.attachment_content):'';
+						return remarks;
+					}
+
+					function get_sample_type(sample_data, selectedSampleType) {
+						if ((selectedSampleType.prefix !== 'FC' && selectedSampleType.prefix !== 'POOL') || sample_data.index === 1) {
+							return selectedSampleType.id;
+						}
+						else if ((selectedSampleType.prefix === 'FC' || selectedSampleType.prefix === 'POOL') && sample_data.index !== 1) {
+							sample_type = _.findWhere($scope.sample_types, {'prefix': 'IN-'+selectedSampleType.prefix});
+							if (sample_type !== undefined) {
+								return sample_type.id;
+							}
+						}
+						else {return selectedSampleType.id;}
+					}
+
                     result = data.result;
                     if (result['success'] === 'True') {
                     	$scope.outcome.batch_id = result['obj_id']
 
-                    	// creating analysis request
-						for (var si in $scope.arimport_params.client_samples) {
-							services = []
-							for (var i=0; i< arimport_params.selectedAnalysisServices.length; i++) {
-								services[i] = arimport_params.selectedAnalysisServices[i].id;
-							}
-							contacts = []
-							for (var i=0; i< arimport_params.selectedCCContacts.length; i++) {
-								contacts[i] = arimport_params.selectedCCContacts[i].id;
-							}
+						var services = Array();
+						_.each(arimport_params.selectedAnalysisServices, function(as) {
+							services.push(as.id);
+						});
+						var contacts = Array();
+						_.each(arimport_params.selectedCCContact, function(c) {
+							contacts.push(c.id);
+						});
 
-							params = {
+                    	// creating analysis request
+                    	_.each(arimport_params.client_samples, function(client_samples) {
+                    		params = {
 								title: $scope.outcome.batch_id,
 								Client: arimport_params.selectedClient.id,
-								ClientSampleID: arimport_params.client_samples[si].sample,
-								SampleType: arimport_params.selectedSampleType.id,
+								ClientSampleID: client_samples.sample,
+								SampleType: get_sample_type(client_samples, arimport_params.selectedSampleType),
 								SamplingDate: Utility.format_date(arimport_params.selectedSamplingDate),
 								Batch: $scope.outcome.batch_id,
-								EnvironmentalConditions: get_environmental_conditions(arimport_params.client_samples[si]),
+								EnvironmentalConditions: get_environmental_conditions(client_samples, arimport_params.selectedSampleType),
 								Contact: arimport_params.selectedContact.id,
 								CCContact: contacts.length>0?contacts.join('|'):arimport_params.selectedContact.id,
 								Services: services.join('|'),
-
-								Remarks: $scope.arimport_params.attachment_content!=null?JSON.stringify($scope.arimport_params.attachment_content):'',
+								Remarks: get_remarks(client_samples, arimport_params),
 							}
 
 							BikaService.createAnalysisRequest(params).success(function (data, status, header, config){
@@ -141,7 +170,9 @@ arimport_module.controller('ARImportCtrl',
 									return;
 								}
 							});
-						}
+
+                    	});
+
 						$scope.loading_import.hide();
 						Utility.alert({title:'Success', content: 'Your AR has been successfully imported', alertType:'success'});
 						$state.go('batch',{batch_id: $scope.outcome.batch_id});
@@ -260,6 +291,7 @@ arimport_module.controller('ARImportCtrl',
         	uploadFile: null,
         	attachment: null,
         	attachment_content: null,
+        	client_samples: [],
         };
 
         $scope.$watch('arimport_params.selectedClient',
@@ -297,8 +329,10 @@ arimport_module.controller('ARImportCtrl',
 				var reader = new FileReader();
 				reader.onload = function(event) {
 					var data = event.target.result;
-					$scope.arimport_params.client_samples = $scope.retrieveCSV(data);
-					$scope.getClients();
+					ret_data = $scope.retrieveCSV(data);
+					$scope.arimport_params.client_samples = ret_data.data;
+					$scope.header = ret_data.header;
+					$scope.getAnalysisProfiles();
 				};
 
 				reader.readAsText($scope.arimport_params.uploadFile);
@@ -306,6 +340,36 @@ arimport_module.controller('ARImportCtrl',
 
         $scope.$watch('arimport_params.attachment',
             function (newValue, oldValue) {
+
+            	function extract_samples(content, sample_type) {
+					var samples = Array();
+					var index = 2;
+					if (sample_type === 'FC')
+					{
+						var start_sample_list = false;
+						_.each(content, function (row) {
+							if (start_sample_list) {
+								sample_data = row.split(',');
+								if (sample_data.length > 1 && _.findWhere(samples, {sample: sample_data[1]}) === undefined) {
+									samples.push({index: index, sample: $scope.format_csv_field(sample_data[1])});
+									index++;
+								}
+
+							}
+							if (row.search('Lane,Sample_ID,Sample_Name') != -1) {
+								start_sample_list = true;
+							}
+						});
+
+					}
+					else if (sample_type === 'POOL')
+					{
+						ret_data = $scope.retrieveCSV(content, true);
+						samples = ret_data.data;
+						$scope.header = ret_data.header;
+					}
+					return samples;
+            	}
                 // Ignore initial setup.
                 if ( newValue === oldValue) { return;}
                 if ( newValue === null ) { return; }
@@ -314,37 +378,36 @@ arimport_module.controller('ARImportCtrl',
 				reader.onload = function(event) {
 					var data = event.target.result;
 					$scope.arimport_params.attachment_content = data.split('\n');
-					//console.log($scope.arimport_params.attachment_content);
-					//console.log($scope.arimport_params.attachment_content.toString());
-					//console.log(JSON.stringify($scope.arimport_params.attachment_content));
-
-					//$scope.getClients();
+					var client_samples = extract_samples($scope.arimport_params.attachment_content, $scope.arimport_params.selectedSampleType.prefix);
+					$scope.arimport_params.client_samples = _.union($scope.arimport_params.client_samples, client_samples);
+					$scope.getAnalysisProfiles();
+					console.log(client_samples);
 				};
 
 				reader.readAsText($scope.arimport_params.attachment);
             });
 
 		$scope.retrieveCSV =
-			function(data) {
+			function(data, is_attachment) {
 				var ret_data = Array();
-				var lines = data.split('\n');
-				$scope.header = lines[0].split(',')
+				var lines = is_attachment===undefined?data.split('\n'):data;
+				header = lines[0].split(',')
 
 				for(var i = 0; i < lines.length-1; i++){
 					sample_data = lines[i].split(',');
 					if (sample_data.length > 0 ) {
-						ret_data[i]={index:i, sample: $scope.format_csv_field(sample_data[0])};
+						ret_data[i]={index:is_attachment===undefined?i:i+1, sample: $scope.format_csv_field(sample_data[0])};
 						if (sample_data.length > 1) {
 							for (j = 1; j < sample_data.length; j++) {
-								ret_data[i][$scope.format_csv_field($scope.header[j])] = $scope.format_csv_field(sample_data[j]);
+								ret_data[i][$scope.format_csv_field(header[j])] = $scope.format_csv_field(sample_data[j]);
 							}
 						}
 					}
 				}
 				ret_data.shift();
-				$scope.header.shift();
+				header.shift();
 				//console.log(ret_data);
-				return ret_data;
+				return {data: ret_data, header: header};
 			}
 
 		this.format_csv_field = function(field) {

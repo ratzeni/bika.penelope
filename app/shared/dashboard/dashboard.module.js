@@ -54,6 +54,10 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 					update_counter(review_state, -1, $rootScope.counter);
 					countSamples(review_state);
 				});
+				_.each(this.services_review_state,function(review_state) {
+					update_counter(review_state, -1, $rootScope.counter);
+					countAnalysisRequests(review_state);
+				});
 				return counter;
 			}
 

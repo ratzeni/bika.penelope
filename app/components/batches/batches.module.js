@@ -253,7 +253,8 @@ batches_module.controller('BatchDetailsCtrl',
 				$scope.pagination.page_nr = newPageNumber-1;
 				$scope.pagination.current = newPageNumber;
 			}
-			$scope.getAnalysisRequests($stateParams.batch_id, $stateParams.review_state);
+			//$scope.getAnalysisRequests($stateParams.batch_id, $stateParams.review_state);
+			$scope.getBatch($stateParams.batch_id);
 		}
 
 		$scope.loading_batch = Utility.loading({
@@ -281,7 +282,7 @@ batches_module.controller('BatchDetailsCtrl',
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', title: batch_id, review_state: review_state,
+                params = {sort_on: 'id', sort_order: 'descending', title: batch_id, review_state: review_state,
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
@@ -516,7 +517,7 @@ batches_module.controller('BatchBookCtrl',
 		$scope.getAnalysisRequests =
             function(batch_id, print_stickers) {
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', title: batch_id, cancelled_state: 'active',
+                params = {sort_on: 'id', sort_order: 'descending', title: batch_id, cancelled_state: 'active',
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
@@ -575,7 +576,6 @@ batches_module.controller('BatchBookCtrl',
 					$scope.loading_change_review_state('receiving samples').hide();
 					$scope.getAnalysisRequests($stateParams.batch_id, true);
 
-					//Utility.print_stickers($scope.batch.path,id).then(function($scope.getAnalysisRequests($stateParams.batch_id)));
 				});
 
 			}
