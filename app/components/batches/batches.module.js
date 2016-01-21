@@ -38,6 +38,8 @@ batches_module.controller('BatchesCtrl',
 			last: 0,
 		};
 
+		$scope.samples = {};
+
 		this.changePage = function(newPageNumber, oldPageNumber) {
 			if (newPageNumber !== undefined) {
 				$scope.pagination.page_nr = newPageNumber-1;
@@ -59,7 +61,6 @@ batches_module.controller('BatchesCtrl',
                     $scope.batches = data.result.objects;
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
-
 					transitions = Array();
 					_.each($scope.batches,function(obj) {
 						Utility.merge(transitions,obj.transitions,'id');
@@ -67,8 +68,18 @@ batches_module.controller('BatchesCtrl',
                     $scope.transitions = transitions;
 					$scope.loading_search.hide();
 					$rootScope.counter = DashboardService.update_dashboard();
+					$scope.count_samples();
                 });
             };
+
+		$scope.count_samples = function() {
+			_.each($scope.batches,function(batch) {
+					params = {title: batch.id, include_fields: 'path'};
+					BikaService.countAnalysisRequests(params).success(function (data, status, header, config){
+						$scope.samples[batch.id] = data.result;
+                	});
+			});
+		}
 
         $scope.closeBatch =
 			function(batch_id) {
@@ -238,7 +249,7 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.review_state = 'active';
 		$scope.stickers={id:null};
 		$scope.state = {batch_id: $stateParams.batch_id};
-		$scope.attachment = {content: []};
+		$scope.attachment = {content: [], sample_list:[]};
 
 		$scope.pagination= {
 			page_nr: 0,
@@ -277,12 +288,25 @@ batches_module.controller('BatchDetailsCtrl',
         		return Utility.loading(params);
         	};
 
+		$scope.get_sample_list =
+			function(batch_id) {
+				params = {sort_on: 'getId', sort_order: 'ascending', title: batch_id};
+				BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+					var analysis_requests = data.result.objects;
+					_.each(analysis_requests,function(ar) {
+						if (ar.sample_type.match('IN-')) {
+							$scope.attachment.sample_list.push({sample: ar.sample_id+'|'+ar.client_sample_id});
+						}
+					});
+				});
+			}
+
 		$scope.getAnalysisRequests =
             function(batch_id, review_state, print_stickers) {
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'id', sort_order: 'descending', title: batch_id, review_state: review_state,
+                params = {sort_on: 'getId', sort_order: 'ascending', title: batch_id, review_state: review_state,
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
@@ -295,6 +319,7 @@ batches_module.controller('BatchDetailsCtrl',
 							_.each(JSON.parse(obj.remarks), function(obj) {
 								$scope.attachment.content.push(obj.split(','));
 							});
+							$scope.get_sample_list($stateParams.batch_id);
 						}
 
 						Utility.merge(transitions,obj.transitions,'id');
@@ -432,10 +457,11 @@ batches_module.controller('BatchDetailsCtrl',
 
 		this.get_filename =
 			function () {
+				if ($scope.analysis_requests === undefined || $scope.analysis_requests.length===0) {return 'download.csv';}
 				if ($scope.analysis_requests[0].sample_type === 'FLOWCELL') {
 					return 'samplesheet_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.cvs';
 				}
-				else if (analysis_requests[0].sample_type === 'POOL') {
+				else if ($scope.analysis_requests[0].sample_type === 'POOL') {
 					return 'samplelist_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.cvs';
 				}
 
@@ -444,9 +470,10 @@ batches_module.controller('BatchDetailsCtrl',
 
 		this.check_attachment_type =
 			function (attachment_type) {
-				if (attachment_type === 'samplesheet') {
-					return $scope.analysis_requests[0].sample_type === 'FLOWCELL';
-				}
+				return false;
+//				if (attachment_type === 'samplesheet') {
+//					return $scope.analysis_requests[0].sample_type === 'FLOWCELL';
+//				}
 			}
 
 		this.add_to_blackboard =
@@ -517,7 +544,7 @@ batches_module.controller('BatchBookCtrl',
 		$scope.getAnalysisRequests =
             function(batch_id, print_stickers) {
                 $scope.analysis_requests = [];
-                params = {sort_on: 'id', sort_order: 'descending', title: batch_id, cancelled_state: 'active',
+                params = {sort_on: 'id', sort_order: 'ascending', title: batch_id, cancelled_state: 'active',
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){

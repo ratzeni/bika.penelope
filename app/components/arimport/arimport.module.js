@@ -377,11 +377,15 @@ arimport_module.controller('ARImportCtrl',
 				var reader = new FileReader();
 				reader.onload = function(event) {
 					var data = event.target.result;
-					$scope.arimport_params.attachment_content = data.split('\n');
+					$scope.arimport_params.attachment_content = Array()
+					_.each(data.split('\n'), function(row) {
+						$scope.arimport_params.attachment_content.push($scope.format_csv_field(row));
+					});
+
 					var client_samples = extract_samples($scope.arimport_params.attachment_content, $scope.arimport_params.selectedSampleType.prefix);
 					$scope.arimport_params.client_samples = _.union($scope.arimport_params.client_samples, client_samples);
 					$scope.getAnalysisProfiles();
-					console.log(client_samples);
+					//console.log(client_samples);
 				};
 
 				reader.readAsText($scope.arimport_params.attachment);
@@ -399,6 +403,7 @@ arimport_module.controller('ARImportCtrl',
 						ret_data[i]={index:is_attachment===undefined?i:i+1, sample: $scope.format_csv_field(sample_data[0])};
 						if (sample_data.length > 1) {
 							for (j = 1; j < sample_data.length; j++) {
+								header[j] = $scope.format_csv_field(header[j]);
 								ret_data[i][$scope.format_csv_field(header[j])] = $scope.format_csv_field(sample_data[j]);
 							}
 						}

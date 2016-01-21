@@ -13,6 +13,7 @@ var main_module = angular.module('MainApp',[
     'ConfigModule',
     'BikaApiRestModule',
     'UtilityModule',
+    'angularSpinner',
     'LoginModule',
     'DashboardModule',
     'HomeModule',

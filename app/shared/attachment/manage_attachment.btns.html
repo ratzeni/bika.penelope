@@ -3,6 +3,7 @@
     <span class="glyphicon glyphicon-export"></span>&nbsp;Export&nbsp;CSV
 </button>
 <button type="button" class="btn btn-primary" aria-hidden="true"
+        ng-if="attachment.sample_list.length>0"
         ng-csv="attachment.sample_list" lazy-load="true"
         filename="{{ctrl.get_filename()}}" field-separator=",">
     <span class="glyphicon glyphicon-export"></span>&nbsp;Export&nbsp;SampleList

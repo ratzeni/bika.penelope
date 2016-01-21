@@ -38,7 +38,7 @@
                         <th ng-click="sort('date')">Date
                             <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
-                        <!--<th>Samples</th>-->
+                        <th>Samples</th>
                         <th ng-click="sort('review_state')">State
                             <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
@@ -71,7 +71,19 @@
                         <td>{{row.description}}</td>
                         <td>{{row.client}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
-                        <!--<td>{{row.analysis_requests.length}}</td>-->
+                        <td>{{samples[row.id]}}
+                            <div  style="margin-top:10px"
+                                  data-ng-if="!samples[row.id]"
+                                  spinner-on="!samples[row.id]"
+                                  us-spinner="{radius:20,
+                                  lines:10,
+                                  length:15,
+                                  width: 20,
+                                  scale:0.20,
+                                  speed: 1.5,
+                                  opacity:0.10,
+                                  corners: 1,
+                                  position: 'relative'}"></div></td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
                         <!--<td><ng-include src="'app/shared/blackboard/toggle.btns.mini.html'"></ng-include></td>-->
