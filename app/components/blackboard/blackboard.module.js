@@ -16,7 +16,18 @@ blackboard_module.controller('BlackBoardCtrl',
 		$scope.submit_params = {analyses: []};
 		$scope.verify_params = {analyses: []};
 		$scope.publish_params = {analyses: []};
+		$scope.assign_params = {
+			analyses: [],
+			worksheet: null,
+			analyst: null,
+			worksheet_title: null,
+			worksheet_description: null,
+			switchWorksheet: false,
+
+		};
 		$scope.analyses = [];
+		$scope.worksheets = [];
+		$scope.analysts = [];
 
 		$scope.csv = {sample_list: []};
 
@@ -31,6 +42,22 @@ blackboard_module.controller('BlackBoardCtrl',
         		}
         		return Utility.loading(params);
         	};
+
+		$scope.getAnalysists =
+			function() {
+				BikaService.getAnalystUsers().success(function (data, status, header, config){
+					$scope.analysts = data.result.objects;
+				});
+			}
+
+		$scope.getWorksheets =
+			function() {
+				params = {sort_on: 'id', sort_order: 'descending'}
+				BikaService.getWorksheets(params).success(function (data, status, header, config){
+					$scope.worksheets = data.result.objects;
+				});
+			}
+
 
 
 		$scope.init =
@@ -53,6 +80,8 @@ blackboard_module.controller('BlackBoardCtrl',
 				$scope.transitions = transitions;
                 $scope.workflow_transitions = workflow_transitions;
                 $scope.analyses = analyses;
+                $scope.getWorksheets();
+        		$scope.getAnalysists();
 			}
 		$scope.init();
 
@@ -254,6 +283,111 @@ blackboard_module.controller('BlackBoardCtrl',
 				 });
 			}
 
+		$scope.assign =
+			function(request_id, analysis_id) {
+				if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to assign<br/>', content:'Please select at least a Sample', alertType:'warning'});
+					return;
+				}
+				if (Array.isArray(analysis_id) && analysis_id.length == 0) {
+					Utility.alert({title:'Nothing to assign<br/>', content:'Please select at least a Analysis', alertType:'warning'});
+					return;
+				}
+				if ($scope.assign_params.switchWorksheet && $scope.assign_params.worksheet == null ||
+				 	!$scope.assign_params.switchWorksheet &&
+				 	($scope.assign_params.worksheet_title == null || $scope.assign_params.worksheet_title == '' )) {
+				 	Utility.alert({title:'Nothing to assign<br/>', content:'Please select at least a Worksheet', alertType:'warning'});
+					return;
+				}
+				$scope.loading_change_review_state('assigning').show();
+				if (!$scope.assign_params.switchWorksheet) {
+					params = {
+						title: $scope.assign_params.worksheet_title,
+						description: $scope.assign_params.worksheet_title,
+						Analyst: $scope.assign_params.analyst.userid,
+						Remarks: $scope._get_worksheet_analyses(request_id, analysis_id),
+					};
+					BikaService.createWorksheet(params).success(function (data, status, header, config){
+						result = data.result;
+						$scope.checked_list = [];
+						$scope.assign_params = {
+							analyses: [],
+							worksheet: null,
+							analyst: null,
+							worksheet_title: null,
+							worksheet_description: null,
+							switchWorksheet: false,
+						};
+						$scope.loading_change_review_state('assigning').hide();
+						$scope.updateAnalysisRequests(request_id);
+						$scope.getWorksheets();
+					});
+
+				}
+				else {
+					console.log($scope.assign_params.worksheet);
+
+					params = {
+						obj_path: $scope.assign_params.worksheet.path,
+						Remarks: $scope._get_worksheet_analyses(request_id, analysis_id, JSON.parse($scope.assign_params.worksheet.remarks)),
+					}
+					BikaService.updateWorksheet(params).success(function (data, status, header, config){
+						result = data.result;
+						$scope.checked_list = [];
+						$scope.assign_params = {
+							analyses: [],
+							worksheet: null,
+							analyst: null,
+							worksheet_title: null,
+							worksheet_description: null,
+							switchWorksheet: false,
+						};
+						$scope.loading_change_review_state('assigning').hide();
+						$scope.updateAnalysisRequests(request_id);
+						$scope.getWorksheets();
+					});
+
+				}
+				//$scope.loading_change_review_state('assigning').show();
+		}
+
+		$scope._get_worksheet_analyses =
+			function(request_id, analysis_id, analysis_list) {
+				if (!Array.isArray(request_id) && !Array.isArray(analysis_id)) {
+					var worksheet_analyses = [];
+					var item = {
+						request_id: request_id,
+						analysis_id: analysis_id,
+						obj_path: $scope._get_analysis_path(request_id, analysis_id),
+					};
+					worksheet_analyses.push(item);
+					if (analysis_list !== undefined) {
+						Utility.merge(worksheet_analyses,analysis_list,'request_id');
+					}
+
+					return JSON.stringify(worksheet_analyses);
+
+				}
+				else if (Array.isArray(request_id) && Array.isArray(analysis_id)) {
+					var worksheet_analyses = [];
+					_.each(request_id,function(request_obj) {
+						_.each(analysis_id,function(analysis_obj) {
+							var item = {
+								request_id: request_obj,
+								analysis_id: analysis_obj.id,
+								obj_path: $scope._get_analysis_path(request_obj, analysis_obj.id),
+								analyst: $scope.assign_params.analyst.userid,
+							};
+							worksheet_analyses.push(item);
+						});
+					});
+					if (analysis_list !== undefined) {
+						Utility.merge(worksheet_analyses,analysis_list,'request_id');
+					}
+					return JSON.stringify(worksheet_analyses);
+				}
+
+			}
 
 		$scope._get_action_params =
 			function(request_id, analysis_id, action) {
@@ -349,6 +483,15 @@ blackboard_module.controller('BlackBoardCtrl',
 			function () {
 				return 'sample_list.'+Utility.format_date()+'.csv'
 			}
+
+		$scope.$watch('assign_params.worksheet',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+                if ( newValue === null ) { return; }
+                $scope.assign_params.analyst = _.findWhere($scope.analysts, {'userid': $scope.assign_params.worksheet.analyst});
+         });
+
 
 
 });

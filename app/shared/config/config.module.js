@@ -21,6 +21,12 @@ angular
                 get_sample_types: '/bika/get/sample_types',
                 get_batches: '/bika/get/batches',
                 get_analysis_requests:'/bika/get/analysis_requests',
+                get_users:'/bika/get/users',
+                get_manager_users:'/bika/get/manager_users',
+                get_analyst_users:'/bika/get/analyst_users',
+                get_clerk_users:'/bika/get/clerk_users',
+                get_client_users:'/bika/get/client_users',
+                get_worksheets:'/bika/get/worksheets',
                 create_batch: '/bika/create/batch',
                 create_analysis_request:'/bika/create/analysis_request',
                 cancel_batch: '/bika/cancel/batch',
@@ -38,6 +44,8 @@ angular
 				set_analyses_results : '/bika/set/analyses_results',
 				count_samples: '/bika/count/samples',
 				count_analysis_requests: '/bika/count/analysis_requests',
+				create_worksheet: '/bika/create/worksheet',
+				update_worksheet: '/bika/update/worksheet',
 
             },
             plone_url: {

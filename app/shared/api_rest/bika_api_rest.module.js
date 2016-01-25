@@ -91,6 +91,36 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call(method, params);
     };
 
+    this.getWorksheets = function(params) {
+        method = config.bikaApiRest.methods.get_worksheets;
+        return BikaApiRestService.call(method, params);
+    };
+
+    this.getUsers = function(params) {
+        method = config.bikaApiRest.methods.get_users;
+        return BikaApiRestService.call(method, params);
+    };
+
+    this.getManagerUsers = function(params) {
+        method = config.bikaApiRest.methods.get_manager_users;
+        return BikaApiRestService.call(method);
+    };
+
+    this.getAnalystUsers = function() {
+        method = config.bikaApiRest.methods.get_analyst_users;
+        return BikaApiRestService.call(method);
+    };
+
+    this.getClerkUsers = function() {
+        method = config.bikaApiRest.methods.get_clerk_users;
+        return BikaApiRestService.call(method);
+    };
+
+    this.getClientUsers = function() {
+        method = config.bikaApiRest.methods.get_client_users;
+        return BikaApiRestService.call();
+    };
+
 	this.getAnalysisRequests = function(params) {
         method = config.bikaApiRest.methods.get_analysis_requests;
         return BikaApiRestService.call(method, params);
@@ -100,6 +130,16 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         method = config.bikaApiRest.methods.count_analysis_requests;
         return BikaApiRestService.call(method, params);
     };
+
+	this.createWorksheet = function(params) {
+    	method = config.bikaApiRest.methods.create_worksheet;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.updateWorksheet = function(params) {
+    	method = config.bikaApiRest.methods.update_worksheet;
+        return BikaApiRestService.call(method, params);
+    }
 
     this.createBatch = function(params) {
     	method = config.bikaApiRest.methods.create_batch;
