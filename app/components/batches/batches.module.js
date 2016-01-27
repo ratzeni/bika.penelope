@@ -503,7 +503,7 @@ batches_module.controller('BatchBookCtrl',
 	function(BikaService, Utility, DashboardService, ngCart, $stateParams, config, $scope, $modal, $rootScope) {
 
 		//$scope.batch = [];
-		$scope.analyses = []
+		$scope.analyses = [];
 		$scope.analysis_requests = [];
 		$scope.analysis_results = [];
 		$scope.checked_list = [];
@@ -573,8 +573,8 @@ batches_module.controller('BatchBookCtrl',
 						}
 						$scope.obj_id = obj.id;
 						$scope.analysis_results[$scope.obj_id] = [];
-						$scope.analysis_worksheets[$scope.obj_id] = [];
-						$scope.analysis_analysts[$scope.obj_id] = [];
+						//$scope.analysis_worksheets[$scope.obj_id] = [];
+						//$scope.analysis_analysts[$scope.obj_id] = [];
 						_.each(obj.analyses, function(o) {
 							Utility.merge(workflow_transitions, o.transitions, 'id');
 							$scope.analysis_results[$scope.obj_id][o.id] = (o.review_state === 'sample_received')?1:o.result;

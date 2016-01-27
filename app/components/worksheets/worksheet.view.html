@@ -1,9 +1,57 @@
-<div class="panel panel-primary" data-ng-controller="BatchBookCtrl as ctrl">
+<div class="panel panel-primary">
+  <div class="panel-body">
+      <div class="col-sm-12 controls" >
+            <div class="col-sm-4 controls" >
+                <table class="table table-striped">
+                    <tr>
+                        <td>Worksheet:</td>
+                        <td>{{worksheet.title}}</td>
+                    </tr>
+                    <tr>
+                        <td>ID:</td>
+                        <td>{{worksheet.id}}</td>
+                    </tr>
+                    <tr>
+                        <td>Description:</td>
+                        <td>{{worksheet.description}}</td>
+                    </tr>
+                    <tr>
+                        <td>Analyst:</td>
+                        <td>{{worksheet.analyst}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-4 controls" >
+                <table class="table table-striped">
+                    <tr>
+                        <td>Creator:</td>
+                        <td>{{worksheet.creator}}</td>
+                    </tr>
+                    <tr>
+                        <td>Creation Date:</td>
+                        <td>{{ctrl.format_date(worksheet.creation_date)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Last Update:</td>
+                        <td>{{ctrl.format_date(worksheet.modification_date)}}</td>
+                    </tr>
+                    <tr>
+                        <td>State:</td>
+                        <td>{{ctrl.format_review_state(worksheet.review_state)}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+  </div>
+</div>
+<div class="panel panel-primary">
     <div class="panel-body">
+
         <form class="form-inline">
             <div class="col-sm-12 controls" >
-                <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
-                <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
+
+                <label title="published" ng-if="worksheet_details.length > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{worksheet_details.length}}</label>
+                <input type="text" ng-model="search" ng-if="worksheet_details.length > 0" class="form-control pull-right" placeholder="Search...">
             </div>
         </form>
         <div class="col-sm-12 controls" style="margin-top:10px;">
@@ -13,9 +61,12 @@
                     <th>
                         <div style="padding-left:10px;">
                                 <input type="checkbox"  value=""
-                                       data-ng-checked="checked_list.length == analysis_requests.length"
+                                       data-ng-checked="checked_list.length == worksheet_details.length"
                                        data-ng-click="ctrl.toggle_all()">
                         </div>
+                    </th>
+                    <th ng-click="sort('id')">RequestID
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th ng-click="sort('sample_id')">SampleID
                         <span class="glyphicon sort-icon" ng-show="sortKey=='sample_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -23,11 +74,20 @@
                     <th ng-click="sort('client_sample_id')">ClientSID
                         <span class="glyphicon sort-icon" ng-show="sortKey=='client_sample_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
+                    <th ng-click="sort('batch_title')">Batch
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='batch_title'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
                     <th ng-click="sort('sample_type')">Type
                         <span class="glyphicon sort-icon" ng-show="sortKey=='sample_type'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th data-ng-repeat="a in analyses">
-                        {{a.keyword}}
+                    <th>
+                        Analysis
+                    </th>
+                    <th>
+                        Result
+                    </th>
+                    <th>
+                        Date Result
                     </th>
                     <th ng-click="sort('review_state')">State
                         <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -36,9 +96,9 @@
                     <th><span class="fic glyphicon glyphicon-blackboard" ></span></th>
                 </tr>
                 </thead>
-                <tbody ng-if="analysis_requests.length > 0">
-                <tr dir-paginate="row in analysis_requests | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
-                    total-items="pagination.total" current-page="pagination.current">
+                <tbody ng-if="worksheet_details.length > 0">
+                <tr dir-paginate="row in worksheet_details | orderBy:sortKey:reverse|filter:search|itemsPerPage:worksheet_details.length"
+                    total-items="pagination.total" data-ng-init="a=row.analyses">
                     <td>
                         <div style="padding-left:10px;">
                             <input type="checkbox"  value="{{row.id}}"
@@ -46,12 +106,14 @@
                                    data-ng-click="ctrl.toggle(row.id)">
                         </div>
                     </td>
-
+                    <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.id}}</span></a></td>
                     <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.sample_id}}</span></a></td>
                     <td>{{row.client_sample_id}}</td>
+                    <td><a class="pull-left" ui-sref="batch({batch_id: row.batch_id})" style="text-decoration: none;"><span>{{row.batch_title}}</span></a></td>
                     <td>{{row.sample_type}}</td>
-                    <td data-ng-repeat="a in row.analyses">
-                        <div>
+                    <td>{{a.keyword}}</label>
+                    <td>
+                        <div style="margin-top:5px;">
                             <div data-ng-if="a.review_state !== 'sample_received'">{{ctrl.format_result(a.result)}}</div>
                             <div data-ng-if="a.review_state === 'sample_received'">
                                 <select class="input-sm" data-ng-model="analysis_results[row.id][a.id]">
@@ -67,6 +129,7 @@
                             </div>
                         </div>
                     </td>
+                     <td>{{ctrl.format_date(a.date_result)}}</td>
                     <td>{{ctrl.format_review_state(row.review_state)}}</td>
                     <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
                     <td>
@@ -80,17 +143,9 @@
                 </tbody>
             </table>
 
-            <dir-pagination-controls
-                    max-size="10"
-                    direction-links="true"
-                    boundary-links="true"
-                    class="pull-right"
-                    on-page-change="ctrl.changePage(newPageNumber, oldPageNumber)"
-                    style="margin-top: -25px">
-            </dir-pagination-controls>
 
         </div>
-        <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="analysis_requests.length > 0">
+        <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="worksheet_details.length > 0">
             <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
             <ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>
             <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>

@@ -1,12 +1,12 @@
-<div data-ng-app="BatchesModule" ng-controller="BatchesCtrl as ctrl">
+<div data-ng-app="WorksheetsModule" ng-controller="WorksheetsCtrl as ctrl">
     <div class="panel panel-primary">
         <div class="panel-body">
             <form class="form-inline">
                 <div class="col-sm-12 controls" >
                     <div class="btn-group  btn-group-reset" ng-model="buttons.radio" ng-init="buttons.radio = 'open'" data-nq-radio-group="">
-                                <label title="Left Button" class="btn btn-primary"><input type="radio" value="open" data-ng-click="getBatches('open')">Open</label>
-                                <label title="Middle Button" class="btn btn-primary"><input type="radio" value="closed" data-ng-click="getBatches('closed')">Closed</label>
-                                <label title="Right Button" class="btn btn-primary"><input type="radio" value="cancelled" data-ng-click="getBatches('cancelled')">Cancelled</label>
+                                <label title="Left Button" class="btn btn-primary"><input type="radio" value="open" data-ng-click="getWorksheets('open')">Open</label>
+                                <label title="Middle Button" class="btn btn-primary"><input type="radio" value="closed" data-ng-click="getWorksheets('closed')">Closed</label>
+                                <label title="Right Button" class="btn btn-primary"><input type="radio" value="cancelled" data-ng-click="getWorksheets('cancelled')">Cancelled</label>
                     </div>
                     <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
                     <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
@@ -19,11 +19,11 @@
                         <th>
                             <div style="padding-left:10px;">
                                 <input type="checkbox"  value=""
-                                       data-ng-checked="checked_list.length == batches.length"
+                                       data-ng-checked="checked_list.length == worksheets.length"
                                        data-ng-click="ctrl.toggle_all()">
                         </div>
                         </th>
-                        <th ng-click="sort('id')">BatchID
+                        <th ng-click="sort('id')">WorksheetID
                             <span class="glyphicon sort-icon" ng-show="sortKey=='id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
                         <th ng-click="sort('title')">Title
@@ -32,13 +32,15 @@
                         <th ng-click="sort('description')">Description
                             <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
-                        <th ng-click="sort('client')">Client
+                        <th>
+                            Analysis
+                        </th>
+                        <th ng-click="sort('analyst')">Analyst
                             <span class="glyphicon sort-icon" ng-show="sortKey=='client'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
                         <th ng-click="sort('date')">Date
                             <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
-                        <th>Samples</th>
                         <th ng-click="sort('review_state')">State
                             <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
@@ -46,8 +48,8 @@
                         <!--<th><span class="fic glyphicon glyphicon-blackboard" ></span></th>-->
                     </tr>
                     </thead>
-                    <tbody ng-if="batches.length > 0">
-                    <tr dir-paginate="row in batches | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
+                    <tbody ng-if="worksheets.length > 0">
+                    <tr dir-paginate="row in worksheets | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
                         total-items="pagination.total" current-page="pagination.current">
                         <td>
                             <div style="padding-left:10px;">
@@ -57,33 +59,21 @@
                             </div>
                         </td>
                         <td>
-                            <a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
+                            <a class="pull-left" ui-sref="worksheet({worksheet_id: row.id})" style="text-decoration: none;">
                                 <span>{{row.id}}</span>
                             </a>
 
                         </td>
                         <td>
-                            <a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
+                            <a class="pull-left" ui-sref="worksheet({worksheet_id: row.id})"  style="text-decoration: none;">
                                 <span>{{row.title}}</span>
                             </a>
 
                         </td>
-                        <td><a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>
-                        <td>{{row.client}}</td>
+                        <td> <a class="pull-left" ui-sref="worksheet({worksheet_id: row.id})"  style="text-decoration: none;"><span>{{row.description}}</span></a></td>
+                        <td>{{ctrl.count_analyses(row.remarks)}}</td>
+                        <td>{{row.analyst}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
-                        <td>{{samples[row.id]}}
-                            <div  style="margin-top:10px"
-                                  data-ng-if="!samples[row.id]"
-                                  spinner-on="!samples[row.id]"
-                                  us-spinner="{radius:20,
-                                  lines:10,
-                                  length:15,
-                                  width: 20,
-                                  scale:0.20,
-                                  speed: 1.5,
-                                  opacity:0.10,
-                                  corners: 1,
-                                  position: 'relative'}"></div></td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
                         <!--<td><ng-include src="'app/shared/blackboard/toggle.btns.mini.html'"></ng-include></td>-->
@@ -101,10 +91,13 @@
                 </dir-pagination-controls>
 
             </div>
-            <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="batches.length > 0">
+            <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="worksheets.length > 0">
                 <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
-                <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
+                <!--<ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>-->
             </div>
         </div>
     </div>
 </div>
+
+
+

@@ -137,10 +137,10 @@
                             <span>{{row.id}}</span>
                         </a>
                     </td>
-                    <td>{{row.sample_id}}</td>
+                    <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.sample_id}}</span></a></td>
                     <td>{{row.client_sample_id}}</td>
                     <td>{{row.sample_type}}</td>
-                    <td> <div class="col-sm-1 controls" >
+                    <td><div class="col-sm-1 controls" >
                         <button type="button" data-nq-popover="" class="btn btn-primary btn-xs">
                             <span class="glyphicon glyphicon-eye-open"></span>&nbsp;Results
                         </button>
