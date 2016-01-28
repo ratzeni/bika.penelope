@@ -93,6 +93,7 @@ main_module.run(
 			}
 		}
 
+
 		$rootScope.logout = function(){
 			Auth.logout();
 		};

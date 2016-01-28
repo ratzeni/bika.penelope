@@ -1,8 +1,10 @@
 var login_module = angular.module('LoginModule',[]);
 
 login_module.constant('USER_ROLES', {
-	all : '*',
-	user : 'user',
+	manager: 'LabManager',
+	analyst: 'Analyst',
+	clerk: 'LabClerk',
+	client: 'Client',
 }).constant('AUTH_EVENTS', {
 	loginSuccess : 'auth-login-success',
 	loginFailed : 'auth-login-failed',
@@ -30,7 +32,7 @@ login_module.service('Session',
 
 		this.create = function(user) {
 			this.user = user;
-			this.userRole = user.userRole;
+			this.userRole = user.role;
 		};
 		this.destroy = function() {
 			this.user = null;
@@ -60,9 +62,13 @@ login_module.factory('Auth',
 		//the login function
 		authService.login = function(user, success, error) {
 			BikaService.login(user).success(function (data, status, header, config){
-        		is_signed = (data.result.toLowerCase() == 'true');
+        		is_signed = (data.result.is_signed.toLowerCase() == 'true');
         		if (is_signed) {
-        			user.userRole = 'user';
+        			user.role = data.result.user.role;
+        			user.userid = data.result.user.userid;
+        			user.fullname = data.result.user.fullname;
+
+        			//user.userRole = bika_user.role;
         			//set the browser session, to avoid relogin on refresh
 					$window.sessionStorage["userInfo"] = JSON.stringify(user);
 					//update current user into the Session service or $rootScope.currentUser

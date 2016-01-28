@@ -86,12 +86,11 @@
                         <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-
-                        <li>
-                            <a ui-sref="blackboard" ng-class="getClass('blackboard')" style="padding: 10px 10px 0 0;">
-                                <ngcart-summary></ngcart-summary>
-                            </a>
-                        </li>
+                            <li>
+                                <a ui-sref="blackboard" ng-class="getClass('blackboard')" style="padding: 10px 10px 0 0;">
+                                    <ngcart-summary></ngcart-summary>
+                                </a>
+                            </li>
                     </ul>
                 </div>
             </div>
@@ -101,5 +100,22 @@
     <div ui-view></div>
 </div>
  <ng-include src="'app/shared/footer/footer.view.html'"></ng-include>
+  <div class="navbar navbar-inverse navbar-fixed-bottom" style="margin:0;"
+       role="navigation" ng-show="$state.current.name!=='login'">
+       <div class="container-fluid">
+            <div class="collapse navbar-collapse">
+                 <ul class="nav navbar-nav navbar-right">
+                        <li class="active">
+                            <a href="#">
+                                <span style="margin-left:10px;">
+                                    Hi, {{currentUser.fullname}}
+                                </span>
+                                <span class="fic glyphicon glyphicon-user" style="margin-left:10px;"></span>
+                            </a>
+                        </li>
+                 </ul>
+            </div>
+       </div>
+  </div>
 </body>
 </html>
