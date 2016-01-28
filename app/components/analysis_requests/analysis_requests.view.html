@@ -93,9 +93,9 @@
                             <h3 class="popover-title">Analyses Report for sample:</br> {{row.sample_id}}</h3>
                             <div class="popover-content">
                                 <table class="table table-striped">
-                                    <tr ng-repeat="a in row.analyses">
+                                    <tr ng-repeat="a in row.analyses"  ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">
                                         <td>{{a.keyword}}</td>
-                                        <td ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">
+                                        <td>
                                             <span class="pull-right">
                                                 {{ctrl.format_result(a.result)}}
                                             </span>

@@ -14,7 +14,7 @@ batches_module.controller('BatchesCtrl',
 
         $scope.loading_blackboard = Utility.loading({
             busyText: 'Wait while updating board...',
-            delayHide: 100000,
+            delayHide: 1000,
         });
 
         $scope.loading_change_review_state =
@@ -208,14 +208,14 @@ batches_module.controller('BatchesCtrl',
 					$scope.loading_blackboard.show();
 					params = {title: batch_id};
 					BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
-						var analysis_requests = data.result;
+						var analysis_requests = data.result.objects;
 						_.each(analysis_requests, function(ar) {
 							if (ngCart.getItemById(ar.id) === false ) {
 								ngCart.addItem(ar.id,ar.id,1,1,ar);
 							}
 						});
 						$scope.loading_blackboard.hide();
-					})
+					});
 				});
 				$scope.checked_list = [];
 			}
@@ -294,8 +294,10 @@ batches_module.controller('BatchDetailsCtrl',
 				BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
 					var analysis_requests = data.result.objects;
 					_.each(analysis_requests,function(ar) {
-						if (ar.sample_type.match('IN-')) {
-							$scope.attachment.sample_list.push({sample: ar.sample_id+'|'+ar.client_sample_id});
+						if (ar.sample_type.match('SAMPLE-IN-')) {
+							$scope.attachment.sample_list.push({sample: ar.sample_id+'|'+ar.client_sample_id,
+							Sample_ID: ar.sample_id,
+							Sample_Name: ar.client_sample_id});
 						}
 					});
 				});

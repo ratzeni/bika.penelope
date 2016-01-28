@@ -50,7 +50,7 @@
                     <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.sample_id}}</span></a></td>
                     <td>{{row.client_sample_id}}</td>
                     <td>{{row.sample_type}}</td>
-                    <td data-ng-repeat="a in row.analyses">
+                    <td data-ng-repeat="a in row.analyses"  ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">
                         <div>
                             <div data-ng-if="a.review_state !== 'sample_received'">{{ctrl.format_result(a.result)}}</div>
                             <div data-ng-if="a.review_state === 'sample_received'">

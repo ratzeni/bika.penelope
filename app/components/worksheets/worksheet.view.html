@@ -111,8 +111,8 @@
                     <td>{{row.client_sample_id}}</td>
                     <td><a class="pull-left" ui-sref="batch({batch_id: row.batch_id})" style="text-decoration: none;"><span>{{row.batch_title}}</span></a></td>
                     <td>{{row.sample_type}}</td>
-                    <td>{{a.keyword}}</label>
-                    <td>
+                    <td>{{a.keyword}}</td>
+                    <td  ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">
                         <div style="margin-top:5px;">
                             <div data-ng-if="a.review_state !== 'sample_received'">{{ctrl.format_result(a.result)}}</div>
                             <div data-ng-if="a.review_state === 'sample_received'">

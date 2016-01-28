@@ -121,7 +121,7 @@ arimport_module.controller('ARImportCtrl',
 							return selectedSampleType.id;
 						}
 						else if ((selectedSampleType.prefix === 'FC' || selectedSampleType.prefix === 'POOL') && sample_data.index !== 1) {
-							sample_type = _.findWhere($scope.sample_types, {'prefix': 'IN-'+selectedSampleType.prefix});
+							sample_type = _.findWhere($scope.sample_types, {'prefix': 'SAMPLE-IN-'+selectedSampleType.prefix});
 							if (sample_type !== undefined) {
 								return sample_type.id;
 							}
