@@ -61,7 +61,7 @@
                     <th>
                         <div style="padding-left:10px;">
                                 <input type="checkbox"  value=""
-                                       data-ng-checked="checked_list.length == worksheet_details.length"
+                                       data-ng-checked="checked_list.length == worksheet_details.length && checked_list.length > 0"
                                        data-ng-click="ctrl.toggle_all()">
                         </div>
                     </th>
@@ -102,8 +102,8 @@
                     <td>
                         <div style="padding-left:10px;">
                             <input type="checkbox"  value="{{row.id}}"
-                                   data-ng-checked="checked_list.indexOf(row.id) > -1"
-                                   data-ng-click="ctrl.toggle(row.id)">
+                                   data-ng-checked="_.findWhere(checked_list, {'request_id': row.id, 'analysis_id': a.id}) !== undefined"
+                                   data-ng-click="ctrl.toggle(row.id, a.id)">
                         </div>
                     </td>
                     <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.id}}</span></a></td>
@@ -116,7 +116,8 @@
                         <div style="margin-top:5px;">
                             <div data-ng-if="a.review_state !== 'sample_received'">{{ctrl.format_result(a.result)}}</div>
                             <div data-ng-if="a.review_state === 'sample_received'">
-                                <select class="input-sm" data-ng-model="analysis_results[row.id][a.id]">
+                                <select class="input-sm"
+                                        data-ng-model="$scope.checked_list[_.indexOf($scope.checked_list, _.findWhere($scope.checked_list,  {'request_id': request_id, 'analysis_id': analysis_id}))];">
                                     <option data-ng-selected="{{key}}"
                                             ng-repeat="(key,value) in ctrl.results"
                                             data-option-value="key" data-option-label="value" value="{{key}}">
@@ -130,7 +131,7 @@
                         </div>
                     </td>
                      <td>{{ctrl.format_date(a.date_result)}}</td>
-                    <td>{{ctrl.format_review_state(row.review_state)}}</td>
+                    <td>{{ctrl.format_review_state(a.review_state)}}</td>
                     <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
                     <td>
                         <ngcart-addtocart id="{{  row.id }}" name="{{ row.id }}"
@@ -146,8 +147,9 @@
 
         </div>
         <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="worksheet_details.length > 0">
-            <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
-            <ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>
+            <!--<ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>-->
+            <!--<ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>-->
+            <ng-include src="'app/shared/review_state/worksheets.btns.html'"></ng-include>
             <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
         </div>
     </div>

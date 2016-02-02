@@ -19,6 +19,7 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
  		this.samples_review_state = ['sample_due','sample_received'];
 		this.ars_review_state = ['published','verified'];
 		this.services_review_state = ['to_be_verified'];
+		this.worksheets_review_state = ['assigned'];
 
 		update_counter =
 			function (review_state, count, counter) {
@@ -43,6 +44,26 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
                 });
 			}
 
+		countWorksheets =
+			function(review_state) {
+                params = {sort_on: 'id', sort_order: 'descending', review_state: 'open'};
+                BikaService.getWorksheets(params).success(function (data, status, header, config){
+					var worksheets = data.result.objects;
+					var analyst = $rootScope.currentUser.userid;
+					var count = 0;
+					_.each(worksheets, function(w) {
+
+						if (w.remarks != undefined && w.remarks != null &&  w.remarks != '' && analyst == w.analyst) {
+							analyses = JSON.parse(w.remarks);
+							count = count +  analyses.length;
+							console.log(count);
+						}
+
+					});
+					update_counter(review_state, count, counter);
+                });
+			}
+
 
 		this.update_dashboard =
 			function () {
@@ -57,6 +78,10 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 				_.each(this.services_review_state,function(review_state) {
 					update_counter(review_state, -1, $rootScope.counter);
 					countAnalysisRequests(review_state);
+				});
+				_.each(this.worksheets_review_state,function(review_state) {
+					update_counter(review_state, -1, $rootScope.counter);
+					countWorksheets(review_state);
 				});
 				return counter;
 			}

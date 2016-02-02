@@ -156,6 +156,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call(method, params);
     }
 
+    this.cancelWorksheet = function(params) {
+    	method = config.bikaApiRest.methods.cancel_worksheet;
+        return BikaApiRestService.call(method, params);
+    }
+
     this.cancelAnalysisRequest = function(params) {
     	method = config.bikaApiRest.methods.cancel_analysis_request;
         return BikaApiRestService.call(method, params);
@@ -163,6 +168,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
     this.reinstateBatch = function(params) {
     	method = config.bikaApiRest.methods.reinstate_batch;
+        return BikaApiRestService.call(method, params);
+    }
+
+	this.reinstateWorksheet = function(params) {
+    	method = config.bikaApiRest.methods.reinstate_worksheet;
         return BikaApiRestService.call(method, params);
     }
 
@@ -178,6 +188,16 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
     this.closeBatch = function(params) {
     	method = config.bikaApiRest.methods.close_batch;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.openWorksheet = function(params) {
+    	method = config.bikaApiRest.methods.open_worksheet;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.closeWorksheet = function(params) {
+    	method = config.bikaApiRest.methods.close_worksheet;
         return BikaApiRestService.call(method, params);
     }
 

@@ -277,6 +277,7 @@ arimport_module.controller('ARImportCtrl',
         $scope.update([]);
 
         $scope.arimport_params = {
+        	switchAR: true,
             selectedClient: null,
             selectedContact: null,
         	selectedCCContacts: null,
@@ -292,6 +293,7 @@ arimport_module.controller('ARImportCtrl',
         	attachment: null,
         	attachment_content: null,
         	client_samples: [],
+        	single_sample: null,
         };
 
         $scope.$watch('arimport_params.selectedClient',
@@ -320,11 +322,35 @@ arimport_module.controller('ARImportCtrl',
             }
         );
 
+		$scope.$watch('arimport_params.switchAR',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+                $scope.header = [];
+                $scope.arimport_params.client_samples = [];
+                $scope.arimport_params.single_sample = null;
+                $scope.arimport_params.uploadFile = null;
+
+            });
+
+         $scope.$watch('arimport_params.single_sample',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+                if ( newValue === null || newValue === '') {
+                	$scope.header = [];
+                	$scope.arimport_params.client_samples = [];
+                }
+                if ( newValue !== null || newValue !=='') {
+                	$scope.arimport_params.client_samples = [{index: 1, sample: $scope.arimport_params.single_sample}];
+                }
+            });
+
         $scope.$watch('arimport_params.uploadFile',
             function (newValue, oldValue) {
                 // Ignore initial setup.
                 if ( newValue === oldValue) { return;}
-                if ( newValue === null ) { return; }
+                if ( newValue === null ) { $scope.arimport_params.client_samples; return; }
 
 				var reader = new FileReader();
 				reader.onload = function(event) {
@@ -372,7 +398,10 @@ arimport_module.controller('ARImportCtrl',
             	}
                 // Ignore initial setup.
                 if ( newValue === oldValue) { return;}
-                if ( newValue === null ) { return; }
+                if ( newValue === null ) {
+                	$scope.arimport_params.client_samples = [];
+                	return;
+                }
 
 				var reader = new FileReader();
 				reader.onload = function(event) {

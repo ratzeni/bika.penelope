@@ -2,16 +2,35 @@
 <div class="panel panel-primary">
     <div class="panel-body">
         <form name="arimportForm" class="form" data-ng-submit="submit(arimport_params)">
-            <div class="col-sm-12">
-                <div class="input-inline col-sm-2">
-                    <file-field class="btn"
+            <div class="col-sm-12 controls">
+                <div class="col-sm-2">
+                    <input type="checkbox" ng-model="arimport_params.switchAR"
+                           data-nq-switch-button=""
+                           data-theme="success,stripped,rounded"
+                           data-label-text="Samples" data-false-label="Single" data-true-label="Multi">
+                </div>
+                <div class="input-inline col-sm-2" data-ng-if="arimport_params.switchAR">
+                    <file-field class="btn  pull-right"
                                 ng-class="{'btn-success': (arimport_params.client_samples.length >0) }"
                                 ng-model="arimport_params.uploadFile" data-ng-required="True">Upload Request</file-field>
                 </div>
-                <div class="input-inline col-sm-10">
-                <input type="text" class="form-control"  ng-model="arimport_params.uploadFile.name"
+                <div class="input-inline col-sm-8" data-ng-if="arimport_params.switchAR">
+                    <input type="text" class="form-control"  ng-model="arimport_params.uploadFile.name"
                        placeholder="CSV Client Request File..." value="{{arimport_params.uploadFile.name}}">
-                    </div>
+                </div>
+                <div class="input-inline col-sm-2" data-ng-if="!arimport_params.switchAR">
+                   <input type="text" data-ng-required="true"
+                                   title="single_sample"
+                                   class="form-control"
+                                   ng-model="arimport_params.single_sample"
+                                   placeholder="Sample Name..."/>
+                </div>
+                <div class="input-inline col-sm-4" data-ng-if="!arimport_params.switchAR">
+
+                </div>
+            </div>
+            <div class="col-sm-12">
+
             </div>
             <div class="col-sm-12" style="margin-top:10px;">
                         <div class="input-inline col-sm-4">

@@ -56,8 +56,14 @@ worksheets_module.controller('WorksheetsCtrl',
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
 					transitions = Array();
-					_.each($scope.batches,function(obj) {
-						Utility.merge(transitions,obj.transitions,'id');
+					_.each($scope.worksheets,function(obj) {
+						if (obj.transitions.length > 0) {
+							Utility.merge(transitions,obj.transitions,'id');
+						}
+						else {
+							Utility.merge(transitions,[{'id': obj.review_state}], 'id');
+						}
+
 					});
                     $scope.transitions = transitions;
 					$scope.loading_search.hide();
@@ -109,24 +115,75 @@ worksheets_module.controller('WorksheetsCtrl',
 		}
 
 
+		$scope.closeWorksheet =
+			function(worksheet_id) {
+				$scope.loading_change_review_state('closing worksheets').show();
+				params = {ids: worksheet_id};
+				BikaService.closeWorksheet(params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('closing worksheets').hide();
+					$scope.checked_list = [];
+				 	$scope.getWorksheets($scope.review_state);
+				});
+
+			}
+
+		$scope.openWorksheet =
+			function(worksheet_id) {
+				$scope.loading_change_review_state('opening worksheets').show();
+				params = {ids: worksheet_id};
+				BikaService.openWorksheet(params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('opening worksheets').hide();
+					$scope.checked_list = [];
+				 	$scope.getWorksheets($scope.review_state);
+				});
+
+
+			}
+
+		$scope.cancelWorksheet =
+			function(worksheet_id) {
+				$scope.loading_change_review_state('deleting worksheets').show();
+				params = {ids: worksheet_id};
+				BikaService.cancelWorksheet(params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('deleting worksheets').hide();
+					$scope.checked_list = [];
+				 	$scope.getWorksheets($scope.review_state);
+				});
+
+			}
+
+		$scope.reinstateWorksheet =
+			function(worksheet_id) {
+				$scope.loading_change_review_state('reinstating worksheets').show();
+				params = {ids: batch_id};
+				BikaService.reinstateWorksheet(params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('reinstating worksheets').hide();
+					$scope.checked_list = [];
+				 	$scope.getWorksheets($scope.review_state);
+				});
+
+			}
+
+
+
 
 		this.change_review_state =
-			function (action, batch_id) {
-				if (batch_id === undefined) {
-					var batch_id = $scope.checked_list.join('|');
+			function (action, worksheet_id) {
+				if (worksheet_id === undefined) {
+					var worksheet_id = $scope.checked_list.join('|');
 				}
 
 				if (action === 'close') {
-					 $scope.closeBatch(batch_id);
+					 $scope.closeWorksheet(worksheet_id);
 				}
 				else if (action === 'open') {
-					 $scope.openBatch(batch_id);
+					 $scope.openBatch(worksheet_id);
 				}
 				else if (action === 'cancel') {
-					 $scope.cancelBatch(batch_id);
+					 $scope.cancelWorksheet(worksheet_id);
 				}
 				else if (action === 'reinstate') {
-					 $scope.reinstateBatch(batch_id);
+					 $scope.reinstateWorksheet(worksheet_id);
 				}
 			}
 
@@ -148,19 +205,8 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 		$scope.state = {worksheet_id: $stateParams.worksheet_id};
 
 		$scope.analyses = [];
-		$scope.analysis_results = {};
-		$scope.submit_params = {analyses: []};
-		$scope.verify_params = {analyses: []};
-		$scope.publish_params = {analyses: []};
-		$scope.assign_params = {
-			analyses: [],
-			worksheet: null,
-			analyst: null,
-			worksheet_title: null,
-			worksheet_description: null,
-			switchWorksheet: false,
+		$scope.analysis_results = Array();
 
-		};
 		$scope.stickers={id:null};
 		$scope.worksheets = [];
 		$scope.analysts = [];
@@ -198,7 +244,6 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 		// :: function :: getWorksheet()
         $scope.getWorksheet =
             function(worksheet_id) {
-            	$scope.worksheet_details = [];
             	$scope.loading_worksheet.show();
                 params = {sort_on: 'Date', sort_order: 'descending', id: worksheet_id};
                 BikaService.getWorksheets(params).success(function (data, status, header, config){
@@ -207,25 +252,29 @@ worksheets_module.controller('WorksheetDetailsCtrl',
                     var transitions = Array();
                     var workflow_transitions = Array();
 					var _analyses = Array();
+					var worksheet_details = Array();
                  	_.each(analyses, function(obj) {
                  		params = {id: obj.request_id};
-                 		if (!_.has($scope.analysis_results,obj.request_id)) {$scope.analysis_results[obj.request_id] = {};}
                  		BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
                  			var ar = data.result.objects[0];
                  			var analysis =  _.findWhere(ar.analyses, {'id': obj.analysis_id});
                  			ar.analyses = analysis;
-
-                 			$scope.worksheet_details.push(ar);
+                 			console.log(ar);
+                 			return;
+                 			worksheet_details.push(ar);
                  			Utility.merge(_analyses,[ar.analyses],'id');
                  			Utility.merge(transitions,ar.transitions,'id');
                  			Utility.merge(workflow_transitions,ar.analyses.transitions,'id');
                  			$scope.transitions = transitions;
                  			$scope.workflow_transitions = workflow_transitions;
-                 			if ($scope.worksheet_details.length == analyses.length) {
+                 			if (worksheet_details.length == analyses.length) {
                  				$scope.analyses = _analyses;
+                 				$scope.worksheet_details = worksheet_details;
+                 				//console.log($scope.worksheet_details)
                  				$scope.loading_worksheet.hide();
                  			}
-                 			$scope.analysis_results[ar.id][obj.analysis_id] =  (ar.analyses.review_state === 'sample_received')?1:ar.analyses.result;
+                 			//$scope.analysis_results[ar.id][obj.analysis_id] =  (ar.analyses.review_state === 'sample_received')?1:ar.analyses.result;
+                 			$scope.analysis_results.push({'request_id': ar.id, 'analysis_id': obj.analysis_id, 'result': (ar.analyses.review_state === 'sample_received')?1:ar.analyses.result})
                  		});
                  	});
 
@@ -262,28 +311,28 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 		}
 
 		this.toggle =
-			function(id) {
-				var idx = $scope.checked_list.indexOf(id);
+			function(request_id, analysis_id) {
+				var idx = _.indexOf($scope.checked_list, _.findWhere($scope.checked_list,  {'request_id': request_id, 'analysis_id': analysis_id}));
 				if (idx > -1) {
 					$scope.checked_list.splice(idx, 1);
 				}
 				else {
-					$scope.checked_list.push(id);
+					$scope.checked_list.push({'request_id': request_id, 'analysis_id': analysis_id});
 				}
-				//console.log($scope.checked_list);
 			}
 
 		this.toggle_all = function() {
 				if ($scope.checked_list.length < $scope.worksheet_details.length) {
 					_.each($scope.worksheet_details,function(b) {
-						$scope.checked_list.push(b.id);
-					})
+						var request_id = b.id;
+						var analysis_id = b.analyses.id;
+						$scope.checked_list.push({'request_id': request_id, 'analysis_id': analysis_id});
+					});
 				}
 				else {
 					$scope.checked_list = [];
 				}
 		}
-
 
 		$scope.receiveSample =
 			function(id) {
@@ -295,9 +344,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 					$scope.checked_list = [];
 					$scope.loading_change_review_state('receiving samples').hide();
 					$scope.getWorksheet($scope.state.worksheet_id);
-
 				});
-
 			}
 
 		$scope.submit =
@@ -318,8 +365,6 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 				 	//console.log(result);
 				 	if (result.success === 'True') {
 				 		params = {f: $scope._get_action_params(request_id, analysis_id)}
-				 		//console.log(params);
-
 				 		BikaService.submit(params).success(function (data, status, header, config){
 				 			result = data.result;
 				 			//console.log(result);
@@ -465,18 +510,18 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 					return JSON.stringify(worksheet_analyses);
 
 				}
-				else if (Array.isArray(request_id) && Array.isArray(analysis_id)) {
+				else if (Array.isArray(request_id)) {
 					var worksheet_analyses = [];
 					_.each(request_id,function(request_obj) {
-						_.each(analysis_id,function(analysis_obj) {
-							var item = {
-								request_id: request_obj,
-								analysis_id: analysis_obj.id,
-								obj_path: $scope._get_analysis_path(request_obj, analysis_obj.id),
+
+						var item = {
+								request_id: request_obj.request_id,
+								analysis_id: request_obj.analysis_id,
+								obj_path: $scope._get_analysis_path(request_obj.request_id, request_obj.analysis_id),
 								analyst: $scope.assign_params.analyst.userid,
-							};
-							worksheet_analyses.push(item);
-						});
+						};
+						worksheet_analyses.push(item);
+
 					});
 					if (analysis_list !== undefined) {
 						Utility.merge(worksheet_analyses,analysis_list,'request_id');
@@ -493,15 +538,15 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 					f.push($scope._get_analysis_path(request_id, analysis_id));
 					return JSON.stringify(f);
 				}
-				else if (Array.isArray(request_id) && Array.isArray(analysis_id)) {
+				else if (Array.isArray(request_id)) {
 					var f = []
 					_.each(request_id,function(request_obj) {
 						if (action !== undefined && action=='publish') {
-							f.push($scope._get_analysis_path(request_obj));
+							f.push($scope._get_analysis_path(request_obj.request_id));
 						}
-						_.each(analysis_id,function(analysis_obj) {
-							f.push($scope._get_analysis_path(request_obj, analysis_obj.id));
-						});
+
+						f.push($scope._get_analysis_path(request_obj.request_id,request_obj.analysis_id));
+
 					});
 					return JSON.stringify(f);
 				}
@@ -515,12 +560,10 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 					input_values[$scope._get_analysis_path(request_id,analysis_id)] = {Result: $scope._get_analysis_result(request_id, analysis_id)}
 					return JSON.stringify(input_values);
 				}
-				else if (Array.isArray(request_id) && Array.isArray(analysis_id)) {
+				else if (Array.isArray(request_id)) {
 					var input_values = {};
 					_.each(request_id,function(request_obj) {
-						_.each(analysis_id,function(analysis_obj) {
-							input_values[$scope._get_analysis_path(request_obj,analysis_obj.id)] = {Result: $scope._get_analysis_result(request_obj, analysis_obj.id)}
-						});
+						input_values[$scope._get_analysis_path(request_obj.request_id,request_obj.analysis_id)] = {Result: $scope._get_analysis_result(request_obj.request_id,request_obj.analysis_id)}
 					});
 					return JSON.stringify(input_values);
 				}
@@ -528,20 +571,17 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 
 		$scope._get_analysis_path =
 			function(request_id, analysis_id) {
-				//console.log($scope.worksheet_details);
-				//console.log(request_id);
 				request = _.findWhere($scope.worksheet_details, {'id': request_id});
 				if (analysis_id === undefined) {
 					return request.path;
 				}
 				else {return request.path + "/" + analysis_id;}
-
 			}
 
 		$scope._get_analysis_result =
 			function(request_id, analysis_id) {
-				//console.log($scope.analysis_results);
-				return $scope.analysis_results[request_id][analysis_id].toString();
+				analysis_results = _.findWhere($scope.analysis_results, {'request_id': request_id, 'analysis_id': analysis_id});
+				return analysis_results.result.toString();
 			}
 
 		this.change_review_state =
@@ -559,7 +599,6 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 
 		this.change_workflow_review_state =
 			function (action, request_id, analysis_id) {
-
 				if (action === 'submit') {
 					 $scope.submit(request_id, analysis_id);
 				}
