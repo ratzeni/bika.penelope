@@ -9,6 +9,7 @@
                                 <label title="Right Button" class="btn btn-primary"><input type="radio" value="cancelled" data-ng-click="getWorksheets('cancelled')">Cancelled</label>
                     </div>
                     <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
+                    <label title="published" ng-if="pagination.total == 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.total}}</label>
                     <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
                 </div>
             </form>
@@ -19,7 +20,7 @@
                         <th>
                             <div style="padding-left:10px;">
                                 <input type="checkbox"  value=""
-                                       data-ng-checked="checked_list.length == worksheets.length"
+                                       data-ng-checked="checked_list.length == worksheets.length && checked_list.length > 0"
                                        data-ng-click="ctrl.toggle_all()">
                         </div>
                         </th>
@@ -75,7 +76,8 @@
                         <td>{{row.analyst}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
-                        <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
+                        <!--<td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>-->
+                        <td><ng-include src="'app/shared/review_state/worksheets.btns.mini.html'"></ng-include></td>
                         <!--<td><ng-include src="'app/shared/blackboard/toggle.btns.mini.html'"></ng-include></td>-->
                     </tr>
                     </tbody>
@@ -92,9 +94,9 @@
 
             </div>
             <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="worksheets.length > 0">
-                <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
+                <!--<ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>-->
 
-                <!--<ng-include src="'app/shared/review_state/worksheets.btns.html'"></ng-include>-->
+                <ng-include src="'app/shared/review_state/worksheets.btns.html'"></ng-include>
                 <!--<ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>-->
             </div>
         </div>

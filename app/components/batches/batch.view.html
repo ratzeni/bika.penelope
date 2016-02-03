@@ -82,6 +82,7 @@
                     <label title="cancelled" class="btn btn-primary"><input type="radio" value="cancelled" data-ng-click="getAnalysisRequests(batch.id, 'cancelled')">Cancelled</label>
                 </div>
                 <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
+                <label title="published" ng-if="pagination.total == 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.total}}</label>
                 <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
             </div>
         </form>
@@ -92,7 +93,7 @@
                     <th>
                         <div style="padding-left:10px;">
                                 <input type="checkbox"  value=""
-                                       data-ng-checked="checked_list.length == analysis_requests.length"
+                                       data-ng-checked="checked_list.length == analysis_requests.length  && checked_list.length > 0"
                                        data-ng-click="ctrl.toggle_all()">
                         </div>
                     </th>

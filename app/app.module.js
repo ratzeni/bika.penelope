@@ -15,7 +15,6 @@ var main_module = angular.module('MainApp',[
     'UtilityModule',
     'angularSpinner',
     'LoginModule',
-    'DashboardModule',
     'HomeModule',
     'ARImportModule',
     'BatchesModule',

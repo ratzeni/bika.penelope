@@ -5,7 +5,7 @@ analysis_requests_module.run(function($rootScope){
 });
 
 analysis_requests_module.controller('AnalysisRequestsCtrl',
-	function(BikaService, DashboardService, Utility, config, ngCart, $scope, $stateParams, $rootScope) {
+	function(BikaService, Utility, config, ngCart, $scope, $stateParams, $rootScope) {
 
 		$scope.analyses = [];
 		$scope.analysis_requests = [];
@@ -51,7 +51,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', review_state: review_state,
+                params = {sort_on: 'Date', sort_order: 'descending', Subject: review_state,
                 		page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
@@ -70,7 +70,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 
                     	Utility.print_stickers($scope.stickers.id);
                     }
-                    $rootScope.counter = DashboardService.update_dashboard();
+                    //$rootScope.counter = DashboardService.update_dashboard();
                 });
             };
 
@@ -208,7 +208,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 	});
 
 analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
-	function(BikaService, DashboardService, Utility, config, $stateParams, $scope, $rootScope) {
+	function(BikaService, Utility, config, $stateParams, $scope, $rootScope) {
 
 		$scope.state = {analysis_request_id: $stateParams.analysis_request_id};
 		$scope.analysis_request = null;
@@ -255,7 +255,7 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
                     if (print_stickers !==undefined && print_stickers === true) {
                     	Utility.print_stickers($scope.stickers.id);
                     }
-                    $rootScope.counter = DashboardService.update_dashboard();
+                    //$rootScope.counter = DashboardService.update_dashboard();
 
 
                 });

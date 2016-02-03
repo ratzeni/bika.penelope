@@ -5,116 +5,22 @@
 </button>
 <button type="button" class="btn btn-primary" aria-hidden="true"
         data-ng-show="ctrl.check_transitions('submit', workflow_transitions)"
-        data-nq-collapse="" data-target-id="#collapseSubmitForm" data-collapsed="true">
+        data-ng-click="ctrl.change_workflow_review_state('submit', checked_list, workflow_params.analyses)">
     <span class="glyphicon glyphicon-new-window"></span>&nbsp;Submit
 </button>
 <!--data-ng-click="ctrl.change_workflow_review_state('submit')"-->
 <button type="button" class="btn btn-success" aria-hidden="false"
         data-ng-show="ctrl.check_transitions('verify', workflow_transitions)"
-        data-nq-collapse="" data-target-id="#collapseVerifyForm" data-collapsed="true">
+        data-ng-click="ctrl.change_workflow_review_state('verify', checked_list, workflow_params.analyses)">
     <span class="glyphicon glyphicon-check">
     </span>&nbsp;Verify
 </button>
 <button type="button" class="btn btn-success" aria-hidden="true"
-        data-ng-show="ctrl.check_transitions('publish', workflow_transitions)"
-        data-nq-collapse="" data-target-id="#collapsePublishForm" data-collapsed="true">
+         data-ng-show="ctrl.check_transitions('publish', workflow_transitions)"
+        data-ng-click="ctrl.change_workflow_review_state('publish', checked_list, workflow_params.analyses)">
     <span class="glyphicon glyphicon-globe">
     </span>&nbsp;Publish
 </button>
-
-<div id="collapseSubmitForm"  class="panel panel-default" style="margin-top:10px;">
-    <div class="panel-heading">
-        <div class="panel-title">Submit results for a verification</div>
-
-    </div>
-
-    <div class="panel-body">
-        <div class="col-sm-12 controls">
-            <div class="col-sm-12 controls">
-                <select data-nq-select="" data-ng-required="true" data-min-required="1"
-                        data-qo-placeholder="Analyses.." name="analyses"
-                        data-ng-model="submit_params.analyses"
-                        data-qo-multiple="true"
-                        data-qo-max-length="0"
-                        data-qo-display-type="input"
-                        data-ng-options="a.id for a in analyses">
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-12 controls">
-            <div class="col-sm-12 controls pull-right" style="margin-top:10px;">
-                <button type="button" class="btn btn-success" aria-hidden="true"
-                        data-ng-show="ctrl.check_transitions('submit', workflow_transitions)"
-                        data-ng-click="ctrl.change_workflow_review_state('submit', checked_list,submit_params.analyses)">
-                    <span class="glyphicon glyphicon-new-window"></span>&nbsp;Submit
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="collapseVerifyForm"  class="panel panel-default" style="margin-top:10px;">
-    <div class="panel-heading">
-        <div class="panel-title">Verify results</div>
-
-    </div>
-
-    <div class="panel-body">
-        <div class="col-sm-12 controls">
-            <div class="col-sm-12 controls">
-                <select data-nq-select="" data-ng-required="true" data-min-required="1"
-                        data-qo-placeholder="Analyses.." name="analyses"
-                        data-ng-model="verify_params.analyses"
-                        data-qo-multiple="true"
-                        data-qo-max-length="0"
-                        data-qo-display-type="input"
-                        data-ng-options="a.id for a in analyses">
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-12 controls">
-            <div class="col-sm-12 controls pull-right" style="margin-top:10px;">
-                <button type="button" class="btn btn-success" aria-hidden="true"
-                        data-ng-show="ctrl.check_transitions('verify', workflow_transitions)"
-                        data-ng-click="ctrl.change_workflow_review_state('verify', checked_list, verify_params.analyses)">
-                    <span class="glyphicon glyphicon-check"></span>&nbsp;Verify
-                </button>
-            </div>
-
-
-
-        </div>
-    </div>
-</div>
-<div id="collapsePublishForm"  class="panel panel-default" style="margin-top:10px;">
-    <div class="panel-heading">
-        <div class="panel-title">Publish results</div>
-
-    </div>
-
-    <div class="panel-body">
-        <div class="col-sm-12 controls">
-            <div class="col-sm-12 controls">
-                <select data-nq-select="" data-ng-required="true" data-min-required="1"
-                        data-qo-placeholder="Analyses.." name="analyses"
-                        data-ng-model="publish_params.analyses"
-                        data-qo-multiple="true"
-                        data-qo-max-length="0"
-                        data-qo-display-type="input"
-                        data-ng-options="a.id for a in analyses">
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-12 controls">
-            <div class="col-sm-12 controls pull-right" style="margin-top:10px;">
-                <button type="button" class="btn btn-success" aria-hidden="true"
-                        data-ng-show="ctrl.check_transitions('publish', workflow_transitions)"
-                        data-ng-click="ctrl.change_workflow_review_state('publish', checked_list, publish_params.analyses)">
-                    <span class="glyphicon glyphicon-globe"></span>&nbsp;Publish
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 <div id="collapseAssignForm"  class="panel panel-default" style="margin-top:10px;">
     <div class="panel-heading">
         <div class="panel-title">Assign to a worksheet</div>
@@ -153,27 +59,15 @@
                         data-ng-model="assign_params.analyst">
                 </select>
             </div>
-            <div class="input-inline col-sm-6" style="margin-top:10px">
-                <select data-nq-select="" data-qo-placeholder="Analyses..."
-                        data-ng-options="a.id for a in analyses"
-                        data-qo-multiple="true"
-                        data-qo-max-length="0"
-                        data-qo-display-type="input"
-                        data-ng-model="assign_params.analyses">
-                </select>
-            </div>
         </div>
          <div class="col-sm-12 controls">
             <div class="col-sm-12 controls pull-right" style="margin-top:10px;">
                 <button type="button" class="btn btn-primary" aria-hidden="true"
                         data-ng-show="ctrl.check_transitions('assign', workflow_transitions)"
-                        data-ng-click="ctrl.change_workflow_review_state('assign', checked_list, assign_params.analyses)">
+                        data-ng-click="ctrl.change_workflow_review_state('assign', checked_list, workflow_params.analyses)">
                     <span class="glyphicon glyphicon-list-alt"></span>&nbsp;Assign
                 </button>
             </div>
-
-
-
         </div>
     </div>
 </div>

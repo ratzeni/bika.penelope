@@ -5,7 +5,7 @@ analysis_requests_module.run(function($rootScope){
 });
 
 blackboard_module.controller('BlackBoardCtrl',
-	function(BikaService, DashboardService, Utility, config, ngCart, $scope, $state, $stateParams, $rootScope) {
+	function(BikaService, Utility, config, ngCart, $scope, $state, $stateParams, $rootScope) {
 
 
 		$scope.analysis_requests = [];
@@ -142,7 +142,7 @@ blackboard_module.controller('BlackBoardCtrl',
 
 					$scope.init();
 				 	if (print_stickers !==undefined && print_stickers === true) {Utility.print_stickers($scope.stickers.id);}
-                    $rootScope.counter = DashboardService.update_dashboard();
+                    //$rootScope.counter = DashboardService.update_dashboard();
 				 });
 			}
 

@@ -33,7 +33,6 @@ angular
                 cancel_batch: '/bika/cancel/batch',
                 cancel_worksheet: '/bika/cancel/worksheet',
                 cancel_analysis_request:'/bika/cancel/analysis_request',
-                cancel_worksheet:'/bika/cancel/worksheet',
                 reinstate_batch: '/bika/reinstate/batch',
                 reinstate_worksheet: '/bika/reinstate/worksheet',
                 reinstate_analysis_request:'/bika/reinstate/analysis_request',
@@ -50,9 +49,12 @@ angular
 				set_analyses_results : '/bika/set/analyses_results',
 				count_samples: '/bika/count/samples',
 				count_analysis_requests: '/bika/count/analysis_requests',
-
 				update_worksheet: '/bika/update/worksheet',
-
+				update_worksheets: '/bika/update/worksheets',
+				update_batch: '/bika/update/batch',
+				update_batches: '/bika/update/batches',
+				update_analysis_request: '/bika/update/analysis_request',
+				update_analysis_requests: '/bika/update/analysis_requests',
             },
             plone_url: {
             	develop: 'http://localhost:8080',

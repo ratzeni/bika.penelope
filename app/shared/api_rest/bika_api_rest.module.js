@@ -141,6 +141,31 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call(method, params);
     }
 
+    this.updateWorksheets = function(params) {
+    	method = config.bikaApiRest.methods.update_worksheets;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.updateBatch = function(params) {
+    	method = config.bikaApiRest.methods.update_batch;
+        return BikaApiRestService.call(method, params);
+    }
+
+   this.updateBatches = function(params) {
+    	method = config.bikaApiRest.methods.update_batches;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.updateAnalysisRequest = function(params) {
+    	method = config.bikaApiRest.methods.update_analysis_request;
+        return BikaApiRestService.call(method, params);
+    }
+
+	this.updateAnalysisRequests = function(params) {
+    	method = config.bikaApiRest.methods.update_analysis_requests;
+        return BikaApiRestService.call(method, params);
+    }
+
     this.createBatch = function(params) {
     	method = config.bikaApiRest.methods.create_batch;
         return BikaApiRestService.call(method, params);

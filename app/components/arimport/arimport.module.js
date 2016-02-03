@@ -90,6 +90,7 @@ arimport_module.controller('ARImportCtrl',
 					BatchDate: Utility.format_date(arimport_params.selectedSamplingDate),
 					Client: arimport_params.selectedClient.id,
 					Remarks: arimport_params.selectedExportMode.label,
+					subject: 'open',
 				}
 
 				BikaService.createBatch(params).success(function (data, status, header, config){
@@ -156,6 +157,7 @@ arimport_module.controller('ARImportCtrl',
 								CCContact: contacts.length>0?contacts.join('|'):arimport_params.selectedContact.id,
 								Services: services.join('|'),
 								Remarks: get_remarks(client_samples, arimport_params),
+								subject: 'sample_due',
 							}
 
 							BikaService.createAnalysisRequest(params).success(function (data, status, header, config){
