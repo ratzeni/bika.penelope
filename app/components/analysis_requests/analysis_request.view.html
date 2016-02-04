@@ -89,6 +89,13 @@
             <table class="table table-bordered table-striped table-hover table-responsive">
                 <thead>
                     <tr class="alert alert-success">
+                        <th>
+                             <div style="padding-left:10px;">
+                                <input type="checkbox"  value=""
+                                       data-ng-checked="workflow_params.analyses.length == analysis_requests.length  && workflow_params.analyses.length > 0"
+                                       data-ng-click="ctrl.toggle_all_analyses()">
+                        </div>
+                        </th>
                         <th>Analysis</th>
                         <th>Description</th>
                         <th>Category</th>
@@ -100,6 +107,13 @@
                 </thead>
                 <tbody ng-if="analysis_request.analyses.length > 0">
                     <tr data-ng-repeat="a in analysis_request.analyses">
+                        <td>
+                            <div style="padding-left:10px;">
+                                <input type="checkbox"  value="{{a.id}}" class="pull-left" style="margin-right:10px"
+                                       data-ng-checked="workflow_params.analyses.indexOf(a.id) > -1"
+                                       data-ng-click="ctrl.toggle_analyses(a.id)">
+                            </div>
+                        </td>
                         <td>{{a.keyword}}</td>
                         <td>{{a.title}}</td>
                         <td>{{a.category}}</td>

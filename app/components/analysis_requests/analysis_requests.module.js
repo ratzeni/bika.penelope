@@ -10,7 +10,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 		$scope.analyses = [];
 		$scope.analysis_requests = [];
 		$scope.checked_list = [];
-		$scope.review_state = ($stateParams.review_state!==undefined && $stateParams.review_state!=='')?$stateParams.review_state:'sample_due';
+		$scope.review_state = ($stateParams.review_state!==undefined && $stateParams.review_state!=='')?$stateParams.review_state:'active';
 		$scope.buttons = {radio: $scope.review_state};
 		$scope.stickers={id:null};
 
@@ -51,8 +51,15 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'Date', sort_order: 'descending', Subject: review_state,
+                params = {sort_on: 'Date', sort_order: 'descending',
                 		page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
+
+                if (review_state === 'active') {
+					params['Subjects'] = 'sample_due|sample_received|to_be_verified|verified|published';
+				}
+				else {
+					params['Subject'] = review_state;
+				}
 
                 BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
                     $scope.analysis_requests = data.result.objects;
@@ -215,9 +222,7 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 		$scope.stickers = {id: null};
 
 		$scope.analysis_results = [];
-		$scope.submit_params = {analyses: []};
-		$scope.verify_params = {analyses: []};
-		$scope.publish_params = {analyses: []};
+		$scope.workflow_params = {analyses: []};
 		$scope.analyses = []
 
 		$scope.loading_ars = Utility.loading({
@@ -334,13 +339,30 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 			}
 
 
+		$scope.ultimate_workflow_transitions =
+			function(request_id, review_state) {
+					_params = {id: request_id}
+					BikaService.getAnalysisRequests(_params).success(function (data, status, header, config){
+						ar = data.result.objects[0];
+						if (ar.review_state === review_state) {
+							var __params = {obj_path: ar.path, subject: review_state};
+							BikaService.updateAnalysisRequest(__params).success(function (data, status, header, config){
+								$scope.getAnalysisRequests($scope.state.analysis_request_id);
+							});
+						} else {$scope.getAnalysisRequests($scope.state.analysis_request_id);}
+					});
+
+
+
+		}
+
 		$scope.submit =
 			function(request_id, analysis_id) {
 				if (Array.isArray(request_id) && request_id.length == 0) {
 					Utility.alert({title:'Nothing to submit<br/>', content:'Please select at least a Sample', alertType:'warning'});
 					return;
 				}
-				if (Array.isArray(request_id) && request_id.length == 0) {
+				if (Array.isArray(analysis_id) && analysis_id.length == 0) {
 					Utility.alert({title:'Nothing to submit<br/>', content:'Please select at least a Analysis', alertType:'warning'});
 					return;
 				}
@@ -358,9 +380,9 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 				 			result = data.result;
 				 			//console.log(result);
 				 			$scope.checked_list = [];
-				 			$scope.submit_params = {analyses: []};
+				 			$scope.workflow_params = {analyses: []};
+				 			$scope.ultimate_workflow_transitions($scope.state.analysis_request_id, 'to_be_verified');
 				 			$scope.loading_change_review_state('submitting').hide();
-				 			$scope.getAnalysisRequests($scope.state.analysis_request_id);
 				 		});
 				 	}
 				});
@@ -384,9 +406,10 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 					result = data.result;
 					//console.log(result);
 					$scope.checked_list = [];
-					$scope.verify_params = {analyses: []};
+					$scope.workflow_params = {analyses: []};
+					$scope.ultimate_workflow_transitions($scope.state.analysis_request_id, 'verified');
 					$scope.loading_change_review_state('verifying').hide();
-					$scope.getAnalysisRequests($scope.state.analysis_request_id);
+					//$scope.getAnalysisRequests($scope.state.analysis_request_id)
 				 });
 			}
 
@@ -408,16 +431,17 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 					result = data.result;
 					//console.log(result);
 					$scope.checked_list = [];
-					$scope.publish_params = {analyses: []};
+					$scope.workflow_params = {analyses: []};
+					$scope.ultimate_workflow_transitions($scope.state.analysis_request_id, 'published');
 					$scope.loading_change_review_state('publishing').hide();
-					$scope.getAnalysisRequests($scope.state.analysis_request_id);
+					//$scope.getAnalysisRequests($scope.state.analysis_request_id);
 				 });
 			}
 
 		$scope._get_action_params =
 			function(request_id, analysis_id, action) {
 				if (!Array.isArray(request_id) && !Array.isArray(analysis_id)) {
-					var f = []
+					var f = [];
 					f.push($scope._get_analysis_path(request_id, analysis_id));
 					return JSON.stringify(f);
 				}
@@ -427,8 +451,8 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 					if (action !== undefined && action=='publish') {
 						f.push($scope._get_analysis_path(request_id));
 					}
-					_.each(analysis_id,function(analysis_obj) {
-						f.push($scope._get_analysis_path(request_id, analysis_obj.id));
+					_.each(analysis_id,function(id) {
+						f.push($scope._get_analysis_path(request_id, id));
 					});
 
 					return JSON.stringify(f);
@@ -444,8 +468,8 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 					input_values[$scope._get_analysis_path(request_id,analysis_id)] = {Result: $scope._get_analysis_result(request_id, analysis_id)}
 				}
 				else if (Array.isArray(analysis_id)) {
-					_.each(analysis_id,function(analysis_obj) {
-						input_values[$scope._get_analysis_path(request_id,analysis_obj.id)] = {Result: $scope._get_analysis_result(request_id, analysis_obj.id)}
+					_.each(analysis_id,function(id) {
+						input_values[$scope._get_analysis_path(request_id, id)] = {Result: $scope._get_analysis_result(request_id, id)}
 					});
 				}
 				return JSON.stringify(input_values);
@@ -496,6 +520,27 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 		}
 
 		this.results = config.legend.analysis_result;
+
+		this.toggle_analyses = function(id) {
+				var idx = $scope.workflow_params.analyses.indexOf(id);
+				if (idx > -1) {
+					$scope.workflow_params.analyses.splice(idx, 1);
+				}
+				else {
+					$scope.workflow_params.analyses.push(id);
+				}
+			}
+
+		this.toggle_all_analyses = function() {
+				if ($scope.workflow_params.analyses.length < $scope.analysis_request.analyses.length) {
+					_.each($scope.analysis_request.analyses,function(a) {
+						$scope.workflow_params.analyses.push(a.id);
+					})
+				}
+				else {
+					$scope.workflow_params.analyses = [];
+				}
+		}
 
 
 });

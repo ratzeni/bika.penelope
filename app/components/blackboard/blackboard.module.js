@@ -103,6 +103,17 @@ blackboard_module.controller('BlackBoardCtrl',
 				//console.log($scope.checked_list);
 			}
 
+		this.toggle_all = function() {
+				if ($scope.checked_list.length < ngCart.getItems().length) {
+					_.each(ngCart.getItems(),function(item) {
+						$scope.checked_list.push(item.getData().id);
+					});
+				}
+				else {
+					$scope.checked_list = [];
+				}
+		}
+
 		this.format_date =
 			function(date) {
 				return Utility.format_date(date);
@@ -484,6 +495,13 @@ blackboard_module.controller('BlackBoardCtrl',
 		this.get_filename =
 			function () {
 				return 'sample_list.'+Utility.format_date()+'.csv'
+			}
+
+
+		this.getHeader =
+			function() {
+				{return ["Sample", "Sample_ID", "Sample_Name"]};
+
 			}
 
 		$scope.$watch('assign_params.worksheet',

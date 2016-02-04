@@ -1042,6 +1042,8 @@ batches_module.controller('BatchBookCtrl',
 				}
 		}
 
+
+
 		this.add_to_blackboard =
 			function(ids) {
 				_.each(ids,function(id) {

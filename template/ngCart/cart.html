@@ -14,7 +14,11 @@
         <thead>
                 <tr class="alert alert-success">
                     <th>
-
+                        <div style="padding-left:10px;">
+                                <input type="checkbox"  value=""
+                                       data-ng-checked="checked_list.length == ngCart.getCart().items.length  && checked_list.length > 0"
+                                       data-ng-click="ctrl.toggle_all()">
+                        </div>
                     </th>
                     <th ng-click="sort('id')">RequestID
                         <span class="glyphicon sort-icon" ng-show="sortKey=='id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -161,11 +165,11 @@
                     style="margin-top: -25px">
             </dir-pagination-controls>
             <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="ngCart.getTotalItems() > 0">
-                <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
-                <ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>
+                <!--<ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>-->
+                <!--<ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>-->
                 <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
                 <button type="button" class="btn btn-primary" aria-hidden="true"
-                        ng-csv="csv.sample_list" lazy-load="true"
+                        ng-csv="csv.sample_list" lazy-load="true" csv-header="ctrl.getHeader()"
                         filename="{{ctrl.get_filename()}}" field-separator=",">
                     <span class="glyphicon glyphicon-export"></span>&nbsp;Export&nbsp;SampleList
                 </button>
