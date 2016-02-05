@@ -253,6 +253,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
                  		params = {id: obj.request_id};
                  		BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
                  			var ar = data.result.objects[0];
+                 			//console.log(ar);
                  			var analysis =  _.findWhere(ar.analyses, {'id': obj.analysis_id});
                  			ar.analyses = analysis;
                  			worksheet_details.push(ar);

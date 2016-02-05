@@ -49,7 +49,8 @@ arimport_module.controller('ARImportCtrl',
 					return;
 				}
 
-				if ($scope.arimport_params.selectedAnalysisServices === null || $scope.arimport_params.selectedAnalysisServices === undefined) {
+				if ($scope.arimport_params.selectedAnalysisServices.illumina.length === 0 || $scope.arimport_params.selectedAnalysisServices.bioinfo.length === 0
+					|| $scope.arimport_params.selectedAnalysisServices.library_prep.length === 0 || $scope.arimport_params.selectedAnalysisServices.extraction.length === 0) {
 					Utility.alert({title:'There\'s been an error<br/>', content:'Analysis Service field required', alertType:'danger'});
 					return;
 				}
@@ -135,7 +136,16 @@ arimport_module.controller('ARImportCtrl',
                     	$scope.outcome.batch_id = result['obj_id']
 
 						var services = Array();
-						_.each(arimport_params.selectedAnalysisServices, function(as) {
+						_.each(arimport_params.selectedAnalysisServices.extraction, function(as) {
+							services.push(as.id);
+						});
+						_.each(arimport_params.selectedAnalysisServices.library_prep, function(as) {
+							services.push(as.id);
+						});
+						_.each(arimport_params.selectedAnalysisServices.illumina, function(as) {
+							services.push(as.id);
+						});
+						_.each(arimport_params.selectedAnalysisServices.bioinfo, function(as) {
 							services.push(as.id);
 						});
 						var contacts = Array();
@@ -250,9 +260,26 @@ arimport_module.controller('ARImportCtrl',
 		// :: function :: getAnalysisServices()
         $scope.getAnalysisServices =
             function(arimport_params) {
-                params = {}
+                params = {sort_on: 'keyword', sort_order: 'ascending',}
                 BikaService.getAnalysisServices(params).success(function (data, status, header, config){
-                    $scope.analysis_services = data.result.objects;
+                	$scope.analysis_services = {extraction: [], bioinfo: [], illumina: [], library_prep: []};
+                	_.each(data.result.objects, function (analysis) {
+
+                     	if (analysis.category=="Extraction") {
+                     		$scope.analysis_services.extraction.push(analysis);
+                     	}
+                     	else if (analysis.category=="Bioinformatics Service") {
+                     		$scope.analysis_services.bioinfo.push(analysis);
+                     	}
+                     	else if (analysis.category=="Next Generation Sequencing") {
+                     		$scope.analysis_services.illumina.push(analysis);
+                     	}
+                     	else if (analysis.category=="NGS Library Preparation") {
+                     		$scope.analysis_services.library_prep.push(analysis);
+                     	}
+
+                    });
+
                 });
             };
 
@@ -286,7 +313,7 @@ arimport_module.controller('ARImportCtrl',
         	selectedSampleType: null,
         	selectedContainerType: null,
         	selectedAnalysisProfiles: null,
-        	selectedAnalysisServices: null,
+        	selectedAnalysisServices: {extraction: [], library_prep: [], illumina: [], bioinfo: []},
         	selectedSamplingDate: Utility.format_date(),
         	selectedBatch: null,
         	selectedExportMode: $scope.export_mode[0],

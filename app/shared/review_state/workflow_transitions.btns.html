@@ -28,26 +28,26 @@
     <div class="panel-body">
         <div class="col-sm-12 controls">
             <div class="col-sm-3">
-                <input type="checkbox" ng-model="assign_params.switchWorksheet" data-nq-switch-button=""
+                <input type="checkbox" ng-model="workflow_params.switchWorksheet" data-nq-switch-button=""
                        data-theme="warning,stripped,rounded"
                        data-label-text="Worksheet" data-false-label="Create new" data-true-label="Add to">
             </div>
             <div class="input-inline col-sm-3" data-ng-if="assign_params.switchWorksheet">
                 <select data-nq-select="" data-qo-placeholder="Worksheets..."
                         data-ng-options="w.title for w in worksheets"
-                        data-ng-model="assign_params.worksheet">
+                        data-ng-model="workflow_params.worksheet">
                 </select>
             </div>
             <div class="input-inline col-sm-3" data-ng-if="!assign_params.switchWorksheet">
                             <input type="text" data-ng-required="true"
                                    title="batch"
                                    class="form-control"
-                                   ng-model="assign_params.worksheet_title"
+                                   ng-model="workflow_params.worksheet_title"
                                    placeholder="Worksheet..."/>
             </div>
             <div class="input-inline col-sm-6" data-ng-if="!assign_params.switchWorksheet">
                             <input type="text" class="form-control" data-ng-required="true"
-                                   ng-model="assign_params.worksheet_description" data-name="description"
+                                   ng-model="workflow_params.worksheet_description" data-name="description"
                                    placeholder="Description...">
             </div>
         </div>
@@ -56,7 +56,8 @@
             <div class="input-inline col-sm-6" style="margin-top:10px">
                 <select data-nq-select="" data-qo-placeholder="Analyst..."
                         data-ng-options="u.fullname for u in analysts"
-                        data-ng-model="assign_params.analyst">
+                        data-ng-init="workflow_params.analyst = _.findWhere(analysts, {'fullname': currentUser.fullname})"
+                        data-ng-model="workflow_params.analyst">
                 </select>
             </div>
         </div>

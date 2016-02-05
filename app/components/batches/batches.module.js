@@ -887,11 +887,11 @@ batches_module.controller('BatchBookCtrl',
 				else if (Array.isArray(request_id) && Array.isArray(analysis_id)) {
 					var worksheet_analyses = [];
 					_.each(request_id,function(request_obj) {
-						_.each(analysis_id,function(analysis_obj) {
+						_.each(analysis_id,function(id) {
 							var item = {
 								request_id: request_obj,
-								analysis_id: analysis_obj.id,
-								obj_path: $scope._get_analysis_path(request_obj, analysis_obj.id),
+								analysis_id: id,
+								obj_path: $scope._get_analysis_path(request_obj, id),
 								analyst: $scope.workflow_params.analyst.userid,
 							};
 							worksheet_analyses.push(item);

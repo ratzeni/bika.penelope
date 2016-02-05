@@ -122,14 +122,46 @@
                         </div>
             </div>-->
             <div class="col-sm-12" style="margin-top:10px;">
-                <div class="input-inline col-sm-12">
+                <div class="input-inline col-sm-6">
                             <select data-nq-select=""
                                     data-qo-max-length="0" data-name="services"
                                     data-qo-multiple="true"
                                     data-qo-display-type="input"
-                                    data-qo-placeholder="Analysis Services.."
-                                    data-ng-model="arimport_params.selectedAnalysisServices"
-                                    data-ng-options="as.title for as in analysis_services" data-ng-required="true">
+                                    data-qo-placeholder="Extraction..."
+                                    data-ng-model="arimport_params.selectedAnalysisServices.extraction"
+                                    data-ng-options="as.title for as in analysis_services.extraction" >
+                            </select>
+                        </div>
+                <div class="input-inline col-sm-6">
+                            <select data-nq-select=""
+                                    data-qo-max-length="0" data-name="services"
+                                    data-qo-multiple="true"
+                                    data-qo-display-type="input"
+                                    data-qo-placeholder="NGS Library..."
+                                    data-ng-model="arimport_params.selectedAnalysisServices.library_prep"
+                                    data-ng-options="as.title for as in analysis_services.library_prep" >
+                            </select>
+                        </div>
+            </div>
+            <div class="col-sm-12" style="margin-top:10px;">
+                <div class="input-inline col-sm-6">
+                            <select data-nq-select=""
+                                    data-qo-max-length="0" data-name="services"
+                                    data-qo-multiple="true"
+                                    data-qo-display-type="input"
+                                    data-qo-placeholder="NGS Illumina..."
+                                    data-ng-model="arimport_params.selectedAnalysisServices.illumina"
+                                    data-ng-options="as.title for as in analysis_services.illumina" >
+                            </select>
+                        </div>
+                <div class="input-inline col-sm-6">
+                            <select data-nq-select=""
+                                    data-qo-max-length="0" data-name="services"
+                                    data-qo-multiple="true"
+                                    data-qo-display-type="input"
+                                    data-qo-placeholder="Bioinformatics Dept..."
+                                    data-ng-model="arimport_params.selectedAnalysisServices.bioinfo"
+                                    data-ng-options="as.title for as in analysis_services.bioinfo" >
                             </select>
                         </div>
             </div>
