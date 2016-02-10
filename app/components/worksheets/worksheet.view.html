@@ -17,7 +17,13 @@
                     </tr>
                     <tr>
                         <td>Analyst:</td>
-                        <td>{{worksheet.analyst}}</td>
+                        <td>
+                            <label class="btn btn-xs active"
+                                   data-ng-class="{'btn-primary': worksheet.analyst == currentUser.userid, 'btn-danger': worksheet.analyst != currentUser.userid}"
+                                   style="width:100%">
+                                <span class="glyphicon glyphicon-user pull-left"></span>&nbsp;<span class="pull-left" style="margin-left:5px;">{{worksheet.analyst}}</span>
+                            </label>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -127,6 +133,11 @@
                             </div>
                             <div style="margin-top:5px;">
                                 <ng-include src="'app/shared/review_state/workflow_transitions.btns.mini.html'"></ng-include>
+                            </div>
+                            <div data-ng-if="a.analyst!=''">
+                                <label class="btn btn-xs active" data-ng-class="{'btn-primary': a.analyst == currentUser.userid, 'btn-danger': a.analyst != currentUser.userid}" style="margin-top:5px;width:100%">
+                                    <span class="glyphicon glyphicon-user pull-left"></span>&nbsp;<span class="pull-left" style="margin-left:5px;">{{a.analyst}}</span>
+                                </label>
                             </div>
                         </div>
                     </td>

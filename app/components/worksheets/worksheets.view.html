@@ -73,7 +73,13 @@
                         </td>
                         <td> <a class="pull-left" ui-sref="worksheet({worksheet_id: row.id})"  style="text-decoration: none;"><span>{{row.description}}</span></a></td>
                         <td>{{ctrl.count_analyses(row.remarks)}}</td>
-                        <td>{{row.analyst}}</td>
+                        <td>
+                            <label class="btn btn-xs active"
+                                   data-ng-class="{'btn-primary': row.analyst == currentUser.userid, 'btn-danger': row.analyst != currentUser.userid}"
+                                   style=width:100%">
+                                <span class="glyphicon glyphicon-user pull-left"></span>&nbsp;<span class="pull-left" style="margin-left:5px;">{{row.analyst}}</span>
+                            </label>
+                        </td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <!--<td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>-->

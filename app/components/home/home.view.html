@@ -1,15 +1,223 @@
-<div style="height:100%; padding-top:55px;" data-ng-controller="HomeCtrl">
-    <div class="col-sm-12">
-        <div class="col-sm-4">&nbsp;</div>
-         <div class="col-sm-4">
-            <button type="button" data-nq-dropdown="" class="btn btn-primary" style="width:250px;">Open Menu</button>
-            <ul class="dropdown-menu dropdown-menu-right" tabindex="-1" role="menu">
-                <li tabindex="-1" role="presentation"><a ui-sref="search" role="menuitem"><i class="fic glyphicon glyphicon-search"></i> Search</a></li>
-                <li role="separator" class="divider"></li>
-                <li tabindex="-1" role="presentation"><a ui-sref="cart" role="menuitem"><i class="fic glyphicon glyphicon-shopping-cart"></i> Shopping Cart</a></li>
-            </ul>
-             </div>
-         <div class="col-sm-4">&nbsp;</div>
-        </div>
-    </div>
+<div data-ng-app="HomeModule" ng-controller="HomeCtrl as ctrl">
+            <div class="col-sm-12">
+                 <div class="col-sm-4">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading">
+                              <div class="panel-title">
+                                Sample Due
+                              </div>
+                          </div>
+                          <div class="panel-body" style="height:310px;">
+                              <div style="margin-top:135px"
+                                   data-ng-if="counter.sample_due < 0"
+                                    spinner-on="counter.sample_due < 0"
+                                    us-spinner="{
+                                      radius: 50,
+                                      lines:13,
+                                      length: 70,
+                                      width: 14,
+                                      scale: 1,
+                                      speed: 1.5,
+                                      opacity:0.1,
+                                      corners: 1,
+                                      color:'#000',
+                                      position: 'relative',
+                                      trail: 60,
+                                      shadow: true,
+                                    }">
+
+                              </div>
+                              <div data-ng-if="counter.sample_due >= 0">
+                                   <fs:donut
+                                    outer-radius="200"
+                                    inner-radius="10"
+                                    bind="data.sample_due"/>
+
+                               </div>
+                          </div>
+                          <label class="btn btn-success active"
+                                 data-ng-if="counter.sample_due >= 0"
+                                 style="margin-bottom:10px;margin-left:10px;">
+                              {{counter.sample_due}}&nbsp;/&nbsp;{{counter.active}}
+                          </label>
+                      </div>
+                </div>
+                <div class="col-sm-4">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading">
+                              <div class="panel-title">
+                                Sample Received
+                              </div>
+                          </div>
+                          <div class="panel-body" style="height:310px;">
+                               <div style="margin-top:135px"
+                                   data-ng-if="counter.sample_received < 0"
+                                    spinner-on="counter.sample_received < 0"
+                                    us-spinner="{
+                                      radius: 50,
+                                      lines:13,
+                                      length: 70,
+                                      width: 14,
+                                      scale: 1,
+                                      speed: 1.5,
+                                      opacity:0.1,
+                                      corners: 1,
+                                      color:'#000',
+                                      position: 'relative',
+                                      trail: 60,
+                                      shadow: true,
+                                    }">
+
+                              </div>
+                              <div  data-ng-if="counter.sample_received >= 0">
+                                   <fs:donut
+                                      data-ng-if="counter.sample_received >= 0"
+                                outer-radius="100"
+                                inner-radius="50"
+                                bind="data.sample_received"/>
+                              </div>
+
+                          </div>
+                          <label class="btn btn-success active"
+                                 data-ng-if="counter.sample_received >= 0"
+                                 style="margin-bottom:10px;margin-left:10px;">
+                              {{counter.sample_received}}&nbsp;/&nbsp;{{counter.active}}
+                          </label>
+                      </div>
+
+                </div>
+                <div class="col-sm-4">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading">
+                              <div class="panel-title">
+                                To be verified
+                              </div>
+                          </div>
+                          <div class="panel-body" style="height:310px;">
+                                <div style="margin-top:135px"
+                                    data-ng-if="counter.to_be_verified < 0"
+                                    spinner-on="counter.to_be_verified < 0"
+                                    us-spinner="{
+                                      radius: 50,
+                                      lines:13,
+                                      length: 70,
+                                      width: 14,
+                                      scale: 1,
+                                      speed: 1.5,
+                                      opacity:0.1,
+                                      corners: 1,
+                                      color:'#000',
+                                      position: 'relative',
+                                      trail: 60,
+                                      shadow: true,
+                                    }">
+
+                              </div>
+                              <div data-ng-if="counter.to_be_verified >= 0">
+                                  <fs:donut
+                                     data-ng-if="counter.to_be_verified >= 0"
+                                outer-radius="100"
+                                inner-radius="50"
+                                bind="data.to_be_verified"/>
+                              </div>
+
+                          </div>
+                          <label class="btn btn-success active"
+                                 data-ng-if="counter.to_be_verified >= 0"
+                                 style="margin-bottom:10px;margin-left:10px;">
+                              {{counter.to_be_verified}}&nbsp;/&nbsp;{{counter.active}}
+                          </label>
+                      </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                 <div class="col-sm-4">
+                      <div class="panel panel-primary">
+                          <div class="panel-heading">
+                              <div class="panel-title">
+                                Verified
+                              </div>
+                          </div>
+                          <div class="panel-body" style="height:310px;">
+                               <div style="margin-top:135px"
+                                    data-ng-if="counter.verified < 0"
+                                    spinner-on="counter.verified < 0"
+                                    us-spinner="{
+                                      radius: 50,
+                                      lines:13,
+                                      length: 70,
+                                      width: 14,
+                                      scale: 1,
+                                      speed: 1.5,
+                                      opacity:0.1,
+                                      corners: 1,
+                                      color:'#000',
+                                      position: 'relative',
+                                      trail: 60,
+                                      shadow: true,
+                                    }">
+
+                              </div>
+                              <div  data-ng-if="counter.verified >= 0">
+                                  <fs:donut
+                                     data-ng-if="counter.verified >= 0"
+                                outer-radius="100"
+                                inner-radius="50"
+                                bind="data.verified"/>
+                              </div>
+
+                          </div>
+                           <label class="btn btn-success active"
+                                 data-ng-if="counter.verified >= 0"
+                                 style="margin-bottom:10px;margin-left:10px;">
+                              {{counter.verified}}&nbsp;/&nbsp;{{counter.active}}
+                          </label>
+                      </div>
+                </div>
+                <div class="col-sm-4" >
+                      <div class="panel panel-primary">
+                          <div class="panel-heading">
+                              <div class="panel-title">
+                                Published
+                              </div>
+                          </div>
+                          <div class="panel-body" style="height:310px;">
+                               <div style="margin-top:135px"
+                                    data-ng-if="counter.published < 0"
+                                    spinner-on="counter.published < 0"
+                                    us-spinner="{
+                                      radius: 50,
+                                      lines:13,
+                                      length: 70,
+                                      width: 14,
+                                      scale: 1,
+                                      speed: 1.5,
+                                      opacity:0.1,
+                                      corners: 1,
+                                      color:'#000',
+                                      position: 'relative',
+                                      trail: 60,
+                                      shadow: true,
+                                    }">
+
+                              </div>
+                              <div  data-ng-if="counter.published >= 0">
+                                <fs:donut
+                                     data-ng-if="counter.published >= 0"
+                                outer-radius="100"
+                                inner-radius="50"
+                                bind="data.published"/>
+                              </div>
+
+                          </div>
+                           <label class="btn btn-success active"
+                                 data-ng-if="counter.published >= 0"
+                                 style="margin-bottom:10px;margin-left:10px;">
+                              {{counter.published}}&nbsp;/&nbsp;{{counter.active}}
+                          </label>
+                      </div>
+                </div>
+
+            </div>
+
 </div>

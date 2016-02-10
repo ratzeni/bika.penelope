@@ -824,20 +824,26 @@ batches_module.controller('BatchBookCtrl',
 						Remarks: $scope._get_worksheet_analyses(request_id, analysis_id),
 						subject: 'open',
 					};
+
+
 					BikaService.createWorksheet(params).success(function (data, status, header, config){
 						result = data.result;
-						$scope.checked_list = [];
-						$scope.workflow_params = {
-							analyses: [],
-							worksheet: null,
-							analyst: null,
-							worksheet_title: null,
-							worksheet_description: null,
-							switchWorksheet: false,
-						};
-						$scope.loading_change_review_state('assigning').hide();
-						$scope.getAnalysisRequests($stateParams.batch_id);
-						$scope.getWorksheets();
+						_params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
+						BikaService.updateAnalysisRequests(_params).success(function (data, status, header, config){
+							$scope.checked_list = [];
+							$scope.workflow_params = {
+								analyses: [],
+								worksheet: null,
+								analyst: null,
+								worksheet_title: null,
+								worksheet_description: null,
+								switchWorksheet: false,
+							};
+							$scope.loading_change_review_state('assigning').hide();
+							$scope.getAnalysisRequests($stateParams.batch_id);
+							$scope.getWorksheets();
+						});
+
 					});
 
 				}
@@ -939,6 +945,24 @@ batches_module.controller('BatchBookCtrl',
 					_.each(request_id,function(request_obj) {
 						_.each(analysis_id,function(id) {
 							input_values[$scope._get_analysis_path(request_obj,id)] = {Result: $scope._get_analysis_result(request_obj, id)}
+						});
+					});
+					return JSON.stringify(input_values);
+				}
+			}
+
+		$scope._get_input_values_analyst =
+			function (request_id, analysis_id, analyst) {
+				if (!Array.isArray(request_id) && !Array.isArray(analysis_id)) {
+					var input_values = {};
+					input_values[$scope._get_analysis_path(request_id,analysis_id)] = {Analyst: analyst};
+					return JSON.stringify(input_values);
+				}
+				else if (Array.isArray(request_id) && Array.isArray(analysis_id)) {
+					var input_values = {};
+					_.each(request_id,function(request_obj) {
+						_.each(analysis_id,function(id) {
+							input_values[$scope._get_analysis_path(request_obj,id)] = {Analyst: analyst};
 						});
 					});
 					return JSON.stringify(input_values);

@@ -144,7 +144,7 @@ function(Utility, $scope, $rootScope, $state, $window, $timeout, Auth ) {
 	function login(credentials) {
 		$scope.error = false;
 		Auth.login(credentials, function(user) {
-			$state.go('batches');
+			$state.go('home');
 		}, function(err) {
 			console.log('error function');
 			$scope.error = true;

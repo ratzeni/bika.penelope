@@ -14,6 +14,7 @@
 
     <link rel="stylesheet" href="./assets/bower_components/ng-table/dist/ng-table.min.css">
     <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="./assets/bower_components/dangle/css/dangle.css">
 
     <script src="./assets/bower_components/underscore/underscore.js"></script>
     <script src="./assets/bower_components/angular/angular.min.js"></script>
@@ -34,12 +35,14 @@
     <script src="./assets/bower_components/ngCart/dist/ngCart.min.js"></script>
     <script src="./assets/bower_components/quantumui/dist/js/quantumui.min.js"></script>
     <script src="./assets/bower_components/quantumui/config/icons.js"></script>
+    <script src="./assets/bower_components/d3/d3.min.js"></script>
+    <script src="./assets/bower_components/dangle/dist/dangle.min.js"></script>
 
     <script src="./app/shared/config/config.module.js"></script>
     <script src="./app/shared/api_rest/bika_api_rest.module.js"></script>
     <script src="./app/shared/utility/utility.module.js"></script>
     <script src="./app/shared/login/login.module.js"></script>
-    <!--<script src="./app/shared/dashboard/dashboard.module.js"></script>-->
+    <script src="./app/shared/dashboard/dashboard.module.js"></script>
     <script src="./app/components/home/home.module.js"></script>
     <script src="./app/components/arimport/arimport.module.js"></script>
     <script src="./app/components/batches/batches.module.js"></script>
@@ -79,11 +82,13 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-main">
                     <ul class="nav navbar-nav">
-                        <!--<li  ng-class="getClass('home')"><a ui-sref="home">Home</a></li>-->
+                        <li  ng-class="getClass('home')"><a ui-sref="home">Home</a></li>
                         <li  ng-class="getClass('batches')"><a ui-sref="batches">Batches</a></li>
                         <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
                         <li  ng-class="getClass('worksheets')"><a ui-sref="worksheets">Worksheets</a></li>
                         <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
+
+
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                             <li>

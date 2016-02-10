@@ -4,7 +4,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
     $stateProvider
         .state('home', {
             url: '/home',
-            templateUrl: 'app/components/home/home.view.html',
+            templateUrl: 'app/components/home/home.home.view.html',
             controller: 'HomeCtrl',
             data: {
                 authorizedRoles: [USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]

@@ -3,11 +3,14 @@ var dashboard_module = angular.module('DashboardModule',[]);
 dashboard_module.run(function($rootScope){
   	$rootScope._ = _;
   	$rootScope.counter = {
-			sample_due: 0,
-			sample_received: 0,
-			verified: 0,
-			published: 0,
-			assigned: 0,
+  			batches: -1,
+  			active: -1,
+			sample_due: -1,
+			sample_received: -1,
+			verified: -1,
+			published: -1,
+			worksheets: -1,
+			assigned: -1,
 			run: false,
 	}
 
@@ -17,18 +20,28 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 		var counter = $rootScope.counter;
 
  		this.samples_review_state = ['sample_due','sample_received'];
-		this.ars_review_state = ['published','verified'];
+		this.ars_review_state = ['published','verified', 'active'];
 		this.services_review_state = ['to_be_verified'];
-		this.worksheets_review_state = ['assigned'];
+		this.worksheets_review_state = ['assigned','worksheets'];
+		this.batches_review_state = ['batches'];
 
 		update_counter =
 			function (review_state, count, counter) {
-				counter[review_state] = count;
+				counter[review_state] = parseInt(count);
 			}
 
 		countAnalysisRequests =
 			function(review_state) {
-                params = {sort_on: 'id', sort_order: 'descending', review_state: review_state, include_fields: 'path'};
+				params = {sort_on: 'Date', sort_order: 'descending',
+                		page_nr: 0, page_size: 5, include_fields: 'path'};
+
+                if (review_state === 'active') {
+					params['Subjects'] = 'sample_due|sample_received|to_be_verified|verified|published';
+				}
+				else {
+					params['Subject'] = review_state;
+				}
+
                 BikaService.countAnalysisRequests(params).success(function (data, status, header, config){
 					var count = data.result;
 					update_counter(review_state, count, counter);
@@ -37,8 +50,8 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 
 		countSamples =
 			function(review_state) {
-                params = {sort_on: 'id', sort_order: 'descending', review_state: review_state, include_fields: 'path'};
-                BikaService.countSamples(params).success(function (data, status, header, config){
+                params = {sort_on: 'id', sort_order: 'descending', Subject: review_state, include_fields: 'path', page_nr: 0, page_size: 5};
+                BikaService.countAnalysisRequests(params).success(function (data, status, header, config){
 					var count = data.result;
 					update_counter(review_state, count, counter);
                 });
@@ -46,20 +59,35 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 
 		countWorksheets =
 			function(review_state) {
-                params = {sort_on: 'id', sort_order: 'descending', review_state: 'open'};
+                params = {sort_on: 'id', sort_order: 'descending', Subject: 'open'};
+
                 BikaService.getWorksheets(params).success(function (data, status, header, config){
 					var worksheets = data.result.objects;
 					var analyst = $rootScope.currentUser.userid;
 					var count = 0;
-					_.each(worksheets, function(w) {
+					if (review_state === 'assigned') {
+						_.each(worksheets, function(w) {
 
-						if (w.remarks != undefined && w.remarks != null &&  w.remarks != '' && analyst == w.analyst) {
-							analyses = JSON.parse(w.remarks);
-							count = count +  analyses.length;
-							console.log(count);
-						}
+							if (w.remarks != undefined && w.remarks != null &&  w.remarks != '' && analyst == w.analyst) {
+								analyses = JSON.parse(w.remarks);
+								count = count +  analyses.length;
+								console.log(count);
+							}
 
-					});
+						});
+					}
+					else if (review_state === 'worksheets') {
+						count =  worksheets.length;
+					}
+					update_counter(review_state, count, counter);
+                });
+			}
+
+		countBatches =
+			function(review_state) {
+                params = {sort_on: 'id', sort_order: 'descending', Subject: 'open', page_nr: 0, page_size: 5};
+                BikaService.getBatches(params).success(function (data, status, header, config){
+					var count = data.result.total;
 					update_counter(review_state, count, counter);
                 });
 			}
@@ -83,20 +111,12 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 					update_counter(review_state, -1, $rootScope.counter);
 					countWorksheets(review_state);
 				});
+				_.each(this.batches_review_state,function(review_state) {
+					update_counter(review_state, -1, $rootScope.counter);
+					countBatches(review_state);
+				});
 				return counter;
 			}
 
 		return this;
-})
-.controller('DashboardCtrl',
-	function(DashboardService, $state, $scope, $rootScope) {
-
-		/*if ($state.current.name!=='login') {
-			$rootScope.counter = DashboardService.update_dashboard();
-		}*/
-
-		this.refresh = function() {
-			$rootScope.counter = DashboardService.update_dashboard();
-		}
-
 });

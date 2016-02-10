@@ -157,6 +157,13 @@
                                                 {{ctrl.format_result(a.result)}}
                                             </span>
                                         </td>
+                                        <td data-ng-if="a.analyst != ''">
+                                            <label class="btn btn-xs active"
+                                                   data-ng-class="{'btn-primary': a.analyst == currentUser.userid, 'btn-danger': a.analyst != currentUser.userid}"
+                                                   style="margin-top:5px;width:100%">
+                                                <span class="glyphicon glyphicon-user pull-left"></span>&nbsp;<span class="pull-left" style="margin-left:5px;">{{a.analyst}}</span>
+                                            </label>
+                                        </td>
                                     </tr>
                                 </table>
                             </div>
