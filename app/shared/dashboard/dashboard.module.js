@@ -11,7 +11,7 @@ dashboard_module.run(function($rootScope){
 			published: -1,
 			worksheets: -1,
 			assigned: -1,
-			run: false,
+
 	}
 
 });
@@ -20,7 +20,7 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 		var counter = $rootScope.counter;
 
  		this.samples_review_state = ['sample_due','sample_received'];
-		this.ars_review_state = ['published','verified', 'active'];
+		this.ars_review_state = ['active', 'published','verified'];
 		this.services_review_state = ['to_be_verified'];
 		this.worksheets_review_state = ['assigned','worksheets'];
 		this.batches_review_state = ['batches'];
@@ -33,7 +33,7 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 		countAnalysisRequests =
 			function(review_state) {
 				params = {sort_on: 'Date', sort_order: 'descending',
-                		page_nr: 0, page_size: 5, include_fields: 'path'};
+                		page_nr: 0, page_size: 1, include_fields: 'path'};
 
                 if (review_state === 'active') {
 					params['Subjects'] = 'sample_due|sample_received|to_be_verified|verified|published';
@@ -50,7 +50,7 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 
 		countSamples =
 			function(review_state) {
-                params = {sort_on: 'id', sort_order: 'descending', Subject: review_state, include_fields: 'path', page_nr: 0, page_size: 5};
+                params = {sort_on: 'id', sort_order: 'descending', Subject: review_state, include_fields: 'path', page_nr: 0, page_size: 1};
                 BikaService.countAnalysisRequests(params).success(function (data, status, header, config){
 					var count = data.result;
 					update_counter(review_state, count, counter);
@@ -85,7 +85,7 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 
 		countBatches =
 			function(review_state) {
-                params = {sort_on: 'id', sort_order: 'descending', Subject: 'open', page_nr: 0, page_size: 5};
+                params = {sort_on: 'id', sort_order: 'descending', Subject: 'open', page_nr: 0, page_size: 1};
                 BikaService.getBatches(params).success(function (data, status, header, config){
 					var count = data.result.total;
 					update_counter(review_state, count, counter);

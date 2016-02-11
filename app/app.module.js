@@ -67,6 +67,19 @@ main_module.run(
 		//before each state change, check if the user is logged in
 		//and authorized to move onto the next state
 
+			$rootScope._ = _;
+			$rootScope.counter = {
+					batches: -1,
+					active: -1,
+					sample_due: -1,
+					sample_received: -1,
+					verified: -1,
+					published: -1,
+					worksheets: -1,
+					assigned: -1,
+
+			}
+
 		$rootScope.$on('$stateChangeStart', function (event, next) {
 
 			if (next.data) {

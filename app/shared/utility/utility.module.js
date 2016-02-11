@@ -123,7 +123,10 @@ utility_module.service('Utility',
 			//location.path(url);
 		}
 
+		this.percentage = function(value, total) {
 
+			return parseInt(value/total*100);
+		}
 
 	}
 );

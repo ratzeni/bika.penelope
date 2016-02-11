@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./assets/bower_components/ng-table/dist/ng-table.min.css">
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="stylesheet" href="./assets/bower_components/dangle/css/dangle.css">
+    <link rel="stylesheet" href="./assets/css/radial_progress/radialProgress.css">
 
     <script src="./assets/bower_components/underscore/underscore.js"></script>
     <script src="./assets/bower_components/angular/angular.min.js"></script>
@@ -37,6 +38,7 @@
     <script src="./assets/bower_components/quantumui/config/icons.js"></script>
     <script src="./assets/bower_components/d3/d3.min.js"></script>
     <script src="./assets/bower_components/dangle/dist/dangle.min.js"></script>
+    <script src="./assets/js/radial_progress/radialProgress.js"></script>
 
     <script src="./app/shared/config/config.module.js"></script>
     <script src="./app/shared/api_rest/bika_api_rest.module.js"></script>
@@ -91,11 +93,11 @@
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                            <li>
-                                <a ui-sref="blackboard" ng-class="getClass('blackboard')" style="padding: 10px 10px 0 0;">
-                                    <ngcart-summary></ngcart-summary>
-                                </a>
-                            </li>
+                        <li>
+                            <a ui-sref="blackboard" ng-class="getClass('blackboard')" style="padding: 10px 10px 0 0;">
+                                <ngcart-summary></ngcart-summary>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -104,23 +106,51 @@
     </header>
     <div ui-view></div>
 </div>
- <ng-include src="'app/shared/footer/footer.view.html'"></ng-include>
-  <div class="navbar navbar-inverse navbar-fixed-bottom" style="margin:0;"
-       role="navigation" ng-show="$state.current.name!=='login'">
-       <div class="container-fluid">
-            <div class="collapse navbar-collapse">
-                 <ul class="nav navbar-nav navbar-right">
-                        <li class="active">
-                            <a href="#">
+<ng-include src="'app/shared/footer/footer.view.html'"></ng-include>
+<div class="navbar navbar-inverse navbar-fixed-bottom" style="margin:0;"
+     role="navigation" ng-show="$state.current.name!=='login'">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <a ui-sref="worksheets">
+                                <span>
+                                    Assigned
+                                    <span class="btn-success badge pull-right" style="margin-left:10px"
+                                          data-ng-if="counter.assigned >= 0">
+                                        {{counter.assigned}}
+                                    </span>
+                                    <span class="pull-right" style="margin-left:10px"
+                                          data-ng-if="counter.assigned < 0">
+                                    <div style="margin-top:10px;margin-left:10px;margin-right:10px;"
+                                         spinner-on="counter.assigned < 0"
+                                         us-spinner="{radius:10,
+                                                  lines:7,
+                                                  length:10,
+                                                  width: 15,
+                                                  scale:0.2,
+                                                  speed: 1.5,
+                                                  opacity:0.1,
+                                                  corners: 1,
+                                                  color:'white',
+                                                  top: '90%',
+                                                  position: 'relative'}"></div></span>
+                                </span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active">
+                    <a href="#">
                                 <span style="margin-left:10px;">
                                     Hi, {{currentUser.fullname}}
                                 </span>
-                                <span class="fic glyphicon glyphicon-user" style="margin-left:10px;"></span>
-                            </a>
-                        </li>
-                 </ul>
-            </div>
-       </div>
-  </div>
+                        <span class="fic glyphicon glyphicon-user" style="margin-left:10px;"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 </body>
 </html>
