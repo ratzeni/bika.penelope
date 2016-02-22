@@ -161,7 +161,10 @@ batches_module.controller('BatchesCtrl',
 			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
 		}
 
+
 		$scope.getBatches($scope.review_state);
+
+
 
 		this.format_date =
 			function(date) {
@@ -617,7 +620,7 @@ batches_module.controller('BatchBookCtrl',
                     $scope.pagination.last = data.result.last;
 					$scope.analysis_results = {};
                     transitions = Array();
-                    workflow_transitions = Array()
+                    workflow_transitions = Array();
 					_.each($scope.analysis_requests,function(obj) {
 						Utility.merge(transitions,obj.transitions,'id');
 						if (obj.analyses.length > 0 && $scope.analyses.length == 0 && $scope.review_state == 'active' ) {
