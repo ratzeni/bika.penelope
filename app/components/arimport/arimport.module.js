@@ -5,7 +5,7 @@ arimport_module.run(function($rootScope){
 });
 
 arimport_module.controller('ARImportCtrl',
-	function(BikaService, Utility, config, $state, $scope) {
+			   function(BikaService, Utility, config, $state, $scope, $timeout) {
 
 		$scope.arimportForm = {};
 		$scope.pools = [];
@@ -70,12 +70,9 @@ arimport_module.controller('ARImportCtrl',
 					}
 					else {
 						_.each($scope.pools, function(pool) {
-
-							$scope.submit_pool(arimport_params, pool);
+						    $scope.submit_pool(arimport_params, pool);
+						    //$timeout(function() {var delay=true;}, 180000);
 						});
-
-
-
 					}
 
 				} else {
@@ -105,19 +102,19 @@ arimport_module.controller('ARImportCtrl',
 					client_samples: _.where(arimport_params.client_samples, {'pool': pool}),
 				};
 				_params.client_samples.unshift({index: 1, sample: pool, pool: pool});
-				$scope.import(_params);
+			        $scope.import(_params);
 			};
 		// :: function :: ARImport()
 		$scope.import =
 			function(arimport_params) {
 
 				$scope.loading_import.show()
-				$scope.outcome = {
+				outcome = {
 					batch_id: null,
 					arequest_ids: [],
 				}
 				// creating batch
-				params = {
+				this.batch_params = {
 					title: arimport_params.selectedBatch,
 					description: arimport_params.textDescription,
 					ClientBatchID: arimport_params.selectedBatch,
@@ -126,8 +123,10 @@ arimport_module.controller('ARImportCtrl',
 					Remarks: arimport_params.selectedExportMode.label,
 					subject: 'open',
 				}
+			   
+			    //console.log(this.batch_params);
 
-				BikaService.createBatch(params).success(function (data, status, header, config){
+				BikaService.createBatch(this.batch_params).success(function (data, status, header, config){
 
 					function get_environmental_conditions(sample_data, selectedSampleType) {
 						values = [];
@@ -166,7 +165,7 @@ arimport_module.controller('ARImportCtrl',
 
                     result = data.result;
                     if (result['success'] === 'True') {
-                    	$scope.outcome.batch_id = result['obj_id']
+                    	outcome.batch_id = result['obj_id']
 
 						var services = Array();
 						_.each(arimport_params.selectedAnalysisServices.extraction, function(as) {
@@ -188,13 +187,13 @@ arimport_module.controller('ARImportCtrl',
 
                     	// creating analysis request
                     	_.each(arimport_params.client_samples, function(client_samples) {
-                    		params = {
-								title: $scope.outcome.batch_id,
+                    		this.ar_params = {
+								title: outcome.batch_id,
 								Client: arimport_params.selectedClient.id,
 								ClientSampleID: client_samples.sample,
 								SampleType: get_sample_type(client_samples, arimport_params.selectedSampleType),
 								SamplingDate: Utility.format_date(arimport_params.selectedSamplingDate),
-								Batch: $scope.outcome.batch_id,
+								Batch: outcome.batch_id,
 								EnvironmentalConditions: get_environmental_conditions(client_samples, arimport_params.selectedSampleType),
 								Contact: arimport_params.selectedContact.id,
 								CCContact: contacts.length>0?contacts.join('|'):arimport_params.selectedContact.id,
@@ -203,10 +202,10 @@ arimport_module.controller('ARImportCtrl',
 								subject: 'sample_due',
 							}
 
-							BikaService.createAnalysisRequest(params).success(function (data, status, header, config){
+							BikaService.createAnalysisRequest(this.ar_params).success(function (data, status, header, config){
 								result = data.result;
 								if (result['success'] === 'True') {
-									$scope.outcome.arequest_ids.push({ar_id:result['ar_id'], sample_id:result['sample_id']});
+									outcome.arequest_ids.push({ar_id:result['ar_id'], sample_id:result['sample_id']});
 								}
 								else {
 									console.log(result['message']);
@@ -221,7 +220,7 @@ arimport_module.controller('ARImportCtrl',
 						$scope.loading_import.hide();
 						Utility.alert({title:'Success', content: 'Your AR has been successfully imported', alertType:'success'});
 						if (arimport_params.selectedSampleType.prefix !== 'POOL') {
-							$state.go('batch',{batch_id: $scope.outcome.batch_id});
+							$state.go('batch',{batch_id: outcome.batch_id});
 						}
 
 
@@ -445,7 +444,7 @@ arimport_module.controller('ARImportCtrl',
 						if (row.search('Lane,Sample_ID,Sample_Name') != -1) {
 								start_sample_list = true;
 								sample_data = row.split(',');
-								idx = sample_data.indexOf('Description');
+						                idx = sample_data.length-1;
 
 						}
 					});

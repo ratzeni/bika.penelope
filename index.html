@@ -49,6 +49,7 @@
     <script src="./app/components/arimport/arimport.module.js"></script>
     <script src="./app/components/batches/batches.module.js"></script>
     <script src="./app/components/analysis_requests/analysis_requests.module.js"></script>
+    <script src="./app/shared/attachment/samplesheet.module.js"></script>
     <script src="./app/components/worksheets/worksheets.module.js"></script>
     <script src="./app/components/blackboard/blackboard.module.js"></script>
     <script src="./app/app.module.js"></script>
@@ -89,6 +90,17 @@
                         <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
                         <li  ng-class="getClass('worksheets')"><a ui-sref="worksheets">Worksheets</a></li>
                         <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
+                        <!--<li data-ng-if="currentUser.role=='Site Administrator'">
+                            <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
+                                Admin
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" tabindex="-1" role="menu">
+                                <li role="presentation"  ng-class="getClass('cost_centres')">
+                                    <a role="menuitem" tabindex="-1" ui-sref="cost_centres">Cost centres</a>
+                                </li>
+                            </ul>
+                        </li>-->
 
 
                     </ul>

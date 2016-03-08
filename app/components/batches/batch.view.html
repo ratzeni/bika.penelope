@@ -51,18 +51,29 @@
 
                         <td>{{a.keyword}}</td>
                     </tr>
+                    <tr ng-if="attachment.content.length > 0">
+                        <td>
+
+                          <button type="button" data-nq-toggle-modal="#showAttachment" class="pull-right btn btn-primary btn-sm"
+                                  data-placement="right" data-effect="from-right" data-qs-title="'Show Samplesheet'">
+                                <span class="glyphicon glyphicon-eye-open"></span>&nbsp;Original Samplesheet
+                          </button>
+                         <div id="showAttachment" class="clearfix" data-nq-modal="" data-qo-independent="true" data-qo-screen-mode="true" data-qo-content-template="">
+                            <ng-include src="'app/shared/attachment/show_attachment.modal.html'"></ng-include>
+                         </div>
+
+                        </td>
+                    </tr>
+                    <tr ng-if="attachment.content.length > 0">
+                        <td>
+                            <a  class="pull-right btn btn-primary btn-sm"
+                                ui-sref="samplesheet({batches: attachment.batches, content: attachment.samplesheet})">
+                               <span class="glyphicon glyphicon-equalizer"></span>&nbsp;IEM&nbsp;Samplesheet
+                            </a>
+                        </td>
+
+                    </tr>
                 </table>
-                 <div ng-if="attachment.content.length > 0" class="pull-right">
-                      <button type="button" data-nq-toggle-modal="#showAttachment" class="btn btn-primary btn-sm"
-                              data-placement="right" data-effect="from-right" data-qs-title="'Show Attachment'">
-                            <span class="glyphicon glyphicon-search"></span>&nbsp;Attachment
-                      </button>
-                     <div id="showAttachment" class="clearfix" data-nq-modal="" data-qo-independent="true" data-qo-screen-mode="true" data-qo-content-template="">
-                        <ng-include src="'app/shared/attachment/show_attachment.modal.html'"></ng-include>
-                     </div>
-
-                 </div>
-
             </div>
         </div>
   </div>

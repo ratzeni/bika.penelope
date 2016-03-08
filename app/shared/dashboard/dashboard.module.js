@@ -71,7 +71,7 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 							if (w.remarks != undefined && w.remarks != null &&  w.remarks != '' && analyst == w.analyst) {
 								analyses = JSON.parse(w.remarks);
 								count = count +  analyses.length;
-								console.log(count);
+								//console.log(count);
 							}
 
 						});

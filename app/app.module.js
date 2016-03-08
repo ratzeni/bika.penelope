@@ -21,6 +21,7 @@ var main_module = angular.module('MainApp',[
     'ARImportModule',
     'BatchesModule',
     'AnalysisRequestsModule',
+    'SamplesheetModule',
     'WorksheetsModule',
     'BlackBoardModule',
 ]);

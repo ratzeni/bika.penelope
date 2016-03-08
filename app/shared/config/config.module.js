@@ -4,11 +4,11 @@ angular
         bikaApiRest: {
             production: {
                 rest_url: 'http://localhost:8088',
-                bika_host: 'http://localhost:8080/CRS4',
+                bika_host: 'http://bika.crs4.it:8080/Plone',
                 callback: 'JSON_CALLBACK'},
             develop: {
                 rest_url: 'http://localhost:8088',
-                bika_host: 'http://localhost:8080/CRS4',
+                bika_host: 'http://bika.crs4.it:8080/Plone',
                 callback: 'JSON_CALLBACK'},
             methods: {
                 check_status: '/web/check/status',
@@ -57,8 +57,8 @@ angular
 				update_analysis_requests: '/bika/update/analysis_requests',
             },
             plone_url: {
-            	develop: 'http://localhost:8080',
-            	production: 'http://localhost:8080',
+                develop: 'http://bika.crs4.it:8080',
+                production: 'http://bika.crs4.it:8080',
             },
             data_source: {
 				container_types: [

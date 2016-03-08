@@ -5,7 +5,7 @@ utility_module.run(function($rootScope){
 });
 
 utility_module.service('Utility',
-	function(config, $loading, $alert, $window) {
+	function(config, $loading, $alert, $window, $sce) {
 
 
 		this.loading = function(params) {
@@ -126,6 +126,10 @@ utility_module.service('Utility',
 		this.percentage = function(value, total) {
 
 			return parseInt(value/total*100);
+		}
+
+		this.format_html = function(text) {
+			return text.replace(/%2F/g,'/');
 		}
 
 	}

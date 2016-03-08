@@ -246,6 +246,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
                 BikaService.getWorksheets(params).success(function (data, status, header, config){
                     $scope.worksheet = data.result.objects[0];
                     var analyses = JSON.parse($scope.worksheet.remarks);
+
                     var transitions = Array();
                     var workflow_transitions = Array();
 					var worksheet_details = Array();
@@ -266,6 +267,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
                  				$scope.worksheet_details = worksheet_details;
                  				$scope.loading_worksheet.hide();
                  			}
+
                  			//$scope.analysis_results[ar.id][obj.analysis_id] =  (ar.analyses.review_state === 'sample_received')?1:ar.analyses.result;
                  			$scope.analysis_results.push({'request_id': ar.id, 'analysis_id': obj.analysis_id, 'result': (ar.analyses.review_state === 'sample_received')?1:ar.analyses.result})
                  		});

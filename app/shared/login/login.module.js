@@ -1,6 +1,7 @@
 var login_module = angular.module('LoginModule',[]);
 
 login_module.constant('USER_ROLES', {
+	admin: 'Site Administrator',
 	manager: 'LabManager',
 	analyst: 'Analyst',
 	clerk: 'LabClerk',

@@ -67,7 +67,7 @@ blackboard_module.controller('BlackBoardCtrl',
                 analyses = Array();
                 $scope.csv.sample_list = Array();
 				_.each(ngCart.getItems(), function(item) {
-					$scope.csv.sample_list.push({sample: item.getData().sample_id+'|'+item.getData().client_sample_id,
+					$scope.csv.sample_list.push({
 					 Sample_ID: item.getData().sample_id,
 					 Sample_Name:item.getData().client_sample_id})
 					Utility.merge(transitions,item.getData().transitions,'id');
@@ -338,7 +338,7 @@ blackboard_module.controller('BlackBoardCtrl',
 
 				}
 				else {
-					console.log($scope.assign_params.worksheet);
+					//console.log($scope.assign_params.worksheet);
 
 					params = {
 						obj_path: $scope.assign_params.worksheet.path,

@@ -277,11 +277,11 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.review_state = 'active';
 		$scope.stickers={id:null};
 		$scope.state = {batch_id: $stateParams.batch_id};
-		$scope.attachment = {content: [], sample_list:[]};
+		$scope.attachment = {content: [], sample_list:[], samplesheet: [], batches: []};
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 10,
+			page_size: 50,
 			total: 0,
 			current: 1,
 			last: 0,
@@ -351,11 +351,33 @@ batches_module.controller('BatchDetailsCtrl',
                     $scope.pagination.last = data.result.last;
                     transitions = Array();
 					_.each($scope.analysis_requests,function(obj) {
+
 						if ($scope.attachment.content.length === 0 && obj.remarks != '') {
+							$scope.attachment.samplesheet = obj.remarks;
+							var start_sample_list = false;
+							var index_desc = -1;
+							var sample_type = obj.sample_type;
+
+							var batch_title = $scope.batch.title.replace(obj.client_sample_id,'');
+							if (batch_title === $scope.batch.title) {$scope.attachment.batches.push(batch_title);}
+
 							_.each(JSON.parse(obj.remarks), function(obj) {
-								$scope.attachment.content.push(obj.split(','));
+								row = obj.split(',');
+								$scope.attachment.content.push(row);
+								if (start_sample_list
+									&& row.length > 1
+									&& batch_title != $scope.batch.title
+									&& _.indexOf($scope.attachment.batches,batch_title+row[index_desc]) === -1) {
+
+									$scope.attachment.batches.push(batch_title+row[index_desc]);
+								}
+								if (_.indexOf(row,'Sample_ID') != -1) {
+									start_sample_list = true;
+									index_desc = _.indexOf(row,'Sample_Project')+1;
+								}
+
 							});
-							$scope.get_sample_list($stateParams.batch_id);
+							//$scope.get_sample_list($stateParams.batch_id);
 						}
 
 						Utility.merge(transitions,obj.transitions,'id');
@@ -380,6 +402,7 @@ batches_module.controller('BatchDetailsCtrl',
                 params = {sort_on: 'Date', sort_order: 'descending', id: batch_id};
                 BikaService.getBatches(params).success(function (data, status, header, config){
                     $scope.batch = data.result.objects[0];
+
                     $scope.loading_batch.hide();
                     $scope.getAnalysisRequests($scope.batch.id, $scope.review_state);
                 });
@@ -516,10 +539,10 @@ batches_module.controller('BatchDetailsCtrl',
 			function () {
 				if ($scope.analysis_requests === undefined || $scope.analysis_requests.length===0) {return 'download.csv';}
 				if ($scope.analysis_requests[0].sample_type === 'FLOWCELL') {
-					return 'samplesheet_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.cvs';
+					return 'samplesheet_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.csv';
 				}
 				else if ($scope.analysis_requests[0].sample_type === 'POOL') {
-					return 'samplelist_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.cvs';
+					return 'samplelist_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.csv';
 				}
 
 				return 'filename.csv'
@@ -527,10 +550,10 @@ batches_module.controller('BatchDetailsCtrl',
 
 		this.check_attachment_type =
 			function (attachment_type) {
-				return false;
-//				if (attachment_type === 'samplesheet') {
-//					return $scope.analysis_requests[0].sample_type === 'FLOWCELL';
-//				}
+				if ($scope.analysis_requests[0] === undefined) {return false;}
+				if (attachment_type === 'samplesheet') {
+					return $scope.analysis_requests[0].sample_type === 'FLOWCELL' || $scope.analysis_requests[0].sample_type === 'POOL';
+				}
 			}
 
 		this.add_to_blackboard =
@@ -582,7 +605,7 @@ batches_module.controller('BatchBookCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 10,
+			page_size: 50,
 			total: 0,
 			current: 1,
 			last: 0,
@@ -628,8 +651,7 @@ batches_module.controller('BatchBookCtrl',
 						}
 						$scope.obj_id = obj.id;
 						$scope.analysis_results[$scope.obj_id] = [];
-						//$scope.analysis_worksheets[$scope.obj_id] = [];
-						//$scope.analysis_analysts[$scope.obj_id] = [];
+
 						_.each(obj.analyses, function(o) {
 							Utility.merge(workflow_transitions, o.transitions, 'id');
 							$scope.analysis_results[$scope.obj_id][o.id] = (o.review_state === 'sample_received')?1:o.result;
@@ -858,18 +880,22 @@ batches_module.controller('BatchBookCtrl',
 					}
 					BikaService.updateWorksheet(params).success(function (data, status, header, config){
 						result = data.result;
-						$scope.checked_list = [];
-						$scope.workflow_params = {
-							analyses: [],
-							worksheet: null,
-							analyst: null,
-							worksheet_title: null,
-							worksheet_description: null,
-							switchWorksheet: false,
-						};
-						$scope.loading_change_review_state('assigning').hide();
-						$scope.getAnalysisRequests($stateParams.batch_id);
-						$scope.getWorksheets();
+						_params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
+						BikaService.updateAnalysisRequests(_params).success(function (data, status, header, config){
+							$scope.checked_list = [];
+							$scope.workflow_params = {
+								analyses: [],
+								worksheet: null,
+								analyst: null,
+								worksheet_title: null,
+								worksheet_description: null,
+								switchWorksheet: false,
+							};
+							$scope.loading_change_review_state('assigning').hide();
+							$scope.getAnalysisRequests($stateParams.batch_id);
+							$scope.getWorksheets();
+						});
+
 					});
 
 				}
