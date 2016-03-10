@@ -63,7 +63,10 @@ arimport_module.controller('ARImportCtrl',
 					Utility.alert({title:'There\'s been an error<br/>', content:'Description field required', alertType:'danger'});
 					return;
 				}
-
+				if ($scope.arimport_params.selectedCostCenter === null || $scope.arimport_params.selectedCostCenter === undefined) {
+					Utility.alert({title:'There\'s been an error<br/>', content:'Cost Center field required', alertType:'danger'});
+					return;
+				}
 				if (!$scope.arimportForm.$invalid && _.size($scope.arimport_params.client_samples) > 0) {
 					if (arimport_params.selectedSampleType.title!=='POOL') {
 						$scope.import(arimport_params);
@@ -95,6 +98,7 @@ arimport_module.controller('ARImportCtrl',
 					selectedSamplingDate: arimport_params.selectedSamplingDate,
 					selectedBatch: arimport_params.selectedBatch + "-" + pool,
 					selectedExportMode: arimport_params.selectedExportMode,
+					selectedCostCenter: arimport_params.selectedCostCenter,
 					textDescription: arimport_params.textDescription,
 					uploadFile: arimport_params.uploadFile,
 					attachment: arimport_params.attachment,
@@ -121,6 +125,7 @@ arimport_module.controller('ARImportCtrl',
 					BatchDate: Utility.format_date(arimport_params.selectedSamplingDate),
 					Client: arimport_params.selectedClient.id,
 					Remarks: arimport_params.selectedExportMode.label,
+					rights: arimport_params.selectedCostCenter.id,
 					subject: 'open',
 				}
 			   
@@ -296,8 +301,8 @@ arimport_module.controller('ARImportCtrl',
 		// :: function :: getAnalysisServices()
         $scope.getAnalysisServices =
             function(arimport_params) {
-                params = {sort_on: 'keyword', sort_order: 'ascending',}
-                BikaService.getAnalysisServices(params).success(function (data, status, header, config){
+                this.params = {sort_on: 'keyword', sort_order: 'ascending',}
+                BikaService.getAnalysisServices(this.params).success(function (data, status, header, config){
                 	$scope.analysis_services = {extraction: [], bioinfo: [], illumina: [], library_prep: []};
                 	_.each(data.result.objects, function (analysis) {
 
@@ -324,6 +329,23 @@ arimport_module.controller('ARImportCtrl',
             function() {
                 $scope.export_mode = config.bikaApiRest.data_source.export_mode;
             };
+
+		// :: funcction :: getCostCenters()
+		$scope.getCostCenters =
+			function(arimport_params) {
+				if ( $scope.arimport_params.selectedClient == null ||  $scope.arimport_params.selectedClient == undefined) {return;}
+				this.params = {sort_on: 'title', sort_order: 'ascending'}
+				BikaService.getSupplyOrders(this.params).success(function (data, status, header, config){
+					$scope.cost_centers = [];
+					_.each(data.result.objects, function(cc) {
+						if (cc.client_id == $scope.arimport_params.selectedClient.id) {
+							$scope.cost_centers.push(cc);
+						}
+
+					});
+				});
+			}
+
 
         // :: function :: update()
         $scope.update =
@@ -373,7 +395,7 @@ arimport_module.controller('ARImportCtrl',
                 	return; }
                 $scope.getContacts($scope.arimport_params);
 				$scope.getCCContacts($scope.arimport_params);
-				$scope.batches_tags = null;
+				$scope.getCostCenters($scope.arimport_params);
 				//$scope.getBatches($scope.arimport_params);
             }
         );

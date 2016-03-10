@@ -41,6 +41,9 @@ utility_module.service('Utility',
 			if (date === undefined) {
 				time = new Date();
 			}
+			else if (date === '' || date === 'None') {
+				return '';
+			}
 			else {
 				time = new Date(date);
 			}

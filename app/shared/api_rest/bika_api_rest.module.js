@@ -96,6 +96,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call(method, params);
     };
 
+    this.getSupplyOrders = function(params) {
+        method = config.bikaApiRest.methods.get_supply_orders;
+        return BikaApiRestService.call(method, params);
+    };
+
     this.getUsers = function(params) {
         method = config.bikaApiRest.methods.get_users;
         return BikaApiRestService.call(method, params);
@@ -166,6 +171,16 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call(method, params);
     }
 
+    this.updateSupplyOrder= function(params) {
+    	method = config.bikaApiRest.methods.update_supply_order;
+        return BikaApiRestService.call(method, params);
+    }
+
+	this.updateSupplyOrders= function(params) {
+    	method = config.bikaApiRest.methods.update_supply_orders;
+        return BikaApiRestService.call(method, params);
+    }
+
     this.createBatch = function(params) {
     	method = config.bikaApiRest.methods.create_batch;
         return BikaApiRestService.call(method, params);
@@ -173,6 +188,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
 	this.createAnalysisRequest = function(params) {
     	method = config.bikaApiRest.methods.create_analysis_request;
+        return BikaApiRestService.call(method, params);
+    }
+
+	this.createSupplyOrder = function(params) {
+    	method = config.bikaApiRest.methods.create_supply_order;
         return BikaApiRestService.call(method, params);
     }
 
@@ -248,6 +268,21 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
     this.publish = function(params) {
     	method = config.bikaApiRest.methods.publish;
+        return BikaApiRestService.call(method, params);
+    }
+
+	this.activateSupplyOrder = function(params) {
+    	method = config.bikaApiRest.methods.activate_supply_order;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.deactivateSupplyOrder = function(params) {
+    	method = config.bikaApiRest.methods.deactivate_supply_order;
+        return BikaApiRestService.call(method, params);
+    }
+
+    this.dispatchSupplyOrder = function(params) {
+    	method = config.bikaApiRest.methods.dispatch_supply_order;
         return BikaApiRestService.call(method, params);
     }
 

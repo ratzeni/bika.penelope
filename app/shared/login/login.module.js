@@ -114,7 +114,7 @@ login_module.factory('Auth',
 		};
 
 		//log out the user and broadcast the logoutSuccess event
-		authService.loading = Utility.loading({busyText: 'Logout...', theme: 'danger', showBar: false, delayHide: 500});
+		authService.loading = Utility.loading({busyText: 'Wait while Logout...', theme: 'danger', showBar: true, delayHide: 1000});
 		authService.logout = function(){
 			ngCart.empty();
 			authService.loading.show();
@@ -138,7 +138,7 @@ function(Utility, $scope, $rootScope, $state, $window, $timeout, Auth ) {
 	$scope.$state = $state;
 	$scope.loginForm = {};
 	$scope.error = false;
-	$scope.loading = Utility.loading({busyText: 'Login...', theme: 'success', showBar: false, delayHide: 100});
+	$scope.loading = Utility.loading({busyText: 'Wait while Login...', theme: 'success', showBar: true, delayHide: 1000});
 
 	//Performs the login function, by sending a request to the server with the Auth service
 	self.login = login;

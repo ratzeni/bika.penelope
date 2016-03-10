@@ -84,7 +84,6 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
         .state('arimport', {
             url: '/arimport',
             templateUrl: 'app/components/arimport/arimport.home.view.html',
-
             data: {
                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
             }
@@ -93,7 +92,14 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
         .state('cost_centers', {
             url: '/cost_centers',
             templateUrl: 'app/components/admin/cost_centers/cost_centers.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin]
+            }
 
+        })
+        .state('cost_center', {
+            url: '/cost_center/:costcenter_id',
+            templateUrl: 'app/components/admin/cost_centers/cost_center.home.view.html',
             data: {
                 authorizedRoles: [USER_ROLES.admin]
             }

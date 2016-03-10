@@ -4,11 +4,11 @@ angular
         bikaApiRest: {
             production: {
                 rest_url: 'http://localhost:8088',
-                bika_host: 'http://bika.crs4.it:8080/Plone',
+                bika_host: 'http://localhost:8080/CRS4',
                 callback: 'JSON_CALLBACK'},
             develop: {
                 rest_url: 'http://localhost:8088',
-                bika_host: 'http://bika.crs4.it:8080/Plone',
+                bika_host: 'http://localhost:8080/CRS4',
                 callback: 'JSON_CALLBACK'},
             methods: {
                 check_status: '/web/check/status',
@@ -27,9 +27,11 @@ angular
                 get_clerk_users:'/bika/get/clerk_users',
                 get_client_users:'/bika/get/client_users',
                 get_worksheets:'/bika/get/worksheets',
+                get_supply_orders:'/bika/get/supply_orders',
                 create_batch: '/bika/create/batch',
                 create_worksheet: '/bika/create/worksheet',
                 create_analysis_request:'/bika/create/analysis_request',
+                create_supply_order:'/bika/create/supply_order',
                 cancel_batch: '/bika/cancel/batch',
                 cancel_worksheet: '/bika/cancel/worksheet',
                 cancel_analysis_request:'/bika/cancel/analysis_request',
@@ -45,6 +47,9 @@ angular
                 verify: '/bika/action/verify',
                 assign: '/bika/action/assign',
                 publish: '/bika/action/publish',
+                activate_supply_order: '/bika/action/activate_supply_order',
+                deactivate_supply_order: '/bika/action/deactivate_supply_order',
+                dispatch_supply_order: '/bika/action/dispatch_supply_order',
 				set_analysis_result : '/bika/set/analysis_result',
 				set_analyses_results : '/bika/set/analyses_results',
 				count_samples: '/bika/count/samples',
@@ -55,10 +60,12 @@ angular
 				update_batches: '/bika/update/batches',
 				update_analysis_request: '/bika/update/analysis_request',
 				update_analysis_requests: '/bika/update/analysis_requests',
+				update_supply_order: '/bika/update/supply_order',
+				update_supply_orders: '/bika/update/supply_orders',
             },
             plone_url: {
-                develop: 'http://bika.crs4.it:8080',
-                production: 'http://bika.crs4.it:8080',
+                develop: 'http://localhost:8080',
+                production: 'http://localhost:8080',
             },
             data_source: {
 				container_types: [

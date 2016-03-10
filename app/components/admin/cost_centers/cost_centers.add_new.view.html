@@ -1,0 +1,96 @@
+<div data-ng-app="CostCentersModule" ng-controller="AddCostCenterCtrl as ctrl">
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <form name="addCostCenterForm" class="form">
+            <div class="col-sm-12" style="margin-top:10px;">
+                <div class="input-inline col-sm-3">
+                    <select data-nq-select="" data-ng-required="true" data-min-required="1"
+                            data-qo-placeholder="Client.." name="client"
+                            data-ng-model="costcenter_params.selectedClient"
+                            data-ng-options="c.title for c in clients">
+                    </select>
+                </div>
+                <div class="input-inline col-sm-3">
+                    <select data-nq-select="" data-ng-required="true"  data-min-required="1"
+                            name="contact"
+                            data-qo-placeholder="Contact.."
+                            data-ng-model="costcenter_params.selectedContact"
+                            data-ng-options="c.title for c in contacts">
+                    </select>
+                </div>
+                <div class="input-inline col-sm-3">
+                            <input type="text" ng-model="costcenter_params.selectedOrderDate" class="form-control"
+                                   data-nq-datepicker="" data-qo-format="YYYY-MM-DD" data-qo-mode='date'
+                                   placeholder="datepicker" data-ng-required="true" name="order_date" required>
+                </div>
+                 <div class="input-inline col-sm-3">
+                            <input type="text" ng-model="costcenter_params.selectedExpirationDate" class="form-control"
+                                   data-nq-datepicker="" data-qo-format="YYYY-MM-DD" data-qo-mode='date'
+                                   placeholder="datepicker" data-ng-required="true" name="expiration_date" required>
+                </div>
+            </div>
+            <div class="col-sm-12" style="margin-top:10px;"
+                 ng-if="costcenter_params.selectedClient.title.length>0 && costcenter_params.selectedContact.title.length>0 && costcenter_params.selectedOrderDate < costcenter_params.selectedExpirationDate">
+                        <div class="input-inline col-sm-3">
+                            <input type="text" data-ng-required="true"
+                                   title="order_number"
+                                   class="form-control"
+                                   ng-model="costcenter_params.selectedOrderNumber"
+
+                                   placeholder="CostCenterID..."/>
+                        </div>
+                         <div class="input-inline col-sm-3">
+                            <input type="text" data-ng-required="true"
+                                   title="title"
+                                   class="form-control"
+                                   ng-model="costcenter_params.selectedTitle"
+
+                                   placeholder="Acronym..."/>
+                        </div>
+                        <div class="input-inline col-sm-6">
+                            <input type="text" class="form-control" data-ng-required="true"
+                                   ng-model="costcenter_params.selectedDescription" data-name="description"
+
+                                   placeholder="Description...">
+                        </div>
+            </div>
+            <div class="col-sm-12" style="margin-top:10px;" ng-if="costcenter_params.selectedDescription!=null">
+                <div class="input-inline col-sm-6">
+                    <select data-nq-select="" data-ng-required="true" data-min-required="1"
+                            data-qo-placeholder="Batches.." name="batches"
+                            data-qo-max-length="0" data-name="services"
+                            data-qo-multiple="true"
+                            data-qo-display-type="input"
+                            data-ng-model="costcenter_params.selectedBatches"
+                            data-ng-options="b.title for b in batches">
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-euro"></i>
+                        </div>
+                        <input type="text"
+                           class="form-control"
+                           data-name="amount"
+                           data-ng-model="costcenter_params.selectedAmount"
+
+                           placeholder="Amount..."/>
+
+				    </div>
+                </div>
+
+            </div>
+             <div class="col-sm-12 controls" style="margin-top:10px;" >
+                        <div class="col-sm-12 input-inline pull-right">
+                            <button type="button" class="btn btn-success pull-right"
+                                    data-ng-click="ctrl.submit(costcenter_params)"
+                                    data-ng-disabled="costcenter_params.selectedClient.title.length==0 || costcenter_params.selectedDescription==null || costcenter_params.selectedAmount == null">
+                                <span class="glyphicon glyphicon-copy"></span>&nbsp;Create
+                            </button>
+                        </div>
+                    </div>
+        </form>
+    </div>
+</div>
+</div>

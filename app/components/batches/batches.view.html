@@ -36,6 +36,9 @@
                         <th ng-click="sort('client')">Client
                             <span class="glyphicon sort-icon" ng-show="sortKey=='client'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
+                        <th ng-click="sort('cost_center')">Cost Center
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='client'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
                         <th ng-click="sort('date')">Date
                             <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
@@ -71,6 +74,7 @@
                         </td>
                         <td><a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>
                         <td>{{row.client}}</td>
+                        <td>{{row.cost_center}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{samples[row.id]}}
                             <div  style="margin-top:10px"

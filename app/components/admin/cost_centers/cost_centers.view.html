@@ -1,211 +1,115 @@
-<div data-ng-app="HomeModule" ng-controller="HomeCtrl as ctrl">
-    <div class="col-sm-12">
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        Sample Due
+<div data-ng-app="CostCentersModule" ng-controller="CostCentersCtrl as ctrl">
+    <div class="panel panel-primary">
+        <div class="panel-body">
+            <form class="form-inline">
+                <div class="col-sm-12 controls" >
+                    <div class="btn-group  btn-group-reset" ng-model="buttons.radio" ng-init="buttons.radio = 'pending'" data-nq-radio-group="">
+                                <label title="Left Button" class="btn btn-primary"><input type="radio" value="all" data-ng-click="getSupplyOrders('all')">All</label>
+                                <label title="Middle Button" class="btn btn-primary"><input type="radio" value="pending" data-ng-click="getSupplyOrders('pending')">Pending</label>
+                                <label title="Right Button" class="btn btn-primary"><input type="radio" value="dispatched" data-ng-click="getSupplyOrders('dispatched')">Dispatched</label>
                     </div>
+                    <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
+                    <label title="published" ng-if="pagination.total == 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.total}}</label>
+                    <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
                 </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.sample_due < 0"
-                         spinner-on="counter.sample_due < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
+            </form>
 
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'sample_due'})">
-                        <div id="divSampleDue"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;"></div>
-
-                        <label class="btn btn-success btn-lg"
-                               data-ng-show="counter.sample_due >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.sample_due}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        Sample Received
-                    </div>
-                </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.sample_received < 0"
-                         spinner-on="counter.sample_received < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
-
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'sample_received'})">
-                        <div id="divSampleReceived"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;">
-
+            <div class="col-sm-12 controls" style="margin-top:10px;">
+                <table class="table table-striped table-hover table-bordered table-responsive" >
+                    <thead>
+                    <tr class="alert alert-success">
+                        <th>
+                            <div style="padding-left:10px;">
+                                <input type="checkbox"  value=""
+                                       data-ng-checked="checked_list.length == supply_orders.length  && checked_list.length > 0"
+                                       data-ng-click="ctrl.toggle_all()">
                         </div>
+                        </th>
+                        <th ng-click="sort('id')">BikaID
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('order_number')">CostCenterID
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='order_number'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('title')">Acronym
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='title'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('description')">Description
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('client')">Client
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='client'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('client_id')">Amount
+                             <span class="glyphicon sort-icon" ng-show="sortKey=='amount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('orderDate')">Start Date
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('expiration_date')">Expiration Date
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('dispatched_date')">Dispatched Date
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('review_state')">State
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th><span class="fic glyphicon glyphicon-wrench" ></span></th>
+                        <!--<th><span class="fic glyphicon glyphicon-blackboard" ></span></th>-->
+                    </tr>
+                    </thead>
+                    <tbody ng-if="supply_orders.length > 0">
+                    <tr dir-paginate="row in supply_orders | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
+                        total-items="pagination.total" current-page="pagination.current"
+                        ng-class="{'alert alert-warning': ctrl.check_transitions('activate', row.transitions)}">
+                        <td>
+                            <div style="padding-left:10px;">
+                                <input type="checkbox"  value="{{row.id}}"
+                                       data-ng-checked="checked_list.indexOf(row.id) > -1"
+                                       data-ng-click="ctrl.toggle(row.id)">
+                            </div>
+                        </td>
+                        <td>
+                            <a class="pull-left" ui-sref="cost_center({costcenter_id: row.id})" style="text-decoration: none;">
+                                <span>{{row.id}}</span>
+                            </a>
 
+                        </td>
+                        <td>{{row.order_number}}</td>
+                        <td>
+                            <!--<a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
+                                <span>{{row.title}}</span>
+                            </a>-->
 
-                        <label class="btn btn-success btn-lg"
-                               data-ng-if="counter.sample_received >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.sample_received}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
+                        </td>
+                        <td>{{row.description}}</td>
+                            <!--<a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>-->
+                        <td>{{ctrl.get_client(row.client_id)}}</td>
+                        <td>{{row.rights}}</td>
+                        <td>{{ctrl.format_date(row.order_date)}}</td>
+                        <td>{{ctrl.format_date(row.expiration_date)}}</td>
+                        <td>{{ctrl.format_date(row.dispatched_date)}}</td>
+                        <td>{{ctrl.format_review_state(row.review_state)}}</td>
+                        <td><ng-include src="'app/shared/review_state/supply_orders.btns.mini.html'"></ng-include></td>
+                        <!--<td><ng-include src="'app/shared/blackboard/toggle.btns.mini.html'"></ng-include></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+
+                <dir-pagination-controls
+                        max-size="10"
+                        direction-links="true"
+                        boundary-links="true"
+                        class="pull-right"
+                        on-page-change="ctrl.changePage(newPageNumber, oldPageNumber)"
+                        style="margin-top: -25px">
+                </dir-pagination-controls>
+
             </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        To be verified
-                    </div>
-                </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.to_be_verified < 0"
-                         spinner-on="counter.to_be_verified < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
-
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'to_be_verified'})">
-                        <div id="divToBeVerified"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;"></div>
-
-
-                        <label class="btn btn-success btn-lg"
-                               data-ng-if="counter.to_be_verified >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.to_be_verified}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
+            <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="supply_orders.length > 0">
+                <ng-include src="'app/shared/review_state/supply_orders.btns.html'"></ng-include>
             </div>
         </div>
     </div>
-    <div class="col-sm-12">
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        Verified
-                    </div>
-                </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.verified < 0"
-                         spinner-on="counter.verified < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
-
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'verified'})">
-                        <div id="divVerified"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;"></div>
-                        <label class="btn btn-success btn-lg"
-                               data-ng-if="counter.verified >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.verified}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4" >
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        Published
-                    </div>
-                </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.published < 0"
-                         spinner-on="counter.published < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
-
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'published'})">
-                        <div id="divPublished"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;"></div>
-                        <label class="btn btn-success btn-lg"
-                               data-ng-if="counter.published >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.published}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
 </div>

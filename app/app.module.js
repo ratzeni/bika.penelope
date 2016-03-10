@@ -24,6 +24,7 @@ var main_module = angular.module('MainApp',[
     'SamplesheetModule',
     'WorksheetsModule',
     'BlackBoardModule',
+    'CostCentersModule',
 ]);
 
 // :: MAIN CONTROLLER

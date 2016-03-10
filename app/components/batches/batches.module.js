@@ -19,12 +19,12 @@ batches_module.controller('BatchesCtrl',
 
         $scope.loading_change_review_state =
         	function(text) {
-        		params = {
+        		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
             		delayHide: 500,
             		theme: 'warning',
         		}
-        		return Utility.loading(params);
+        		return Utility.loading(this.params);
         	};
 
 		$scope.checked_list = [];
@@ -54,7 +54,7 @@ batches_module.controller('BatchesCtrl',
             	$scope.loading_search.show();
             	$scope.review_state = review_state;
                 $scope.batches = [];
-                params = {sort_on: 'Date', sort_order: 'descending', Subject: review_state,
+                params = {sort_on: 'id', sort_order: 'descending', Subject: review_state,
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getBatches(params).success(function (data, status, header, config){
