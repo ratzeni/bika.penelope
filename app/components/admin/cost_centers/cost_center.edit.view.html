@@ -51,8 +51,19 @@
                                    placeholder="Description...">
                         </div>
             </div>
-             <div class="col-sm-12 controls" style="margin-top:10px;" >
-                        <div class="col-sm-12 input-inline pull-right">
+            <div class="col-sm-12 controls" style="margin-top:10px;" >
+                        <div class="input-inline col-sm-6">
+                            <select data-nq-select="" data-min-required="1"
+
+                                    data-qo-placeholder="Batches.."
+                                    data-qo-max-length="0"
+                                    data-qo-multiple="true"
+                                    data-qo-display-type="input"
+                                    data-ng-model="costcenter_params.selectedBatches"
+                                    ng-options="b.title for b in data.all_batches">
+                            </select>
+                        </div>
+                        <div class="col-sm-6 input-inline pull-right">
                             <button type="button" class="btn btn-success pull-right"
                                     data-ng-click="ctrl.edit(costcenter_params)">
                                 <span class="glyphicon glyphicon-edit"></span>&nbsp;Edit

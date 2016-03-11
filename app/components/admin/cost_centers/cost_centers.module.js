@@ -352,7 +352,10 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 		$scope.state = {costcenter_id: $stateParams.costcenter_id};
 		$scope.cost_center = null;
 		$scope.batches = [];
+
 		$scope.samples = {};
+
+		$scope.stats = {amount: -1, start: false};
 
 		$scope.loading_search = Utility.loading({
             busyText: 'Wait while loading...',
@@ -382,6 +385,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						selectedDescription: $scope.cost_center.description,
 						selectedAmount: $scope.cost_center.rights,
 						selectedOrderNumber: $scope.cost_center.order_number,
+						selectedBatches: null,
 					};
         		});
         	}
@@ -396,13 +400,19 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
             	$scope.getCostCenter($scope.state.costcenter_id);
             	this.params = {};
             	BikaService.getBatches(this.params).success(function (data, status, header, config){
-
+					all_batches = [];
             		_.each(data.result.objects, function(batch) {
-
                     	if (batch.cost_center == $scope.state.costcenter_id) {
                     		$scope.batches.push(batch);
                     	}
+                    	else if (batch.cost_center != $scope.state.costcenter_id
+                    	 		&& batch.cost_center == ''
+                    			&& batch.client == $scope.get_client($scope.cost_center.client_id)) {
+                    		all_batches.push(batch);
+                    	}
+
                     });
+                    $scope.data= {all_batches: all_batches};
                     $scope.loading_search.hide();
                     $scope.count_samples();
             	});
@@ -413,6 +423,13 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 		$scope.init($scope.state.costcenter_id);
 
 		this.get_client =
+			function(client_id) {
+				this.client = _.findWhere($scope.clients, {id: client_id});
+
+				return this.client.title;
+			}
+
+		$scope.get_client =
 			function(client_id) {
 				this.client = _.findWhere($scope.clients, {id: client_id});
 
@@ -452,6 +469,30 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 					this.result = data.result;
 					if (this.result['success'] === 'True') {
 						Utility.alert({title:'Success', content: 'Center Cost '+$scope.cost_center.title+' has been edited', alertType:'success'});
+						if (Array.isArray($scope.costcenter_params.selectedBatches) &&  $scope.costcenter_params.selectedBatches.length > 0) {
+                    		_.each($scope.costcenter_params.selectedBatches, function(batch){
+                    			obj_id = $scope.state.costcenter_id;
+								this.batch_params = {'obj_path': batch.path, 'rights': obj_id}
+								BikaService.updateBatch(this.batch_params).success(function (data, status, header, config){
+									this.result = data.result;
+									if (this.result['success'] === 'True') {
+										Utility.alert({title:'Success', content: 'Batch '+batch.title+' has been added to '+obj_id, alertType:'success'});
+									}
+									else {
+										Utility.alert({title:'Error while creating...', content: result['message'], alertType:'danger'});
+										return;
+									}
+								});
+
+                    		});
+
+							$state.go('cost_center',{'costcenter_id': $scope.cost_center.id},{reload: true});
+                    	}
+                    	else {
+							$scope.loading_create.hide();
+							Utility.alert({title:'Success', content: 'Your Cost Center has been successfully created with ID: '+obj_id, alertType:'success'});
+
+                    	}
 						$state.go('cost_center',{'costcenter_id': $scope.cost_center.id},{reload: true});
 					}
 					else {
@@ -461,5 +502,54 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 				});
 
 			}
+
+		this.get_partial_amount =
+			function(){
+				$scope.stats.start = true;
+				this.params = {sort_on: 'keyword', sort_order: 'ascending',}
+                BikaService.getAnalysisServices(this.params).success(function (data, status, header, config){
+                	var analyses_services = data.result.objects;
+					var batch_ids = [];
+					_.each($scope.batches, function(batch) {
+						batch_ids.push(batch.id);
+					});
+					this.ar_params = {sort_on: 'getId', sort_order: 'ascending', titles: batch_ids.join('|')};
+					BikaService.getAnalysisRequests(this.ar_params).success(function (data, status, header, config){
+						this.analysis_requests = data.result.objects;
+						var ids = Array();
+						var counter = 0;
+						_.each(this.analysis_requests, function(ar){
+							console.log(ar.review_state);
+							if ((ar.sample_type != 'POOL' || ar.sample_type != 'FLOWCELL') && ar.state_review=='published') {counter++;}
+							_.each(ar.analyses, function(a){
+								if (_.indexOf(ids, a.id) == -1) {ids.push(a.id);}
+							});
+						});
+
+						var amount = 0;
+						_.each(ids, function(id) {
+							service = _.findWhere(analyses_services, {'keyword': id})
+							this.amount = parseInt(service.price.replace('.00',''));
+
+							amount+=this.amount;
+						});
+
+						$scope.stats.amount = amount*counter;
+						$scope.stats.start = false;
+					});
+				});
+
+			}
+
+		$scope.$watch('stats.amount',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+					radialProgress(document.getElementById('divAmount'))
+						.diameter(200)
+						.value(Utility.percentage($scope.stats.amount, $scope.cost_center.rights))
+						.render();
+			});
+
 
 });
