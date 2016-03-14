@@ -842,7 +842,7 @@ batches_module.controller('BatchBookCtrl',
 				}
 				$scope.loading_change_review_state('assigning').show();
 				if (!$scope.workflow_params.switchWorksheet) {
-					params = {
+					this.params = {
 						title: $scope.workflow_params.worksheet_title,
 						description: $scope.workflow_params.worksheet_description,
 						Analyst: $scope.workflow_params.analyst.userid,
@@ -851,7 +851,7 @@ batches_module.controller('BatchBookCtrl',
 					};
 
 
-					BikaService.createWorksheet(params).success(function (data, status, header, config){
+					BikaService.createWorksheet(this.params).success(function (data, status, header, config){
 						result = data.result;
 						_params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
 						BikaService.updateAnalysisRequests(_params).success(function (data, status, header, config){

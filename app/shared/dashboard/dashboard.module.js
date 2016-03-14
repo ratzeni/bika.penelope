@@ -17,6 +17,7 @@ dashboard_module.run(function($rootScope){
 });
 
 dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
+
 		var counter = $rootScope.counter;
 
  		this.samples_review_state = ['sample_due','sample_received'];

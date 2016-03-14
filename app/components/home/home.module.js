@@ -2,6 +2,10 @@ var home_module = angular.module('HomeModule', []);
 
 home_module.controller('HomeCtrl',
 	function(DashboardService, Utility, $state, $scope, $rootScope) {
+
+		$scope.loading = Utility.loading({busyText: 'Wait while Loading...', theme: 'info', showBar: true, delayHide: 1500});
+		$scope.loading.show();
+
 		DashboardService.update_dashboard();
 
 		$scope.counter = $rootScope.counter;
