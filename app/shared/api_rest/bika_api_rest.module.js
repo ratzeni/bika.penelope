@@ -1,7 +1,7 @@
 var bika_api_rest_module = angular.module('BikaApiRestModule', [])
 
-bika_api_rest_module.service('BikaApiRestService',  function(config, $http, $rootScope) {
-    this.conf = config.bikaApiRest.develop;
+bika_api_rest_module.service('BikaApiRestService',  function(init, $http, $rootScope) {
+    this.conf = init.bikaApiRest;
 
 
     this.call = function(method, params) {

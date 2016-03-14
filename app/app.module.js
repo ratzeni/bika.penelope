@@ -11,6 +11,7 @@ var main_module = angular.module('MainApp',[
     'ngQuantum',
     'ngCart',
     'dangle',
+    'InitModule',
     'ConfigModule',
     'BikaApiRestModule',
     'UtilityModule',

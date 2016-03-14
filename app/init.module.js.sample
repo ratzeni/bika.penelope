@@ -1,0 +1,10 @@
+angular
+    .module('InitModule', [])
+    .constant('init', {
+        bikaApiRest: {
+        	rest_url: 'DUMMY_REST_URL',
+        	bika_host: 'DUMMY_BIKA_HOST',
+        	callback: 'JSON_CALLBACK'
+        }
+	});
+

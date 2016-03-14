@@ -2,14 +2,6 @@ angular
     .module('ConfigModule', [])
     .constant('config', {
         bikaApiRest: {
-            production: {
-                rest_url: 'http://localhost:8088',
-                bika_host: 'http://localhost:8080/CRS4',
-                callback: 'JSON_CALLBACK'},
-            develop: {
-                rest_url: 'http://localhost:8088',
-                bika_host: 'http://localhost:8080/CRS4',
-                callback: 'JSON_CALLBACK'},
             methods: {
                 check_status: '/web/check/status',
                 login: '/bika/login',
@@ -63,10 +55,6 @@ angular
 				update_supply_order: '/bika/update/supply_order',
 				update_supply_orders: '/bika/update/supply_orders',
             },
-            plone_url: {
-                develop: 'http://localhost:8080',
-                production: 'http://localhost:8080',
-            },
             data_source: {
 				container_types: [
 					{label: 'Tube', 	value: 'Tube',},
@@ -88,7 +76,7 @@ angular
         	analysis_result_todo: "To do",
         },
         stickers: {
-        	stickers_path: '/CRS4/analysisrequests',
+        	stickers_path: '/analysisrequests',
         	path: 'sticker?autoprint=1&template=Code_128_1x48mm.pt',
         }
 

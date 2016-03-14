@@ -5,7 +5,7 @@ utility_module.run(function($rootScope){
 });
 
 utility_module.service('Utility',
-	function(config, $loading, $alert, $window, $sce) {
+	function(init, config, $loading, $alert, $window, $sce) {
 
 
 		this.loading = function(params) {
@@ -121,7 +121,7 @@ utility_module.service('Utility',
 			if (stickers_path===undefined) {
 				var stickers_path = config.stickers.stickers_path;
 			}
-			var url =  config.bikaApiRest.plone_url.develop+stickers_path+'/'+config.stickers.path+"&items="+ids.replace(/\|/g, ',');
+			var url = init.bikaApiRest.bika_host+stickers_path+'/'+config.stickers.path+"&items="+ids.replace(/\|/g, ',');
 			$window.open(url);
 			//location.path(url);
 		}

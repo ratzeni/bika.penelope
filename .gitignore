@@ -37,3 +37,6 @@ cover
 
 #PyCharm
 .idea
+
+#Config
+init.module.js
