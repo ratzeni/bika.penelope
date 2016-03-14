@@ -39,4 +39,4 @@ cover
 .idea
 
 #Config
-init.module.js
+*init.module.js
