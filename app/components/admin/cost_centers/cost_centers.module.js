@@ -330,8 +330,8 @@ cost_centers_module.controller('AddCostCenterCtrl',
                     	}
                     	else {
 							$scope.loading_create.hide();
-							Utility.alert({title:'Success', content: 'Your Cost Center has been successfully created with ID: '+obj_id, alertType:'success'});
-
+							//Utility.alert({title:'Success', content: 'Your Cost Center has been successfully created with ID: '+obj_id, alertType:'success'});
+							$state.go('cost_centers',{},{reload: true});
                     	}
 
         			}

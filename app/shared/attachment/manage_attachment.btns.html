@@ -8,6 +8,9 @@
         filename="{{ctrl.get_filename()}}" field-separator=",">
     <span class="glyphicon glyphicon-export"></span>&nbsp;Export&nbsp;SampleList
 </button>
+<button type="button" class="btn btn-success" aria-hidden="true" data-ng-click="ctrl.link2Run(attachment.content)">
+    <span class="glyphicon glyphicon-link"></span>&nbsp;Link&nbsp;to&nbsp;Run
+</button>
 <!--
 <button type="button" class="btn btn-primary" aria-hidden="true"
         data-ng-if="ctrl.check_attachment_type('samplesheet')"

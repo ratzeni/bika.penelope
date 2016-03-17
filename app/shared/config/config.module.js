@@ -66,6 +66,30 @@ angular
 					{label: 'LIBRARY',	value: 'LIBRARY',},
 					{label: 'MOUNT', value: 'MOUNT',},
 				],
+				reads: [
+					{label: '51', value: '51'},
+					{label: '76', value: '76'},
+					{label: '101', value: '101'},
+					{label: '251', value: '251'},
+					{label: '301', value: '301'},
+				],
+				indexes: [
+					{label: '6', value: '6'},
+					{label: '7', value: '7'},
+					{label: '8', value: '8'},
+					{label: '9', value: '9'},
+					{label: '10', value: '10'},
+					{label: '11', value: '11'},
+					{label: '12', value: '12'},
+					{label: '13', value: '13'},
+				],
+
+        	}
+        },
+        irodsApiRest: {
+        	methods: {
+        		get_running_folders: '/irods/get/running',
+        		put_samplesheet: '/irods/put/samplesheet'
         	}
         },
         legend: {
@@ -78,7 +102,12 @@ angular
         stickers: {
         	stickers_path: '/analysisrequests',
         	path: 'sticker?autoprint=1&template=Code_128_1x48mm.pt',
+        },
+        instruments: {
+        	SN526: 'Diabolik',
         }
+
+
 
 
     });

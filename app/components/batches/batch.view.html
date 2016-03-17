@@ -51,11 +51,11 @@
 
                         <td>{{a.keyword}}</td>
                     </tr>
-                    <tr ng-if="attachment.content.length > 0">
+                    <tr ng-if="attachment.content.length > 0 && currentUser.role == 'Site Administrator'">
                         <td>
 
                           <button type="button" data-nq-toggle-modal="#showAttachment" class="pull-right btn btn-primary btn-sm"
-                                  data-placement="right" data-effect="from-right" data-qs-title="'Show Samplesheet'">
+                                  data-placement="right" data-effect="from-right" data-qs-title="'Show Samplesheet'" >
                                 <span class="glyphicon glyphicon-eye-open"></span>&nbsp;Original Samplesheet
                           </button>
                          <div id="showAttachment" class="clearfix" data-nq-modal="" data-qo-independent="true" data-qo-screen-mode="true" data-qo-content-template="">
@@ -67,8 +67,8 @@
                     <tr ng-if="attachment.content.length > 0">
                         <td>
                             <a  class="pull-right btn btn-primary btn-sm"
-                                ui-sref="samplesheet({batches: attachment.batches, content: attachment.samplesheet})">
-                               <span class="glyphicon glyphicon-equalizer"></span>&nbsp;IEM&nbsp;Samplesheet
+                                ui-sref="samplesheet_view({batches: attachment.batches, content: attachment.samplesheet})">
+                               <span class="glyphicon glyphicon-equalizer"></span>&nbsp;Samplesheet
                             </a>
                         </td>
 

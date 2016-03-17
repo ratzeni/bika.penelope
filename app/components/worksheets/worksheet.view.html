@@ -55,7 +55,14 @@
 
         <form class="form-inline">
             <div class="col-sm-12 controls" >
+                 <div ng-if="attachment.content.length > 0">
 
+                            <a  class="pull-left btn btn-primary"
+                                ui-sref="samplesheet_view({batches: attachment.batches, content: attachment.samplesheet})">
+                               <span class="glyphicon glyphicon-equalizer"></span>&nbsp;Samplesheet
+                            </a>
+
+                </div>
                 <label title="published" ng-if="worksheet_details.length > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{worksheet_details.length}}</label>
                 <input type="text" ng-model="search" ng-if="worksheet_details.length > 0" class="form-control pull-right" placeholder="Search...">
             </div>
@@ -162,6 +169,7 @@
             <!--<ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>-->
             <!--<ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>-->
             <ng-include src="'app/shared/review_state/worksheets.btns.html'"></ng-include>
+
             <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
         </div>
     </div>

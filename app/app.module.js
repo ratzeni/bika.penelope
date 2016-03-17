@@ -14,6 +14,7 @@ var main_module = angular.module('MainApp',[
     'InitModule',
     'ConfigModule',
     'BikaApiRestModule',
+    'IrodsApiRestModule',
     'UtilityModule',
     'angularSpinner',
     'LoginModule',

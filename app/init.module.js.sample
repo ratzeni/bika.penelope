@@ -1,10 +1,23 @@
 angular
     .module('InitModule', [])
     .constant('init', {
+        apiRest: {
+        	url: 'DUMMY_REST_URL',
+        	callback: 'JSON_CALLBACK',
+        },
         bikaApiRest: {
-        	rest_url: 'DUMMY_REST_URL',
-        	bika_host: 'DUMMY_BIKA_HOST',
-        	callback: 'JSON_CALLBACK'
+        	host: 'DUMMY_BIKA_HOST',
+        },
+        irodsApiRest: {
+        	host: 'DUMMY_IRODS_HOST',
+        	user: 'DUMMY_IRODS_USER',
+        	collection: 'DUMMY_IRODS_COLLECTION',
+
+        },
+        sshApiRest: {
+        	host: 'DUMMY_SSH_HOST',
+        	user: 'DUMMY_SSH_USER',
+        	run_folder: 'DUMMY_RUN_FOLDER',
         }
 	});
 

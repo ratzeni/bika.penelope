@@ -31,11 +31,22 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
 
 
         })
-        .state('samplesheet', {
-            url: '/samplesheet/:batches/{content}',
+        .state('samplesheet_view', {
+            url: '/samplesheet/view/:batches/{content}',
             templateUrl: 'app/shared/attachment/samplesheet.view.html',
             controller: function($stateParams) {
 				$stateParams.batches
+				$stateParams.content
+			},
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+            }
+
+        })
+        .state('samplesheet_link2run', {
+            url: '/samplesheet/link_to_run/{content}',
+            templateUrl: 'app/shared/attachment/samplesheet_link2run.home.view.html',
+            controller: function($stateParams) {
 				$stateParams.content
 			},
             data: {
@@ -85,7 +96,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/arimport',
             templateUrl: 'app/components/arimport/arimport.home.view.html',
             data: {
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
 
         })

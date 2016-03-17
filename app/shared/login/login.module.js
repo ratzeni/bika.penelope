@@ -145,7 +145,12 @@ function(Utility, $scope, $rootScope, $state, $window, $timeout, Auth ) {
 	function login(credentials) {
 		$scope.error = false;
 		Auth.login(credentials, function(user) {
-			$state.go('home');
+			//$state.go('home');
+			if ($rootScope.currentUser.role === 'Analyst') {
+				$state.go('worksheets');
+			}
+			else {$state.go('batches');}
+
 		}, function(err) {
 			console.log('error function');
 			$scope.error = true;

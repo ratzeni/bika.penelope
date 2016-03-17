@@ -43,6 +43,7 @@
     <script src="./app/init.module.js"></script>
     <script src="./app/shared/config/config.module.js"></script>
     <script src="./app/shared/api_rest/bika_api_rest.module.js"></script>
+    <script src="./app/shared/api_rest/irods_api_rest.module.js"></script>
     <script src="./app/shared/utility/utility.module.js"></script>
     <script src="./app/shared/login/login.module.js"></script>
     <script src="./app/shared/dashboard/dashboard.module.js"></script>
@@ -91,7 +92,10 @@
                         <li  ng-class="getClass('batches')"><a ui-sref="batches">Batches</a></li>
                         <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
                         <li  ng-class="getClass('worksheets')"><a ui-sref="worksheets">Worksheets</a></li>
-                        <li  ng-class="getClass('arimport')"><a ui-sref="arimport">AR Import</a></li>
+                        <li  data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                             ng-class="getClass('arimport')">
+                            <a ui-sref="arimport">AR Import</a>
+                        </li>
                         <li data-ng-if="currentUser.role=='Site Administrator'">
                             <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
                                 Admin
@@ -125,7 +129,7 @@
      role="navigation" ng-show="$state.current.name!=='login'">
     <div class="container-fluid">
         <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav navbar-left">
+            <!--<ul class="nav navbar-nav navbar-left">
                 <li>
                     <a ui-sref="worksheets">
                                 <span>
@@ -152,7 +156,7 @@
                                 </span>
                     </a>
                 </li>
-            </ul>
+            </ul>-->
             <ul class="nav navbar-nav navbar-right">
                 <li class="active">
                     <a href="#">

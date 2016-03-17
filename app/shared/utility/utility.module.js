@@ -121,7 +121,7 @@ utility_module.service('Utility',
 			if (stickers_path===undefined) {
 				var stickers_path = config.stickers.stickers_path;
 			}
-			var url = init.bikaApiRest.bika_host+stickers_path+'/'+config.stickers.path+"&items="+ids.replace(/\|/g, ',');
+			var url = init.bikaApiRest.host+stickers_path+'/'+config.stickers.path+"&items="+ids.replace(/\|/g, ',');
 			$window.open(url);
 			//location.path(url);
 		}

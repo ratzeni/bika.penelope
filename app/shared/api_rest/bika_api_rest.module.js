@@ -1,7 +1,7 @@
 var bika_api_rest_module = angular.module('BikaApiRestModule', [])
 
 bika_api_rest_module.service('BikaApiRestService',  function(init, $http, $rootScope) {
-    this.conf = init.bikaApiRest;
+
 
 
     this.call = function(method, params) {
@@ -15,23 +15,16 @@ bika_api_rest_module.service('BikaApiRestService',  function(init, $http, $rootS
             params.password = $rootScope.currentUser.password;
         }
 
-        this.url = this.conf.rest_url + method + '?';
+		this.conf = init.apiRest;
+        this.url = this.conf.url + method + '?callback' + '=' +  this.conf['callback'];
+
+        this.conf = init.bikaApiRest;
         for (var key in this.conf) {
-            if (key != 'rest_url') {
-                this.url+= '&' + key + '=' +  this.conf[key];
-            }
+            this.url+= '&' + key + '=' +  this.conf[key];
         }
 
         for (var key in params) {
-            if (key == 'username') {
-                this.url+= '&' + 'bika_user' + '=' +  params[key];
-            }
-            else if (key == 'password') {
-                this.url+= '&' + 'bika_passwd' + '=' +  params[key];
-            }
-            else {
-                this.url+= '&' + key + '=' +  params[key];
-            }
+           this.url+= '&' + key + '=' +  params[key];
         }
 
         return $http.jsonp(this.url);
