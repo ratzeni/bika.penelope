@@ -190,7 +190,7 @@ samplesheet_module.controller('Link2RunCtrl',
 	 				Utility.alert({title:'There\'s been an error<br/>',
 	 					content: "Only "+_.keys(lanes).length +" lanes: "+ _.keys(lanes).join(','),
 	 					alertType:'danger'});
-	 				//return;
+	 				return;
 	 			}
 	 			this.params = {ids: samples.join('|')}
 	 			BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
