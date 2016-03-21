@@ -240,7 +240,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 
 		$scope.loading_worksheet = Utility.loading({
             busyText: 'Wait while loading worksheet data...',
-            delayHide: 10000,
+            delayHide: 1000,
         });
 
 		$scope.loading_change_review_state =

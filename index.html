@@ -92,6 +92,17 @@
                         <li  ng-class="getClass('batches')"><a ui-sref="batches">Batches</a></li>
                         <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
                         <li  ng-class="getClass('worksheets')"><a ui-sref="worksheets">Worksheets</a></li>
+                        <li>
+                            <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
+                                Samplesheets
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" tabindex="-1" role="menu">
+                                <li role="presentation"  ng-class="getClass('samplesheet_upload')">
+                                    <a role="menuitem" tabindex="-1" ui-sref="samplesheet_upload">Upload</a>
+                                </li>
+                            </ul>
+                        </li>
                         <li  data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
                              ng-class="getClass('arimport')">
                             <a ui-sref="arimport">AR Import</a>

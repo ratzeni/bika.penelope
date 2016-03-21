@@ -2,7 +2,22 @@
     <div class="panel panel-primary">
         <div class="panel-body">
             <div name="link2RunForm" class="form">
-                <div class="col-sm-12" style="margin-top:10px;">
+                <div class="col-sm-12" style="margin-top:10px;"
+                  ng-if="state.content===undefined">
+                    <div class="input-inline col-sm-2">
+                        <file-field class="btn"
+                                    ng-class="{'btn-success': (samplesheet_params.samplesheet.length > 0) }"
+                                    ng-model="samplesheet_params.attachment" data-ng-required="False">
+                            <span>Upload SampleSheet</span>
+
+                        </file-field>
+                    </div>
+                    <div class="input-inline col-sm-10">
+                        <input type="text" class="form-control"  ng-model="samplesheet_params.attachment.name"
+                           placeholder="IEM Samplesheet..." value="{samplesheet_params.attachment.name}}">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="margin-top:10px;" data-ng-if="attachment.samplesheet.length > 0">
                     <div class="input-inline col-sm-4">
                         <select data-nq-select=""
                                 data-min-required="1"
@@ -83,15 +98,19 @@
                     <div class="col-sm-3">
                         <input type="checkbox" ng-model="samplesheet_params.switchMode" data-nq-switch-button="" class="col-sm-3"
                                data-theme="primary,stripped,rounded"
-                               data-label-text="Run Mode" data-false-label="Rapid" data-true-label="Normal">
+                               data-label-text="Run Mode" data-true-label="Rapid" data-false-label="Normal">
                 </div>
 
                 </div>
                 <div class="col-sm-12 controls" style="margin-top:10px;" >
                         <div class="col-sm-6 input-inline pull-right">
                             <button type="button" class="btn btn-success pull-right"
-                                    data-ng-disabled="samplesheet_params.run_folder == null && samplesheet_params.r1 == null && samplesheet_params.i1 == null"
-                                    data-ng-click="ctrl.link_samplesheet(samplesheet_params)">
+                                    data-ng-disabled="samplesheet_params.run_folder == null
+                                        || samplesheet_params.r1 == null
+                                        || samplesheet_params.i1 == null
+                                        || (samplesheet_params.switchReads && samplesheet_params.r2 == null)
+                                        || (samplesheet_params.switchIndexes && samplesheet_params.i2 == null)"
+                                    data-ng-click="ctrl.submit(samplesheet_params)">
                                 <span class="glyphicon glyphicon-link"></span>&nbsp;Link&nbsp;to&nbsp;Run
                             </button>
                         </div>
@@ -101,11 +120,11 @@
         </div>
     </div>
     </div>
-    <div class="panel panel-primary" style="margin-top:10px" data-ng-if="attachment.samplesheet.length > 0">
+    <div class="panel panel-primary" style="margin-top:10px" ng-show="samplesheet_params.samplesheet.length > 0">
     <div class="panel-body">
         <div class="col-sm-12 controls" style="margin-top: 10px;">
             <table class="table table-striped table-bordered ">
-                <tr ng-repeat="row in attachment.samplesheet track by $index">
+                <tr ng-repeat="row in samplesheet_params.samplesheet track by $index">
                     <td ng-repeat="field in row track by $index">
                         {{field}}
                     </td>

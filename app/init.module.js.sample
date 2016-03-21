@@ -9,15 +9,13 @@ angular
         	host: 'DUMMY_BIKA_HOST',
         },
         irodsApiRest: {
-        	host: 'DUMMY_IRODS_HOST',
-        	user: 'DUMMY_IRODS_USER',
-        	collection: 'DUMMY_IRODS_COLLECTION',
-
+        	irods_resource: 'DUMMY_IRODS_RESOURCE',
+        	samplesheet_collection: 'DUMMY_IRODS_SAMPLESHEET_COLLECTION',
         },
         sshApiRest: {
         	host: 'DUMMY_SSH_HOST',
         	user: 'DUMMY_SSH_USER',
         	run_folder: 'DUMMY_RUN_FOLDER',
+        	tmp_folder: 'DUMMY_TMP_FOLDER',
         }
 	});
-

@@ -67,7 +67,7 @@
                 <input type="text" ng-model="search" ng-if="worksheet_details.length > 0" class="form-control pull-right" placeholder="Search...">
             </div>
         </form>
-        <div class="col-sm-12 controls" style="margin-top:10px;">
+        <div class="col-sm-12 controls" style="margin-top:10px;min-height:350px;">
             <table class="table table-striped table-hover table-bordered table-responsive" >
                 <thead>
                 <tr class="alert alert-success">
@@ -162,8 +162,24 @@
                 </tr>
                 </tbody>
             </table>
-
-
+            <div  style="margin-top:160px"
+                  data-ng-if="worksheet_details.length  == 0"
+                  spinner-on="worksheet_details.length  == 0"
+                  us-spinner="{
+                    radius: 100,
+                    lines:13,
+                    length: 35,
+                    width: 8,
+                    scale: 1,
+                    speed: 1.5,
+                    opacity:0.1,
+                    corners: 1,
+                    color:'#000',
+                    position: 'relative',
+                    trail: 60,
+                    shadow: true,
+                  }">
+            </div>
         </div>
         <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="worksheet_details.length > 0">
             <!--<ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>-->

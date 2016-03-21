@@ -96,8 +96,12 @@ samplesheet_module.controller('Link2RunCtrl',
 	function(BikaService, IrodsService, Utility, $stateParams, $state, config, $scope, $rootScope) {
 		//$scope.run_folders = ['160210_SN526_0254_BHGC35BCXX','160226_SN526_0255_BC8490ACXX','160308_SN526_0256_BC7WNWACXX'];
 
-		$scope.state = {content:Utility.format_html($stateParams.content)};
-		$scope.attachment = {content:[], sample_list:[], samplesheet: JSON.parse($scope.state.content)};
+		$scope.attachment = {content:[], sample_list:[], samplesheet: []};
+
+		if ($stateParams.content !== undefined) {
+			$scope.state = {content:Utility.format_html($stateParams.content)};
+			$scope.attachment = {content:[], sample_list:[], samplesheet: JSON.parse($scope.state.content)};
+		}
 
 		$scope.get_running_folders =
 			function() {
@@ -120,44 +124,163 @@ samplesheet_module.controller('Link2RunCtrl',
 			switchIndexes: false,
 			i1: null,
 			i2: null,
-			switchMode: false,
+			switchMode: true,
+			attachment: null,
+			samplesheet: $scope.attachment.samplesheet.length>0?$scope.attachment.samplesheet:null,
 		};
 
 		$scope.reads = config.bikaApiRest.data_source.reads;
 		$scope.indexes = config.bikaApiRest.data_source.indexes;
 
-	 	this.link_samplesheet =
+	 	$scope.link_samplesheet =
 	 		function(samplesheet_params) {
 				this.params = {
 					illumina_run_directory: samplesheet_params.run_folder.running_folder,
-				 	samplesheet: JSON.stringify($scope.attachment.samplesheet),
+				 	samplesheet: JSON.stringify(samplesheet_params.samplesheet),
 				 	run: samplesheet_params.run_folder.running_folder,
 				 	fcid: samplesheet_params.fcid,
-				 	read1_cycles: samplesheet_params.r1,
-				 	read2_cycles: samplesheet_params.r2,
-				 	index1_cycles: samplesheet_params.i1,
-				 	index2_cycles: samplesheet_params.i2,
+				 	read1_cycles: samplesheet_params.r1.value,
+				 	read2_cycles: samplesheet_params.r2!=null?samplesheet_params.r2.value:'',
+				 	index1_cycles: samplesheet_params.i1.value,
+				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2.value:'',
 				 	is_rapid: samplesheet_params.switchMode.toString(),
 				};
-				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
-					console.log(data.result);
-				});
 
-				console.log(this.params);
+				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
+					if (data.result.success === 'True') {
+						Utility.alert({title:'Success', content: 'Samplesheet has been successfully imported', alertType:'success'});
+					}
+					else {
+						Utility.alert({title:'There\'s been an error<br/>',
+	 					content: data.result.error.join(" ") + " " +  data.result.objects.join(" "),
+	 					alertType:'danger'});
+					}
+
+				});
+	 		}
+
+	 	this.submit =
+	 		function(samplesheet_params) {
+	 			//check samplesheet
+	 			var samples = Array();
+	 			var lanes = {};
+	 			var start_sample_list = false;
+	 			var ilanes = 0;
+	 			var isampleid = 0;
+	 			_.each(samplesheet_params.samplesheet, function(row) {
+	 				if (start_sample_list) {
+	 					if (row[ilanes] !== undefined && row[ilanes] !== ''  && !isNaN(row[ilanes])) {
+	 						lanes[row[ilanes]] = true;
+	 					}
+	 					if (_.indexOf(samples,row[isampleid]) === -1 && row[isampleid] !== undefined && row[isampleid] !== '') {
+	 						samples.push(row[isampleid]);
+	 					}
+
+					}
+
+					if (_.indexOf(row,'Sample_ID') !== -1){
+						start_sample_list = true;
+						isampleid = _.indexOf(row,'Sample_ID');
+						ilanes = _.indexOf(row,'Lane');
+
+					}
+	 			});
+
+	 			if (_.keys(lanes).length < 8) {
+	 				Utility.alert({title:'There\'s been an error<br/>',
+	 					content: "Only "+_.keys(lanes).length +" lanes: "+ _.keys(lanes).join(','),
+	 					alertType:'danger'});
+	 				//return;
+	 			}
+	 			this.params = {ids: samples.join('|')}
+	 			BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
+	 				if (data.result.objects.length < samples.length) {
+	 					unknows = Array();
+
+						_.each(samples, function(sample) {
+							if (_.findWhere(data.result.objects, {'id': sample}) === undefined) {
+								unknows.push(sample);
+							}
+						});
+
+						Utility.alert({title:'There\'s been an error<br/>',
+							content: "Unknown samples: \n" + unknows.join('\n'),
+							alertType:'danger'});
+
+						return;
+	 				}
+	 				else {
+	 					$scope.link_samplesheet(samplesheet_params);
+	 				}
+	 			});
+
+
 	 		}
 
 		$scope.$watch('samplesheet_params.run_folder',
             function (newValue, oldValue) {
                 // Ignore initial setup.
                 if ( newValue === oldValue) { return;}
-                if ( newValue === null || newValue == undefined ) {  return; }
+                if ( newValue === null || newValue == undefined || newValue.running_folder === '') {
+                	$scope.samplesheet_params.fcid = null;
+                	$scope.samplesheet_params.date = null;
+                	$scope.samplesheet_params.instrument = null;
+                	return;
+                }
 
                 pieces = newValue.running_folder.split('_')
 
                 $scope.samplesheet_params.fcid = pieces[3].substring(1);
                 $scope.samplesheet_params.date = "20"+pieces[0].substring(0,2)+"/"+pieces[0].substring(2,4)+"/"+pieces[0].substring(4,6);
                 $scope.samplesheet_params.instrument = config.instruments[pieces[1]];
-            }
-        );
+            });
+
+		$scope.$watch('attachment.samplesheet',
+            function (newValue, oldValue) {
+
+            	if ( newValue === oldValue) { return;}
+                if ( newValue === null || newValue == undefined || newValue == []) {
+                	$scope.samplesheet_params.samplesheet = [];
+                	return;
+                }
+
+                $scope.samplesheet_params.samplesheet = $scope.attachment.samplesheet;
+            });
+
+        $scope.$watch('samplesheet_params.attachment',
+            function (newValue, oldValue) {
+            	// Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+                if ( newValue === null ) {
+                	$scope.samplesheet_params.samplesheet = [];
+                	return;
+                }
+
+				var reader = new FileReader();
+				reader.onload = function(event) {
+					var data = event.target.result.replace(/\r/g,"");
+					data = data.replace(/"/g,"");
+
+					$scope.attachment.samplesheet = Array();
+					_.each(data.split('\n'), function(row) {
+						if (row.length > 1) {
+							$scope.attachment.samplesheet.push(JSON.parse(JSON.stringify(row.split(','))));
+						}
+
+					});
+					$scope.restart();
+
+				};
+				reader.readAsText($scope.samplesheet_params.attachment);
+            });
+
+        $scope.restart =
+        	function(){
+        		BikaService.checkStatus().success(function (data, status, header, config){
+				   resut = data;
+				});
+			}
+
+
 
 });

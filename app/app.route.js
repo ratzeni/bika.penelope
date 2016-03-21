@@ -54,6 +54,14 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             }
 
         })
+         .state('samplesheet_upload', {
+            url: '/samplesheet/link_to_run',
+            templateUrl: 'app/shared/attachment/samplesheet_link2run.home.view.html',
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+            }
+
+        })
         .state('analysis_requests', {
             url: '/analysis_requests/:review_state',
             templateUrl: 'app/components/analysis_requests/analysis_requests.home.view.html',
