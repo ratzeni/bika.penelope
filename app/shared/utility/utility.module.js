@@ -45,9 +45,9 @@ utility_module.service('Utility',
 				return '';
 			}
 			else {
-				time = new Date(date);
+				time = new Date(date.split('.')[0]);
 			}
-			return time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate()
+			return time.getFullYear()+'-'+(("0" + (time.getMonth() + 1)).slice(-2))+'-'+("0" + time.getDate()).slice(-2)
 		}
 
 		this.format_review_state = function(review_state) {
