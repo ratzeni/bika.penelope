@@ -25,6 +25,17 @@
                                 data-ng-model="samplesheet_params.run_folder"
                                 ng-options="r.running_folder for r in run_folders">
                         </select>
+                        <div class="col-sm-10" ng-if="samplesheet_params.switchRun" style="margin-top:10px;">
+                            <input type="text" class="form-control"
+                                   ng-model="samplesheet_params.custom_run_folder"
+                                   placeholder="Add Run Folder..." >
+                        </div>
+                        <div class="col-sm-2" ng-if="samplesheet_params.switchRun" style="margin-top:10px;">
+                            <button type="button" class="btn btn-success"
+                                    data-ng-click="ctrl.add_run_folder(samplesheet_params.custom_run_folder)">
+                                    <span class="glyphicon glyphicon-plus-sign"></span>
+                            </button>
+                        </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="input-group">
@@ -57,7 +68,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 controls" style="margin-top:20px;" data-ng-if="samplesheet_params.run_folder != null">
+                <div class="col-sm-12 controls" style="margin-top:20px;"
+                     data-ng-if="samplesheet_params.run_folder != null && !samplesheet_params.switchRun">
                     <div class="col-sm-4">
                         <input type="checkbox" ng-model="samplesheet_params.switchReads" data-nq-switch-button="" class="col-sm-3"
                                data-theme="primary,stripped,rounded"

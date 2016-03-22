@@ -127,6 +127,7 @@ samplesheet_module.controller('Link2RunCtrl',
 			switchMode: true,
 			attachment: null,
 			samplesheet: $scope.attachment.samplesheet.length>0?$scope.attachment.samplesheet:null,
+			switchRun: false,
 		};
 
 		$scope.reads = config.bikaApiRest.data_source.reads;
@@ -185,13 +186,14 @@ samplesheet_module.controller('Link2RunCtrl',
 
 					}
 	 			});
-
-	 			if (_.keys(lanes).length < 8) {
+				nlanes = samplesheet_params.switchMode?2:8;
+	 			if (_.keys(lanes).length != nlanes) {
 	 				Utility.alert({title:'There\'s been an error<br/>',
-	 					content: "Only "+_.keys(lanes).length +" lanes: "+ _.keys(lanes).join(','),
+	 					content: "Expecting "+nlanes + " lanes, found " + _.keys(lanes).length +": "+ _.keys(lanes).join(','),
 	 					alertType:'danger'});
 	 				return;
 	 			}
+
 	 			this.params = {ids: samples.join('|')}
 	 			BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
 	 				if (data.result.objects.length < samples.length) {
@@ -221,18 +223,70 @@ samplesheet_module.controller('Link2RunCtrl',
             function (newValue, oldValue) {
                 // Ignore initial setup.
                 if ( newValue === oldValue) { return;}
-                if ( newValue === null || newValue == undefined || newValue.running_folder === '') {
+                if ( newValue === null || newValue == undefined || newValue.running_folder === '' || newValue.running_folder === 'MISSING RUN FOLDER') {
+
+
                 	$scope.samplesheet_params.fcid = null;
-                	$scope.samplesheet_params.date = null;
-                	$scope.samplesheet_params.instrument = null;
+					$scope.samplesheet_params.date = null;
+					$scope.samplesheet_params.instrument = null;
+					$scope.samplesheet_params.switchReads = false;
+					$scope.samplesheet_params.r1 = null;
+					$scope.samplesheet_params.r2 = null;
+					$scope.samplesheet_params.switchIndexes = false;
+					$scope.samplesheet_params.i1 = null;
+					$scope.samplesheet_params.i2 = null;
+					$scope.samplesheet_params.switchMode = true;
+
+                	if ( newValue != undefined && newValue.running_folder === 'MISSING RUN FOLDER') {
+                		$scope.samplesheet_params.switchRun = true;
+
+                	}
+					$scope.restart();
                 	return;
                 }
-
+				$scope.samplesheet_params.switchRun = false;
                 pieces = newValue.running_folder.split('_')
-
                 $scope.samplesheet_params.fcid = pieces[3].substring(1);
                 $scope.samplesheet_params.date = "20"+pieces[0].substring(0,2)+"/"+pieces[0].substring(2,4)+"/"+pieces[0].substring(4,6);
                 $scope.samplesheet_params.instrument = config.instruments[pieces[1]];
+
+                if (_.size(newValue.run_info) > 0) {
+                	r1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'});
+                	if (r1 !== undefined) {
+                		$scope.samplesheet_params.r1 = _.findWhere($scope.reads, {'value': r1.NumCycles});
+                		newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'}));
+
+                		r2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'});
+                		if (r2 !== undefined) {
+                			$scope.samplesheet_params.switchReads = true;
+                			$scope.samplesheet_params.r2 = _.findWhere($scope.reads, {'value': r2.NumCycles});
+                			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'}));
+                		}
+                	}
+
+                	i1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'});
+					if (i1 !== undefined) {
+                		$scope.samplesheet_params.i1 = _.findWhere($scope.indexes, {'value': i1.NumCycles});
+                		newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'}));
+                		i2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'});
+                		if (i2 !== undefined) {
+                			$scope.samplesheet_params.switchIndexes = true;
+                			$scope.samplesheet_params.i2 = _.findWhere($scope.indexes, {'value': i2.NumCycles});
+                			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'}));
+                		}
+					}
+					if (newValue.run_info.fc_layout.length > 0) {
+						fc_layout = newValue.run_info.fc_layout[0];
+						if (fc_layout.LaneCount === '8') {
+							$scope.samplesheet_params.switchMode = false;
+						}
+						else if (fc_layout.LaneCount === '2') {
+							$scope.samplesheet_params.switchMode = true;
+						}
+
+					}
+                }
+                $scope.restart();
             });
 
 		$scope.$watch('attachment.samplesheet',
@@ -281,6 +335,21 @@ samplesheet_module.controller('Link2RunCtrl',
 				});
 			}
 
+		this.add_run_folder =
+			function(custom_run_folder) {
 
+                pieces = custom_run_folder.split('_')
+                if (pieces.length !== 4 || pieces[0].length != 6 || pieces[2].length != 4 || pieces[3].length < 10) {
+                	Utility.alert({title:'There\'s been an error<br/>',
+	 					content: "Run folder name not-well formatted",
+	 					alertType:'danger'});
+	 				return;
+                }
+                $scope.run_folders.push({'running_folder': custom_run_folder, run_info: {}});
+                $scope.samplesheet_params.run_folder = _.findWhere($scope.run_folders, {running_folder: custom_run_folder});
+                console.log($scope.samplesheet_params.run_folder);
+				$scope.restart();
+
+			}
 
 });

@@ -17,5 +17,6 @@ angular
         	user: 'DUMMY_SSH_USER',
         	run_folder: 'DUMMY_RUN_FOLDER',
         	tmp_folder: 'DUMMY_TMP_FOLDER',
+        	run_info_file: 'DUMMY_RUN_INFO_FILE',
         }
 	});
