@@ -23,7 +23,6 @@ blackboard_module.controller('BlackBoardCtrl',
 			worksheet_title: null,
 			worksheet_description: null,
 			switchWorksheet: false,
-
 		};
 		$scope.analyses = [];
 		$scope.worksheets = [];
@@ -67,23 +66,28 @@ blackboard_module.controller('BlackBoardCtrl',
                 analyses = Array();
                 $scope.csv.sample_list = Array();
 				_.each(ngCart.getItems(), function(item) {
+
 					$scope.csv.sample_list.push({
 					 Sample_ID: item.getData().sample_id,
 					 Sample_Name:item.getData().client_sample_id})
-					Utility.merge(transitions,item.getData().transitions,'id');
+
+					//Utility.merge(transitions,item.getData().transitions,'id');
 					Utility.merge(analyses, item.getData().analyses, 'id');
+
 					$scope.analysis_results[item.getData().id] = [];
+
 					_.each(item.getData().analyses, function(a) {
-						Utility.merge(workflow_transitions, a.transitions, 'id');
+						console.log(a);
+						//Utility.merge(workflow_transitions, a.transitions, 'id');
 						$scope.analysis_results[item.getData().id][a.id] = (a.review_state === 'sample_received')?1:a.result;
 					});
 
 				});
-				$scope.transitions = transitions;
-                $scope.workflow_transitions = workflow_transitions;
+				//$scope.transitions = transitions;
+                //$scope.workflow_transitions = workflow_transitions;
                 $scope.analyses = analyses;
-                $scope.getWorksheets();
-        		$scope.getAnalysists();
+                //$scope.getWorksheets();
+        		//$scope.getAnalysists();
 			}
 		$scope.init();
 
@@ -500,7 +504,7 @@ blackboard_module.controller('BlackBoardCtrl',
 
 		this.getHeader =
 			function() {
-				{return ["Sample", "Sample_ID", "Sample_Name"]};
+				{return ["Sample_ID", "Sample_Name"]};
 
 			}
 

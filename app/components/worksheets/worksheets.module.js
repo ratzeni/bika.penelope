@@ -243,6 +243,11 @@ worksheets_module.controller('WorksheetDetailsCtrl',
             delayHide: 1000,
         });
 
+        $scope.loading_blackboard = Utility.loading({
+            busyText: 'Wait while updating board...',
+            delayHide: 1000,
+        });
+
 		$scope.loading_change_review_state =
         	function(text) {
         		this.params = {
@@ -550,6 +555,31 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 					 $scope.publish(request_id, analysis_id);
 				}
 
+			}
+
+		this.add_to_blackboard =
+			function(ids) {
+				console.log(ids);
+				_.each(ids,function(id) {
+					$scope.loading_blackboard.show();
+					ar = _.findWhere($scope.worksheet_details, {'id': id.request_id});
+					if (ngCart.getItemById(ar.id) === false ) {
+						ngCart.addItem(ar.id,ar.id,1,1,ar);
+					}
+					$scope.loading_blackboard.hide();
+				});
+				$scope.checked_list = [];
+			}
+
+		this.remove_from_blackboard =
+			function(ids) {
+				_.each(ids,function(id) {
+					ar = _.findWhere($scope.worksheet_details, {'id': id.request_id});
+					if (ngCart.getItemById(ar.id) !== false ) {
+						ngCart.removeItemById(ar.id);
+					}
+				});
+				$scope.checked_list = [];
 			}
 
 
