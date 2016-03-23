@@ -68,7 +68,7 @@ blackboard_module.controller('BlackBoardCtrl',
 				_.each(ngCart.getItems(), function(item) {
 
 					$scope.csv.sample_list.push({
-					 Sample_ID: item.getData().sample_id,
+					 Sample_ID: item.getData().id,
 					 Sample_Name:item.getData().client_sample_id})
 
 					//Utility.merge(transitions,item.getData().transitions,'id');
