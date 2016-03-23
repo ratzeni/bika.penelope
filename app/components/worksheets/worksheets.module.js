@@ -133,8 +133,8 @@ worksheets_module.controller('WorksheetsCtrl',
 		$scope.closeWorksheet =
 			function(worksheet_id) {
 				$scope.loading_change_review_state('closing worksheets').show();
-				params = {input_values: $scope._get_input_values_review_state(worksheet_id,'closed')};
-				BikaService.closeWorksheet(params).success(function (data, status, header, config){
+				this.params = {input_values: $scope._get_input_values_review_state(worksheet_id,'closed')};
+				BikaService.closeWorksheet(this.params).success(function (data, status, header, config){
 					$scope.loading_change_review_state('closing worksheets').hide();
 					$scope.checked_list = [];
 				 	$scope.getWorksheets($scope.review_state);
@@ -144,8 +144,8 @@ worksheets_module.controller('WorksheetsCtrl',
 		$scope.openWorksheet =
 			function(worksheet_id) {
 				$scope.loading_change_review_state('opening worksheets').show();
-				params = {input_values: $scope._get_input_values_review_state(worksheet_id, 'open')};
-				BikaService.openWorksheet(params).success(function (data, status, header, config){
+				this.params = {input_values: $scope._get_input_values_review_state(worksheet_id, 'open')};
+				BikaService.openWorksheet(this.params).success(function (data, status, header, config){
 					$scope.loading_change_review_state('opening worksheets').hide();
 					$scope.checked_list = [];
 				 	$scope.getWorksheets($scope.review_state);
@@ -155,8 +155,8 @@ worksheets_module.controller('WorksheetsCtrl',
 		$scope.cancelWorksheet =
 			function(worksheet_id) {
 				$scope.loading_change_review_state('deleting worksheets').show();
-				params = {input_values: $scope._get_input_values_review_state(worksheet_id, 'cancelled')};
-				BikaService.cancelWorksheet(params).success(function (data, status, header, config){
+				this.params = {input_values: $scope._get_input_values_review_state(worksheet_id, 'cancelled')};
+				BikaService.cancelWorksheet(this.params).success(function (data, status, header, config){
 					$scope.loading_change_review_state('deleting worksheets').hide();
 					$scope.checked_list = [];
 				 	$scope.getWorksheets($scope.review_state);
@@ -166,8 +166,8 @@ worksheets_module.controller('WorksheetsCtrl',
 		$scope.reinstateWorksheet =
 			function(worksheet_id) {
 				$scope.loading_change_review_state('reinstating worksheets').show();
-				params = {input_values: $scope._get_input_values_review_state(worksheet_id, 'open')};
-				BikaService.reinstateWorksheet(params).success(function (data, status, header, config){
+				this.params = {input_values: $scope._get_input_values_review_state(worksheet_id, 'open')};
+				BikaService.reinstateWorksheet(this.params).success(function (data, status, header, config){
 					$scope.loading_change_review_state('reinstating worksheets').hide();
 					$scope.checked_list = [];
 				 	$scope.getWorksheets($scope.review_state);
@@ -373,13 +373,13 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 		}
 
 		$scope.receiveSample =
-			function(id) {
+			function(request_id) {
 				$scope.loading_change_review_state('receiving samples').show();
-				this.params = {ids: id};
 
-				$scope.stickers.id = id;
+				this.params = {f: $scope._get_review_params(request_id)};
+
 				BikaService.receiveSample(this.params).success(function (data, status, header, config){
-					this.params = {input_values: $scope._get_input_values_review_state(id, 'sample_received')};
+					this.params = {input_values: $scope._get_input_values_review_state(request_id, 'sample_received')};
 					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.checked_list = [];
 						$scope.loading_change_review_state('receiving samples').hide();
@@ -435,10 +435,10 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 					return;
 				}
 				$scope.loading_change_review_state('verifying').show();
-				params = {f: $scope._get_action_params(request_id, analysis_id)}
+				this.params = {f: $scope._get_action_params(request_id, analysis_id)}
 				//console.log(params);
 
-				BikaService.verify(params).success(function (data, status, header, config){
+				BikaService.verify(this.params).success(function (data, status, header, config){
 					result = data.result;
 					//console.log(result);
 					$scope.checked_list = [];
@@ -469,6 +469,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 
 		$scope._get_action_params =
 			function(request_id, analysis_id, action) {
+
 				if (!Array.isArray(request_id) && !Array.isArray(analysis_id)) {
 					var f = []
 					f.push($scope._get_analysis_path(request_id, analysis_id));
@@ -477,20 +478,32 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 				else if (Array.isArray(request_id)) {
 					var f = [];
 					_.each(request_id,function(request_obj) {
-						//if (action !== undefined && action=='publish') {
-						//	f.push($scope._get_analysis_path(request_obj.request_id));
-						//}
-						//else {
 							f.push($scope._get_analysis_path(request_obj.request_id,request_obj.analysis_id));
-						//}
-
-
-
 					});
 					return JSON.stringify(f);
 				}
 
 			}
+
+		$scope._get_review_params =
+			function(request_id) {
+
+				if (!Array.isArray(request_id)) {
+					var f = [];
+					f.push($scope._get_analysis_path(request_id));
+					return JSON.stringify(f);
+				}
+				else if (Array.isArray(request_id)) {
+					var f = [];
+					_.each(request_id,function(id) {
+						f.push($scope._get_analysis_path(id));
+					});
+					return JSON.stringify(f);
+				}
+
+			}
+
+
 
 		$scope._get_input_values =
 			function (request_id, analysis_id) {
@@ -526,11 +539,11 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 		this.change_review_state =
 			function (action, id) {
 				if (id === undefined) {
-					_ids = Array();
+					id = Array();
 					_.each($scope.checked_list, function(i) {
-						_ids.push(i.request_id);
+						id.push(i.request_id);
 					});
-					var id = _ids.join('|')
+
 				}
 				if (action === 'receive') {
 					 $scope.receiveSample(id);

@@ -492,9 +492,9 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.receiveSample =
 			function(id) {
 				$scope.loading_change_review_state('receiving samples').show();
-				params = {ids: id};
+				this.params = {ids: id};
 				$scope.stickers.id=id;
-				BikaService.receiveSample(params).success(function (data, status, header, config){
+				BikaService.receiveSample(this.params).success(function (data, status, header, config){
 					params = {input_values: $scope._get_input_values_review_state(id, 'sample_received')};
 					BikaService.updateAnalysisRequests(params).success(function (data, status, header, config){
 						$scope.checked_list = [];
@@ -762,9 +762,9 @@ batches_module.controller('BatchBookCtrl',
 				 	result = data.result;
 				 	//console.log(result);
 				 	if (result.success === 'True') {
-				 		var params = {f: $scope._get_action_params(request_id, analysis_id)}
+				 		this.params = {f: $scope._get_action_params(request_id, analysis_id)}
 
-				 		BikaService.submit(params).success(function (data, status, header, config){
+				 		BikaService.submit(this.params).success(function (data, status, header, config){
 				 			result = data.result;
 				 			$scope.workflow_params.analyses = [];
 				 			$scope.checked_list = [];
