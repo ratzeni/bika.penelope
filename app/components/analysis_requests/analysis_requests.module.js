@@ -57,6 +57,9 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
                 if (review_state === 'active') {
 					params['Subjects'] = 'sample_due|sample_received|to_be_verified|verified|published';
 				}
+				else if (review_state === 'published') {
+					params['review_state'] = review_state;
+				}
 				else {
 					params['Subject'] = review_state;
 				}
