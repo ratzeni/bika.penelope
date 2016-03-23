@@ -478,6 +478,9 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 				else if (Array.isArray(request_id)) {
 					var f = [];
 					_.each(request_id,function(request_obj) {
+							if (action !== undefined && action=='publish') {
+								f.push($scope._get_analysis_path(request_obj.request_id));
+							}
 							f.push($scope._get_analysis_path(request_obj.request_id,request_obj.analysis_id));
 					});
 					return JSON.stringify(f);
