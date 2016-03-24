@@ -45,7 +45,7 @@ utility_module.service('Utility',
 				return '';
 			}
 			else {
-				time = new Date(date.split('.')[0]);
+				time = new Date(date.toString().split('.')[0]);
 			}
 			return time.getFullYear()+'-'+(("0" + (time.getMonth() + 1)).slice(-2))+'-'+("0" + time.getDate()).slice(-2)
 		}
