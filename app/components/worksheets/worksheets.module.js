@@ -9,7 +9,7 @@ worksheets_module.controller('WorksheetsCtrl',
 
 		$scope.loading_search = Utility.loading({
             busyText: 'Wait while searching worksheets...',
-            delayHide: 500,
+            delayHide: 1000,
         });
 
 
@@ -17,7 +17,7 @@ worksheets_module.controller('WorksheetsCtrl',
         	function(text) {
         		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
         		return Utility.loading(this.params);
@@ -252,7 +252,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
         	function(text) {
         		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
         		return Utility.loading(this.params);

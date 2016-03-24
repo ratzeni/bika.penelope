@@ -16,7 +16,7 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 10,
+			page_size: 50,
 			total: 0,
 			current: 1,
 			last: 0,
@@ -32,14 +32,14 @@ analysis_requests_module.controller('AnalysisRequestsCtrl',
 
         $scope.loading_ars = Utility.loading({
             busyText: 'Wait while loading analyses...',
-            delayHide: 500,
+            delayHide: 1000,
         });
 
         $scope.loading_change_review_state =
         	function(text) {
         		params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
         		return Utility.loading(params);
@@ -230,14 +230,14 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 
 		$scope.loading_ars = Utility.loading({
             busyText: 'Wait while loading analyses...',
-            delayHide: 500,
+            delayHide: 1000,
         });
 
         $scope.loading_change_review_state =
         	function(text) {
         		params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
         		return Utility.loading(params);
@@ -354,9 +354,6 @@ analysis_requests_module.controller('AnalysisRequestDetailsCtrl',
 							});
 						} else {$scope.getAnalysisRequests($scope.state.analysis_request_id);}
 					});
-
-
-
 		}
 
 		$scope.submit =

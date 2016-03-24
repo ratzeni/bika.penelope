@@ -9,7 +9,7 @@ batches_module.controller('BatchesCtrl',
 
 		$scope.loading_search = Utility.loading({
             busyText: 'Wait while searching batches...',
-            delayHide: 500,
+            delayHide: 1000,
         });
 
         $scope.loading_blackboard = Utility.loading({
@@ -21,7 +21,7 @@ batches_module.controller('BatchesCtrl',
         	function(text) {
         		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
         		return Utility.loading(this.params);
@@ -32,7 +32,7 @@ batches_module.controller('BatchesCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 10,
+			page_size: 25,
 			total: 0,
 			current: 1,
 			last: 0,
@@ -54,10 +54,10 @@ batches_module.controller('BatchesCtrl',
             	$scope.loading_search.show();
             	$scope.review_state = review_state;
                 $scope.batches = [];
-                params = {sort_on: 'id', sort_order: 'descending', Subject: review_state,
+                this.params = {sort_on: 'id', sort_order: 'descending', Subject: review_state,
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
-                BikaService.getBatches(params).success(function (data, status, header, config){
+                BikaService.getBatches(this.params).success(function (data, status, header, config){
                     $scope.batches = data.result.objects;
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
@@ -74,8 +74,8 @@ batches_module.controller('BatchesCtrl',
 
 		$scope.count_samples = function() {
 			_.each($scope.batches,function(batch) {
-					params = {title: batch.id, include_fields: 'path'};
-					BikaService.countAnalysisRequests(params).success(function (data, status, header, config){
+					this.params = {title: batch.id, include_fields: 'path'};
+					BikaService.countAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.samples[batch.id] = data.result;
                 	});
 			});
@@ -84,10 +84,10 @@ batches_module.controller('BatchesCtrl',
         $scope.closeBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('closing batches').show();
-				params = {ids: batch_id};
-				BikaService.closeBatch(params).success(function (data, status, header, config){
-					params = {input_values: $scope._get_input_values_review_state(batch_id,'closed')};
-					BikaService.updateBatches(params).success(function (data, status, header, config){
+				this.params = {ids: batch_id};
+				BikaService.closeBatch(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'closed')};
+					BikaService.updateBatches(this.params).success(function (data, status, header, config){
 						$scope.loading_change_review_state('closing batches').hide();
 						$scope.checked_list = [];
 				 		$scope.getBatches($scope.review_state);
@@ -99,10 +99,10 @@ batches_module.controller('BatchesCtrl',
 		$scope.openBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('opening batches').show();
-				params = {ids: batch_id};
-				BikaService.openBatch(params).success(function (data, status, header, config){
-					params = {input_values: $scope._get_input_values_review_state(batch_id,'open')};
-					BikaService.updateBatches(params).success(function (data, status, header, config){
+				this.params = {ids: batch_id};
+				BikaService.openBatch(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'open')};
+					BikaService.updateBatches(this.params).success(function (data, status, header, config){
 						$scope.loading_change_review_state('opening batches').hide();
 						$scope.checked_list = [];
 				 		$scope.getBatches($scope.review_state);
@@ -115,10 +115,10 @@ batches_module.controller('BatchesCtrl',
 		$scope.cancelBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('deleting batches').show();
-				params = {id: batch_id};
-				BikaService.cancelBatch(params).success(function (data, status, header, config){
-					params = {input_values: $scope._get_input_values_review_state(batch_id,'cancelled')};
-					BikaService.updateBatches(params).success(function (data, status, header, config){
+				this.params = {id: batch_id};
+				BikaService.cancelBatch(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'cancelled')};
+					BikaService.updateBatches(this.params).success(function (data, status, header, config){
 						$scope.loading_change_review_state('deleting batches').hide();
 						$scope.checked_list = [];
 				 		$scope.getBatches($scope.review_state);
@@ -131,10 +131,10 @@ batches_module.controller('BatchesCtrl',
 		$scope.reinstateBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('reinstating batches').show();
-				params = {ids: batch_id};
-				BikaService.reinstateBatch(params).success(function (data, status, header, config){
-					params = {input_values: $scope._get_input_values_review_state(batch_id)};
-					BikaService.updateBatches(params).success(function (data, status, header, config){
+				this.params = {ids: batch_id};
+				BikaService.reinstateBatch(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state(batch_id)};
+					BikaService.updateBatches(this.params).success(function (data, status, header, config){
 						$scope.loading_change_review_state('reinstating batches').hide();
 						$scope.checked_list = [];
 				 		$scope.getBatches($scope.review_state);
@@ -234,8 +234,8 @@ batches_module.controller('BatchesCtrl',
 
 				_.each(batch_ids,function(batch_id) {
 					$scope.loading_blackboard.show();
-					params = {title: batch_id};
-					BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+					this.params = {title: batch_id};
+					BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
 						var analysis_requests = data.result.objects;
 						_.each(analysis_requests, function(ar) {
 							if (ngCart.getItemById(ar.id) === false ) {
@@ -251,8 +251,8 @@ batches_module.controller('BatchesCtrl',
 		this.remove_from_blackboard =
 			function(batch_ids) {
 				_.each(batch_ids,function(batch_id) {
-					params = {title: batch_id};
-					BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+					this.params = {title: batch_id};
+					BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
 						var analysis_requests = data.result;
 						_.each(analysis_requests, function(ar) {
 							if (ngCart.getItemById(ar.id) !== false ) {
@@ -298,28 +298,28 @@ batches_module.controller('BatchDetailsCtrl',
 
 		$scope.loading_batch = Utility.loading({
             busyText: 'Wait while loading batch data...',
-            delayHide: 500,
+            delayHide: 1000,
         });
 
         $scope.loading_ars = Utility.loading({
             busyText: 'Wait while loading analyses...',
-            delayHide: 500,
+            delayHide: 1000,
         });
 
         $scope.loading_change_review_state =
         	function(text) {
-        		params = {
+        		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
-        		return Utility.loading(params);
+        		return Utility.loading(this.params);
         	};
 
 		$scope.get_sample_list =
 			function(batch_id) {
-				params = {sort_on: 'getId', sort_order: 'ascending', title: batch_id};
-				BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+				this.params = {sort_on: 'getId', sort_order: 'ascending', title: batch_id};
+				BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
 					var analysis_requests = data.result.objects;
 					_.each(analysis_requests,function(ar) {
 						if (ar.sample_type.match('SAMPLE-IN-')) {
@@ -336,16 +336,19 @@ batches_module.controller('BatchDetailsCtrl',
             	$scope.loading_ars.show();
             	$scope.review_state = review_state;
                 $scope.analysis_requests = [];
-                params = {sort_on: 'getId', sort_order: 'ascending', title: batch_id,
+                this.params = {sort_on: 'getId', sort_order: 'ascending', title: batch_id,
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
 				if (review_state === 'active') {
-					params['Subjects'] = 'sample_due|sample_received|to_be_verified|verified|published';
+					this.params['Subjects'] = 'sample_due|sample_received|to_be_verified|verified|published';
+				}
+				else if (review_state === 'published') {
+					this.params['review_state'] = review_state;
 				}
 				else {
-					params['Subject'] = review_state;
+					this.params['Subject'] = review_state;
 				}
-                BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+                BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
                     $scope.analysis_requests = data.result.objects;
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
@@ -399,8 +402,8 @@ batches_module.controller('BatchDetailsCtrl',
         $scope.getBatch =
             function(batch_id) {
             	$scope.loading_batch.show();
-                params = {sort_on: 'Date', sort_order: 'descending', id: batch_id};
-                BikaService.getBatches(params).success(function (data, status, header, config){
+                this.params = {sort_on: 'Date', sort_order: 'descending', id: batch_id};
+                BikaService.getBatches(this.params).success(function (data, status, header, config){
                     $scope.batch = data.result.objects[0];
 
                     $scope.loading_batch.hide();
@@ -462,10 +465,10 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.cancelAnalysisRequest =
 			function(id) {
 				$scope.loading_change_review_state('deleting analysis requests').show();
-				params = {ids: id};
-				BikaService.cancelAnalysisRequest(params).success(function (data, status, header, config){
-					params = {input_values: $scope._get_input_values_review_state(id,'cancelled')};
-					BikaService.updateAnalysisRequests(params).success(function (data, status, header, config){
+				this.params = {ids: id};
+				BikaService.cancelAnalysisRequest(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state(id,'cancelled')};
+					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.checked_list = [];
 						$scope.loading_change_review_state('deleting analysis requests').hide();
 						$scope.getBatch($stateParams.batch_id);
@@ -477,10 +480,10 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.reinstateAnalysisRequest =
 			function(id) {
 				$scope.loading_change_review_state('reinstating analysis requests').show();
-				params = {ids: id};
-				BikaService.reinstateAnalysisRequest(params).success(function (data, status, header, config){
-				 	params = {input_values: $scope._get_input_values_review_state(id)};
-					BikaService.updateAnalysisRequests(params).success(function (data, status, header, config){
+				this.params = {ids: id};
+				BikaService.reinstateAnalysisRequest(this.params).success(function (data, status, header, config){
+				 	this.params = {input_values: $scope._get_input_values_review_state(id)};
+					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.checked_list = [];
 						$scope.loading_change_review_state('reinstating analysis requests').hide();
 						$scope.getBatch($stateParams.batch_id);
@@ -492,20 +495,53 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.receiveSample =
 			function(id) {
 				$scope.loading_change_review_state('receiving samples').show();
-				this.params = {ids: id};
-				$scope.stickers.id=id;
+				this.params = {f: $scope._get_review_params(id.split('|'))};
 				BikaService.receiveSample(this.params).success(function (data, status, header, config){
-					params = {input_values: $scope._get_input_values_review_state(id, 'sample_received')};
-					BikaService.updateAnalysisRequests(params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state(id, 'sample_received')};
+					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.checked_list = [];
 						$scope.loading_change_review_state('receiving samples').hide();
-						$scope.getAnalysisRequests($scope.batch.id, $scope.review_state, true);
+						$scope.getAnalysisRequests($scope.batch.id, $scope.review_state);
 					});
 
 				});
 
 			}
 
+		$scope._get_review_params =
+			function(request_id) {
+
+				if (!Array.isArray(request_id)) {
+					var f = [];
+					f.push($scope._get_path(request_id));
+					return JSON.stringify(f);
+				}
+				else if (Array.isArray(request_id)) {
+					var f = [];
+					_.each(request_id,function(id) {
+						f.push($scope._get_path(id));
+					});
+					return JSON.stringify(f);
+				}
+
+			}
+
+		$scope._get_path =
+			function(request_id) {
+				request = _.findWhere($scope.analysis_requests, {'id': request_id});
+				return request.path;
+			}
+
+		$scope._get_input_values_ =
+			function (ar_id, review_state) {
+				ar_id = ar_id.split('|');
+				var input_values = {};
+				_.each(ar_id,function(id) {
+					ar = _.findWhere($scope.analysis_requests, {'id': id});
+					input_values[ar.path] = {subject: review_state!==undefined?review_state:ar.review_state};
+				});
+				return JSON.stringify(input_values);
+			}
 
 		$scope._get_input_values_review_state =
 			function (ar_id, review_state) {
@@ -622,22 +658,22 @@ batches_module.controller('BatchBookCtrl',
 
 		$scope.loading_change_review_state =
         	function(text) {
-        		var params = {
+        		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 500,
+            		delayHide: 1000,
             		theme: 'warning',
         		}
-        		return Utility.loading(params);
+        		return Utility.loading(this.params);
         	};
 
 
 		$scope.getAnalysisRequests =
             function(batch_id, print_stickers) {
                 $scope.analysis_requests = [];
-                params = {sort_on: 'id', sort_order: 'ascending', title: batch_id, cancelled_state: 'active',
+                this.params = {sort_on: 'id', sort_order: 'ascending', title: batch_id, cancelled_state: 'active',
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
-                BikaService.getAnalysisRequests(params).success(function (data, status, header, config){
+                BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
                     $scope.analysis_requests = data.result.objects;
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
@@ -678,8 +714,8 @@ batches_module.controller('BatchBookCtrl',
 
 		$scope.getWorksheets =
 			function() {
-				params = {sort_on: 'id', sort_order: 'descending'}
-				BikaService.getWorksheets(params).success(function (data, status, header, config){
+				this.params = {sort_on: 'id', sort_order: 'descending'}
+				BikaService.getWorksheets(this.params).success(function (data, status, header, config){
 					$scope.worksheets = data.result.objects;
 				});
 			}
@@ -688,32 +724,6 @@ batches_module.controller('BatchBookCtrl',
         $scope.getWorksheets();
         $scope.getAnalysists();
 
-        $scope.cancelAnalysisRequest =
-			function(id) {
-				$scope.loading_change_review_state('deleting analysis requests').show();
-				params = {ids: id};
-				BikaService.cancelAnalysisRequest(params).success(function (data, status, header, config){
-				 	$scope.checked_list = [];
-				 	$scope.loading_change_review_state('deleting analysis requests').hide();
-				 	$scope.getAnalysisRequests($stateParams.batch_id);
-				});
-
-			}
-
-		$scope.receiveSample =
-			function(id) {
-				$scope.loading_change_review_state('receiving samples').show();
-				params = {ids: id};
-				$scope.stickers.id = id;
-				BikaService.receiveSample(params).success(function (data, status, header, config){
-					//console.log(data);
-					$scope.checked_list = [];
-					$scope.loading_change_review_state('receiving samples').hide();
-					$scope.getAnalysisRequests($stateParams.batch_id, true);
-
-				});
-
-			}
 
 		$scope.ultimate_workflow_transitions =
 			function(params, review_state) {
@@ -727,13 +737,13 @@ batches_module.controller('BatchBookCtrl',
 				});
 				var i = 0;
 				_.each(request_paths, function(path){
-					_params = {path: path};
-					BikaService.getAnalysisRequests(_params).success(function (data, status, header, config){
+					this.params = {path: path};
+					BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
 						i++;
 						ar = data.result.objects[0];
 						if (ar.review_state === review_state) {
-							var __params = {obj_path: path, subject: review_state};
-							BikaService.updateAnalysisRequest(__params).success(function (data, status, header, config){
+							this.params = {obj_path: path, subject: review_state};
+							BikaService.updateAnalysisRequest(this.params).success(function (data, status, header, config){
 								if (i == request_paths.length) {$scope.getAnalysisRequests($stateParams.batch_id)};
 							});
 						}
@@ -756,15 +766,15 @@ batches_module.controller('BatchBookCtrl',
 					return;
 				}
 				$scope.loading_change_review_state('submitting').show();
-				params = {input_values: $scope._get_input_values(request_id, analysis_id)};
+				this.params = {input_values: $scope._get_input_values(request_id, analysis_id)};
 
-				BikaService.setAnalysesResults(params).success(function (data, status, header, config){
+				BikaService.setAnalysesResults(this.params).success(function (data, status, header, config){
 				 	result = data.result;
 				 	//console.log(result);
 				 	if (result.success === 'True') {
-				 		this.params = {f: $scope._get_action_params(request_id, analysis_id)}
+				 		params = {f: $scope._get_action_params(request_id, analysis_id)}
 
-				 		BikaService.submit(this.params).success(function (data, status, header, config){
+				 		BikaService.submit(params).success(function (data, status, header, config){
 				 			result = data.result;
 				 			$scope.workflow_params.analyses = [];
 				 			$scope.checked_list = [];
@@ -853,8 +863,8 @@ batches_module.controller('BatchBookCtrl',
 
 					BikaService.createWorksheet(this.params).success(function (data, status, header, config){
 						result = data.result;
-						_params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
-						BikaService.updateAnalysisRequests(_params).success(function (data, status, header, config){
+						this.params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
+						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 							$scope.checked_list = [];
 							$scope.workflow_params = {
 								analyses: [],
@@ -874,14 +884,14 @@ batches_module.controller('BatchBookCtrl',
 				}
 				else {
 
-					params = {
+					this.params = {
 						obj_path: $scope.workflow_params.worksheet.path,
 						Remarks: $scope._get_worksheet_analyses(request_id, analysis_id, JSON.parse($scope.workflow_params.worksheet.remarks)),
 					}
-					BikaService.updateWorksheet(params).success(function (data, status, header, config){
+					BikaService.updateWorksheet(this.params).success(function (data, status, header, config){
 						result = data.result;
-						_params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
-						BikaService.updateAnalysisRequests(_params).success(function (data, status, header, config){
+						this.params = {input_values: $scope._get_input_values_analyst(request_id, analysis_id, $scope.workflow_params.analyst.userid)};
+						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 							$scope.checked_list = [];
 							$scope.workflow_params = {
 								analyses: [],
