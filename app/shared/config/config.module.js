@@ -105,6 +105,7 @@ angular
         },
         instruments: {
         	SN526: 'Diabolik',
+        	J00143: 'Zagor',
         }
 
 
