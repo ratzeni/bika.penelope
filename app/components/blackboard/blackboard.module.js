@@ -149,7 +149,7 @@ blackboard_module.controller('BlackBoardCtrl',
 
 		this.getHeader =
 			function() {
-				{return ["Sample_ID", "Sample_Name"]};
+				{return ["N","Sample_ID", "Sample_Name"]};
 
 			}
 
