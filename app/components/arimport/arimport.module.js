@@ -88,7 +88,7 @@ arimport_module.controller('ARImportCtrl',
 
 		$scope.submit_pool =
 			function(arimport_params, pool) {
-				var _params = {
+				this.params = {
 					selectedClient: arimport_params.selectedClient,
 					selectedContact: arimport_params.selectedContact,
 					selectedCCContacts: arimport_params.selectedCCContacts,
@@ -106,14 +106,14 @@ arimport_module.controller('ARImportCtrl',
 					client_samples: _.where(arimport_params.client_samples, {'pool': pool}),
 				};
 				_params.client_samples.unshift({index: 1, sample: pool, pool: pool});
-			        $scope.import(_params);
+				$scope.import(this.params);
 			};
 		// :: function :: ARImport()
 		$scope.import =
 			function(arimport_params) {
 
 				$scope.loading_import.show()
-				outcome = {
+				var outcome = {
 					batch_id: null,
 					arequest_ids: [],
 				}
@@ -205,12 +205,17 @@ arimport_module.controller('ARImportCtrl',
 								Services: services.join('|'),
 								Remarks: get_remarks(client_samples, arimport_params),
 								subject: 'sample_due',
+								rights: client_samples.ordinal!=undefined ? client_samples.ordinal : Utility.format_ordinal('0'),
 							}
 
 							BikaService.createAnalysisRequest(this.ar_params).success(function (data, status, header, config){
 								result = data.result;
 								if (result['success'] === 'True') {
+									Utility.alert({title:'Success', content: 'Sample '+ result['sample_id'] + ' has been successfully imported', alertType:'success', duration:3000});
 									outcome.arequest_ids.push({ar_id:result['ar_id'], sample_id:result['sample_id']});
+									if (outcome.arequest_ids.length === arimport_params.client_samples.length) {
+										Utility.alert({title:'Success', content: 'Your Batch has been successfully created.', alertType:'success'});
+									}
 								}
 								else {
 									console.log(result['message']);
@@ -223,7 +228,7 @@ arimport_module.controller('ARImportCtrl',
                     	});
 
 						$scope.loading_import.hide();
-						Utility.alert({title:'Success', content: 'Your AR has been successfully imported', alertType:'success'});
+						Utility.alert({title:'', content: 'Wait while importing samples', alertType:'info'});
 						if (arimport_params.selectedSampleType.prefix !== 'POOL') {
 							$state.go('batch',{batch_id: outcome.batch_id});
 						}
@@ -499,16 +504,43 @@ arimport_module.controller('ARImportCtrl',
 
 		$scope.retrieveCSV =
 			function(data, is_attachment) {
+
+				function check_header(head) {
+
+					if (head.length < 2) {
+						Utility.alert({title:'Not valid CSV file!!!',
+							content: "CSV file must contain at least two column: N & SampleID",
+							alertType:'danger'}
+						);
+						return false;
+					}
+					return true;
+
+				}
+
+				function check_ordinals(value) {
+
+					if (!Number.isInteger(parseInt(value))) {
+						Utility.alert({title:'Not valid CSV file!!!',
+							content: "First column must be a integer value",
+							alertType:'danger'}
+						);
+						return false;
+					}
+					return true;
+				}
+
 				var ret_data = Array();
 				var lines = is_attachment===undefined?data.split('\n'):data;
 				header = lines[0].split(',')
-
-				for(var i = 0; i < lines.length-1; i++){
+				if (!check_header(header)) {return; }
+				for(var i = 1; i < lines.length; i++){
 					sample_data = lines[i].split(',');
-					if (sample_data.length > 0 ) {
-						ret_data[i]={index:is_attachment===undefined?i:i+1, sample: $scope.format_csv_field(sample_data[0])};
-						if (sample_data.length > 1) {
-							for (j = 1; j < sample_data.length; j++) {
+					if (sample_data.length > 1 ) {
+						if (!check_ordinals(sample_data[0])) {return;}
+						ret_data[i]={index:is_attachment===undefined?i:i+1, ordinal: Utility.format_ordinal(sample_data[0]), sample: $scope.format_csv_field(sample_data[1])};
+						if (sample_data.length > 2) {
+							for (j = 2; j < sample_data.length; j++) {
 								header[j] = $scope.format_csv_field(header[j]);
 								ret_data[i][$scope.format_csv_field(header[j])] = $scope.format_csv_field(sample_data[j]);
 							}
@@ -516,6 +548,7 @@ arimport_module.controller('ARImportCtrl',
 					}
 				}
 				ret_data.shift();
+				header.shift();
 				header.shift();
 				//console.log(ret_data);
 				return {data: ret_data, header: header};
@@ -527,6 +560,10 @@ arimport_module.controller('ARImportCtrl',
 
 		$scope.format_csv_field = function(field) {
 			return Utility.format_csv_field(field);
+		}
+
+		this.format_ordinal = function(field) {
+			return Utility.format_ordinal(field);
 		}
 
 		$scope.sort = function(keyname){

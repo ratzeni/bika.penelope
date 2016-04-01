@@ -220,6 +220,11 @@ worksheets_module.controller('WorksheetsCtrl',
 			analyses = JSON.parse(remarks);
 			return analyses.length;
 		}
+
+		 $scope.sort = function(keyname){
+			$scope.sortKey = keyname;   //set the sortKey to the param passed
+			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+		}
 });
 
 worksheets_module.controller('WorksheetDetailsCtrl',
@@ -598,6 +603,9 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 				$scope.checked_list = [];
 			}
 
-
+		 $scope.sort = function(keyname){
+			$scope.sortKey = keyname;   //set the sortKey to the param passed
+			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+		}
 
 });

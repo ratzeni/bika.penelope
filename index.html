@@ -88,10 +88,19 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-main">
                     <ul class="nav navbar-nav">
-                        <li  ng-class="getClass('home')"><a ui-sref="home">Home</a></li>
-                        <li  ng-class="getClass('batches')"><a ui-sref="batches">Batches</a></li>
-                        <li  ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
-                        <li  ng-class="getClass('worksheets')"><a ui-sref="worksheets">Worksheets</a></li>
+                        <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                            ng-class="getClass('home')">
+                            <a ui-sref="home">Home</a>
+                        </li>
+                        <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                            ng-class="getClass('batches')">
+                            <a ui-sref="batches">Batches</a>
+                        </li>
+                        <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                            ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
+                        <li ng-class="getClass('worksheets')">
+                            <a ui-sref="worksheets">Worksheets</a>
+                        </li>
                         <li>
                             <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
                                 Samplesheets

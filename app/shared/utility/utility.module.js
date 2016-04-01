@@ -99,6 +99,18 @@ utility_module.service('Utility',
 
 		}
 
+		this.format_ordinal = function(value, max) {
+
+			if (max === undefined) {max = 3;}
+			function pad (str, max) {
+	  			str = str.toString();
+	  			return str.length < max ? pad("0" + str, max) : str;
+	  		}
+
+	  		return pad(value, max);
+
+		}
+
 		this.merge = function(arr1, arr2, prop) {
 			_.each(arr2,function(arr2obj) {
 				var arr1obj = _.find(arr1,function(arr1obj){
@@ -134,6 +146,7 @@ utility_module.service('Utility',
 		this.format_html = function(text) {
 			return text.replace(/%2F/g,'/');
 		}
+
 
 	}
 );

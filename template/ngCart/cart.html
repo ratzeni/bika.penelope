@@ -20,31 +20,34 @@
                                        data-ng-click="ctrl.toggle_all()">
                         </div>
                     </th>
-                    <th ng-click="sort('id')">RequestID
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().rights')">#ID
+                         <span class="glyphicon sort-icon" ng-show="sortKey=='getData().rights'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('sample_id')">SampleID
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='sample_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().id')">RequestID
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('client_sample_id')">ClientSID
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='client_sample_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().sample_id')">SampleID
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().sample_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('client')">Client
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='client'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().client_sample_id')">ClientSID
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().client_sample_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('batch')">Batch
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='batch'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().client')">Client
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().client'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('sample_type')">Type
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='sample_type'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().batch')">Batch
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().batch'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('getData().sample_type')">Type
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().sample_type'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <!--<th>Analyses
                     </th>-->
-                    <th ng-click="sort('date')">Date
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().date')">Date
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('review_state')">State
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('getData().review_state')">State
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='getData().review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th><span class="fic glyphicon glyphicon-wrench" ></span></th>
                     <th><span class="fic glyphicon glyphicon-blackboard" ></span></th>
@@ -52,7 +55,7 @@
                 </tr>
         </thead>
         <tbody>
-            <tr dir-paginate="item in ngCart.getCart().items | orderBy:sortKey:reverse|filter:search|itemsPerPage:50" ng-init="row=item.getData()">
+            <tr dir-paginate="item in ngCart.getCart().items | orderBy:sortKey:reverse|filter:search|itemsPerPage:150" ng-init="row=item.getData()">
                     <td>
                          <div style="padding-left:10px;">
                                 <input type="checkbox"  value="{{row.id}}"
@@ -60,6 +63,7 @@
                                        data-ng-click="ctrl.toggle(row.id)">
                         </div>
                     </td>
+                    <td>{{row.rights}}</td>
 
                     <td>
                         <a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;">
