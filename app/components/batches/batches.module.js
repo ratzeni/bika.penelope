@@ -619,7 +619,11 @@ batches_module.controller('BatchDetailsCtrl',
 		this.edit =
 			function(edit_params, checked_list) {
 				if (edit_params.whichDate === null) {
-					Utility.alert({title:'Nothing to edit<br/>', content:'Please select date type', alertType:'warning'});
+					Utility.alert({title:'Nothing to edit<br/>', content:'Please select date type', alertType:'danger'});
+					return;
+				}
+				if (checked_list.length === 0 ) {
+					Utility.alert({title:'Nothing to edit<br/>', content:'Please select at least a Sample', alertType:'danger'});
 					return;
 				}
 				var input_values = {};
