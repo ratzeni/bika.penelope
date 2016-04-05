@@ -123,8 +123,17 @@
                     <th>Analyses
 
                     </th>
-                    <th ng-click="sort('date')">Date
+                    <th ng-click="sort('date')">Updated
                         <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('date_created')">Created
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='date_created'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('date_received')">Received
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='date_received'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('date_published')">Published
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='date_published'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th ng-click="sort('review_state')">State
                         <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -183,6 +192,9 @@
 
                     </td>
                     <td>{{ctrl.format_date(row.date)}}</td>
+                    <td>{{ctrl.format_date(row.date_created)}}</td>
+                    <td>{{ctrl.format_date(row.date_received)}}</td>
+                    <td>{{ctrl.format_date(row.date_published)}}</td>
                     <td>{{ctrl.format_review_state(row.review_state)}}</td>
                     <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>
                     <td> <ngcart-addtocart id="{{  row.id }}" name="{{ row.id }}" price="1" quantity="1" mini="true"
@@ -206,6 +218,8 @@
         </div>
          <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="analysis_requests.length > 0">
              <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
+             <ng-include  ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                             src="'app/components/batches/batch.btns.html'"></ng-include>
              <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
          </div>
     </div>

@@ -106,6 +106,7 @@ angular
         instruments: {
         	SN526: 'Diabolik',
         	J00143: 'Zagor',
+        	SN200R: 'Fisietto',
         }
 
 

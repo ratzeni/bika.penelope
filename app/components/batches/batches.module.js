@@ -613,6 +613,36 @@ batches_module.controller('BatchDetailsCtrl',
 				});
 				$scope.checked_list = [];
 		}
+
+		$scope.edit_params = {selectedDate:Utility.format_date(), whichDate: null};
+
+		this.edit =
+			function(edit_params, checked_list) {
+				if (edit_params.whichDate === null) {
+					Utility.alert({title:'Nothing to edit<br/>', content:'Please select date type', alertType:'warning'});
+					return;
+				}
+				var input_values = {};
+				_.each(checked_list,function(id) {
+					ar = _.findWhere($scope.analysis_requests, {'id': id});
+					if (edit_params.whichDate === 'created_date') {
+						input_values[ar.path] = {creation_date: Utility.format_date(edit_params.selectedDate)};
+					}
+					else if (edit_params.whichDate === 'received_date') {
+						input_values[ar.path] = {DateReceived: Utility.format_date(edit_params.selectedDate)};
+					}
+					else if (edit_params.whichDate === 'published_date') {
+						input_values[ar.path] = {DatePublished: Utility.format_date(edit_params.selectedDate)};
+					}
+				});
+				$scope.loading_change_review_state('updating...').show();
+				this.params = {input_values: JSON.stringify(input_values)};
+				BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
+					$scope.checked_list = [];
+					$scope.loading_change_review_state('updating...').hide();
+					$scope.getAnalysisRequests($scope.batch.id, $scope.review_state);
+				});
+		};
 });
 
 batches_module.controller('BatchBookCtrl',
