@@ -218,6 +218,7 @@ arimport_module.controller('ARImportCtrl',
 									}
 								}
 								else {
+									console.log(result);
 									console.log(result['message']);
 									$scope.loading_import.hide();
 									Utility.alert({title:'Error while importing...', content: result['message'], alertType:'danger'});

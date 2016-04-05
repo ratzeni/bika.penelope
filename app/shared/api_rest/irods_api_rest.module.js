@@ -9,13 +9,19 @@ irods_api_rest_module.service('IrodsApiRestService',  function(init, $http) {
     this.call = function(method, params) {
 
 		this.conf = init.apiRest;
-        this.url = this.conf.url + method + '?callback' + '=' +  this.conf['callback'];
+        this.url = this.conf.url + method;
+        this.params =  params===undefined ? {} : params;
 
-        for (var key in params) {
-           this.url+= '&' + key + '=' +  params[key];
-        }
+        this.req = {
+			 method: 'POST',
+			 url: this.url,
+			 headers: {
+			   'Content-Type': undefined,
+			 },
+			 data: this.params
+		};
 
-        return $http.jsonp(this.url);
+		return $http(this.req)
     }
 });
 

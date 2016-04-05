@@ -6,28 +6,29 @@ bika_api_rest_module.service('BikaApiRestService',  function(init, $http, $rootS
 
     this.call = function(method, params) {
 
-        if (params === undefined) {
-            var params = {}
-        }
+        this.url = init.apiRest.url + method;
+        this.conf = init.bikaApiRest;
+        this.params =  params===undefined ? {} : params;
 
         if ($rootScope.currentUser  !== undefined) {
-            params.username = $rootScope.currentUser.username;
-            params.password = $rootScope.currentUser.password;
+            this.params.username = $rootScope.currentUser.username;
+            this.params.password = $rootScope.currentUser.password;
         }
 
-		this.conf = init.apiRest;
-        this.url = this.conf.url + method + '?callback' + '=' +  this.conf['callback'];
-
-        this.conf = init.bikaApiRest;
         for (var key in this.conf) {
-            this.url+= '&' + key + '=' +  this.conf[key];
+            this.params[key] = this.conf[key];
         }
 
-        for (var key in params) {
-           this.url+= '&' + key + '=' +  params[key];
-        }
+        this.req = {
+			 method: 'POST',
+			 url: this.url,
+			 headers: {
+			   'Content-Type': undefined,
+			 },
+			 data: this.params
+		};
 
-        return $http.jsonp(this.url);
+		return $http(this.req)
     }
 });
 
