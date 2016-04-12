@@ -55,6 +55,7 @@
     <script src="./app/components/worksheets/worksheets.module.js"></script>
     <script src="./app/components/blackboard/blackboard.module.js"></script>
     <script src="./app/components/admin/cost_centers/cost_centers.module.js"></script>
+    <script src="./app/components/admin/lab_products/lab_products.module.js"></script>
     <script src="./app/app.module.js"></script>
     <script src="./app/app.route.js"></script>
 
@@ -112,19 +113,23 @@
                                 </li>
                             </ul>
                         </li>
-                        <li  data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
-                             ng-class="getClass('arimport')">
-                            <a ui-sref="arimport">AR Import</a>
-                        </li>
                         <li data-ng-if="currentUser.role=='Site Administrator'">
                             <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
                                 Admin
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" tabindex="-1" role="menu">
-                                <li role="presentation"  ng-class="getClass('cost_centers')">
-                                    <a role="menuitem" tabindex="-1" ui-sref="cost_centers">Cost centers</a>
+                                <li  data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                                     ng-class="getClass('arimport')">
+                                    <a ui-sref="arimport">AR Import</a>
                                 </li>
+                                <li role="presentation"  ng-class="getClass('cost_centers')">
+                                    <a role="menuitem" tabindex="-1" ui-sref="cost_centers">Cost Centers</a>
+                                </li>
+                                <li role="presentation"  ng-class="getClass('lab_products')">
+                                    <a role="menuitem" tabindex="-1" ui-sref="lab_products">Lab Products</a>
+                                </li>
+
                             </ul>
                         </li>
 
@@ -140,7 +145,6 @@
                 </div>
             </div>
         </div>
-        <!--<ng-include ng-if="$state.current.name!=='login'" src="'app/shared/dashboard/dashboard.view.html'"></ng-include>-->
     </header>
     <div ui-view></div>
 </div>

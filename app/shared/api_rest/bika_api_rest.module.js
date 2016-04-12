@@ -4,9 +4,9 @@ bika_api_rest_module.service('BikaApiRestService',  function(init, $http, $rootS
 
 
 
-    this.call = function(method, params) {
+    this.call = function(mode, method, params) {
 
-        this.url = init.apiRest.url + method;
+        this.url = init.apiRest[mode].url + method;
         this.conf = init.bikaApiRest;
         this.params =  params===undefined ? {} : params;
 
@@ -37,82 +37,92 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
     this.login = function(params) {
         method = config.bikaApiRest.methods.login;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read',method, params);
     }
 
 	this.checkStatus = function() {
         method = config.bikaApiRest.methods.check_status;
-        return BikaApiRestService.call(method);
+        return BikaApiRestService.call('read', method);
     };
 
     this.getClients = function(params) {
         method = config.bikaApiRest.methods.get_clients;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getContacts = function(params) {
         method = config.bikaApiRest.methods.get_contacts;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
 	this.getSamples = function(params) {
         method = config.bikaApiRest.methods.get_samples;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.countSamples = function(params) {
         method = config.bikaApiRest.methods.count_samples;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getAnalysisServices = function() {
         method = config.bikaApiRest.methods.get_analysis_services;
-        return BikaApiRestService.call(method);
+        return BikaApiRestService.call('read', method);
     };
 
     this.getAnalysisProfiles = function() {
         method = config.bikaApiRest.methods.get_analysis_profiles;
-        return BikaApiRestService.call(method);
+        return BikaApiRestService.call('read', method);
     };
 
     this.getSampleTypes = function(params) {
         method = config.bikaApiRest.methods.get_sample_types;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getBatches = function(params) {
         method = config.bikaApiRest.methods.get_batches;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getWorksheets = function(params) {
         method = config.bikaApiRest.methods.get_worksheets;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getSupplyOrders = function(params) {
         method = config.bikaApiRest.methods.get_supply_orders;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
+    };
+
+	this.getLabProducts = function(params) {
+        method = config.bikaApiRest.methods.get_lab_products;
+        return BikaApiRestService.call('read', method, params);
+    };
+
+    this.getStorageLocations = function(params) {
+        method = config.bikaApiRest.methods.get_storage_locations;
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getUsers = function(params) {
         method = config.bikaApiRest.methods.get_users;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.getManagerUsers = function(params) {
         method = config.bikaApiRest.methods.get_manager_users;
-        return BikaApiRestService.call(method);
+        return BikaApiRestService.call('read', method);
     };
 
     this.getAnalystUsers = function() {
         method = config.bikaApiRest.methods.get_analyst_users;
-        return BikaApiRestService.call(method);
+        return BikaApiRestService.call('read', method);
     };
 
     this.getClerkUsers = function() {
         method = config.bikaApiRest.methods.get_clerk_users;
-        return BikaApiRestService.call(method);
+        return BikaApiRestService.call('read', method);
     };
 
     this.getClientUsers = function() {
@@ -122,171 +132,196 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
 	this.getAnalysisRequests = function(params) {
         method = config.bikaApiRest.methods.get_analysis_requests;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
     this.countAnalysisRequests = function(params) {
         method = config.bikaApiRest.methods.count_analysis_requests;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     };
 
 	this.createWorksheet = function(params) {
     	method = config.bikaApiRest.methods.create_worksheet;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.updateWorksheet = function(params) {
     	method = config.bikaApiRest.methods.update_worksheet;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.updateWorksheets = function(params) {
     	method = config.bikaApiRest.methods.update_worksheets;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.updateBatch = function(params) {
     	method = config.bikaApiRest.methods.update_batch;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
    this.updateBatches = function(params) {
     	method = config.bikaApiRest.methods.update_batches;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.updateAnalysisRequest = function(params) {
     	method = config.bikaApiRest.methods.update_analysis_request;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
 	this.updateAnalysisRequests = function(params) {
     	method = config.bikaApiRest.methods.update_analysis_requests;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.updateSupplyOrder= function(params) {
     	method = config.bikaApiRest.methods.update_supply_order;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
 	this.updateSupplyOrders= function(params) {
     	method = config.bikaApiRest.methods.update_supply_orders;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
+    }
+
+    this.updateLabProduct= function(params) {
+    	method = config.bikaApiRest.methods.update_lab_product;
+        return BikaApiRestService.call('write', method, params);
+    }
+
+	this.updateLabProducts= function(params) {
+    	method = config.bikaApiRest.methods.update_lab_products;
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.createBatch = function(params) {
     	method = config.bikaApiRest.methods.create_batch;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
 	this.createAnalysisRequest = function(params) {
     	method = config.bikaApiRest.methods.create_analysis_request;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
 	this.createSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.create_supply_order;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
+    }
+
+    this.createLabProduct = function(params) {
+    	method = config.bikaApiRest.methods.create_lab_product;
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.cancelBatch = function(params) {
     	method = config.bikaApiRest.methods.cancel_batch;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.cancelWorksheet = function(params) {
     	method = config.bikaApiRest.methods.cancel_worksheet;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.cancelAnalysisRequest = function(params) {
     	method = config.bikaApiRest.methods.cancel_analysis_request;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.reinstateBatch = function(params) {
     	method = config.bikaApiRest.methods.reinstate_batch;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
 	this.reinstateWorksheet = function(params) {
     	method = config.bikaApiRest.methods.reinstate_worksheet;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.reinstateAnalysisRequest = function(params) {
     	method = config.bikaApiRest.methods.reinstate_analysis_request;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.openBatch = function(params) {
     	method = config.bikaApiRest.methods.open_batch;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.closeBatch = function(params) {
     	method = config.bikaApiRest.methods.close_batch;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.openWorksheet = function(params) {
     	method = config.bikaApiRest.methods.open_worksheet;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.closeWorksheet = function(params) {
     	method = config.bikaApiRest.methods.close_worksheet;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.receiveSample = function(params) {
     	method = config.bikaApiRest.methods.receive_sample;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.submit = function(params) {
     	method = config.bikaApiRest.methods.submit;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.assign = function(params) {
     	method = config.bikaApiRest.methods.assign;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.verify = function(params) {
     	method = config.bikaApiRest.methods.verify;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.publish = function(params) {
     	method = config.bikaApiRest.methods.publish;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
 	this.activateSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.activate_supply_order;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.deactivateSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.deactivate_supply_order;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
+    }
+
+    this.activateLabProduct = function(params) {
+    	method = config.bikaApiRest.methods.activate_lab_product;
+        return BikaApiRestService.call('read', method, params);
+    }
+
+    this.deactivateLabProduct = function(params) {
+    	method = config.bikaApiRest.methods.deactivate_lab_product;
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.dispatchSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.dispatch_supply_order;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('read', method, params);
     }
 
     this.setAnalysisResult = function(params) {
     	method = config.bikaApiRest.methods.set_analysis_result;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.setAnalysesResults = function(params) {
     	method = config.bikaApiRest.methods.set_analyses_results;
-        return BikaApiRestService.call(method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 });

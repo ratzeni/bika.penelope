@@ -30,27 +30,7 @@ home_module.controller('HomeCtrl',
 						.render();
 			});
 
-		$scope.$watch('counter.to_be_verified',
-            function (newValue, oldValue) {
-                // Ignore initial setup.
-                if ( newValue === oldValue) { return;}
 
-					radialProgress(document.getElementById('divToBeVerified'))
-						.diameter(200)
-						.value(Utility.percentage($scope.counter.to_be_verified, $scope.counter.active))
-						.render();
-			});
-
-		$scope.$watch('counter.verified',
-            function (newValue, oldValue) {
-                // Ignore initial setup.
-                if ( newValue === oldValue) { return;}
-
-					radialProgress(document.getElementById('divVerified'))
-						.diameter(200)
-						.value(Utility.percentage($scope.counter.verified, $scope.counter.active))
-						.render();
-			});
 
 		$scope.$watch('counter.published',
             function (newValue, oldValue) {

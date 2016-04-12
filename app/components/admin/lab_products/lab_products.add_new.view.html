@@ -1,0 +1,72 @@
+<div data-ng-app="LabProductsModule" ng-controller="AddLabProductCtrl as ctrl">
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <form name="addLabProductForm" class="form">
+            <div class="col-sm-12" style="margin-top:10px;">
+                <div class="input-inline col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-barcode"></i>
+                        </div>
+                        <input type="text" ng-model="labproducts_params.barcode" class="form-control"
+                               placeholder="REF Barcode..."
+                               ng-model-options="{ updateOn: 'blur' }"
+                               data-ng-required="true" required>
+                    </div>
+                </div>
+                <div class="input-inline col-sm-4">
+                    <div class="input-group" data-ng-if="labproducts_params.barcode.length > 0">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </div>
+                        <input type="text" ng-model="labproducts_params.title" class="form-control"
+                               placeholder="Label..." data-ng-required="true" required>
+                    </div>
+                </div>
+                <div class="input-inline col-sm-5">
+                    <div class="input-group" data-ng-if="labproducts_params.barcode.length > 0">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </div>
+                        <input type="text" ng-model="labproducts_params.description" class="form-control"
+                               placeholder="Description...">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12" style="margin-top:10px;">
+                <div class="input-inline col-sm-2 pull-right">
+                    <div class="input-group" data-ng-if="labproducts_params.title.length > 0">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-tint"></i>
+                        </div>
+                        <input type="text" ng-model="labproducts_params.volume" class="form-control"
+                               placeholder="Volume..." data-ng-required="true" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12" style="margin-top:10px;">
+                <div class="input-inline col-sm-2 pull-right" data-ng-if="labproducts_params.volume.length > 0">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-euro"></i>
+                        </div>
+                        <input type="text" ng-model="labproducts_params.price" class="form-control"
+                               placeholder="Price...">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 controls" style="margin-top:10px;" >
+                <div class="col-sm-12 input-inline pull-right">
+                    <button type="button" class="btn btn-success pull-right"
+                            data-ng-click="ctrl.submit(labproducts_params)"
+                            data-ng-disabled="labproducts_params.barcode.length==0 || labproducts_params.barcode == null
+                            || labproducts_params.title.length==0 || labproducts_params.title == null
+                            || labproducts_params.volume.length==0 || labproducts_params.volume == null">
+                        <span class="glyphicon glyphicon-copy"></span>&nbsp;Create
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>

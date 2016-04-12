@@ -124,6 +124,22 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             }
 
         })
+        .state('lab_products', {
+            url: '/lab_products',
+            templateUrl: 'app/components/admin/lab_products/lab_products.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin]
+            }
+
+        })
+        .state('lab_product', {
+            url: '/lab_product/:labproduct_id',
+            templateUrl: 'app/components/admin/lab_products/lab_product.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin]
+            }
+
+        })
         .state('blackboard', {
             url: '/blackboard',
             templateUrl: 'app/components/blackboard/blackboard.home.view.html',

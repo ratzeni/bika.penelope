@@ -4,7 +4,7 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        Sample Due
+                        Samples Due
                     </div>
                 </div>
                 <div class="panel-body" style="height:310px;">
@@ -45,7 +45,7 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        Sample Received
+                        Samples in progress
                     </div>
                 </div>
                 <div class="panel-body" style="height:310px;">
@@ -79,88 +79,6 @@
                                data-ng-if="counter.sample_received >= 0"
                                style="margin-bottom:10px;margin-left:10px;">
                             {{counter.sample_received}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        To be verified
-                    </div>
-                </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.to_be_verified < 0"
-                         spinner-on="counter.to_be_verified < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
-
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'to_be_verified'})">
-                        <div id="divToBeVerified"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;"></div>
-
-
-                        <label class="btn btn-success btn-lg"
-                               data-ng-if="counter.to_be_verified >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.to_be_verified}}&nbsp;/&nbsp;{{counter.active}}
-                        </label>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12">
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        Verified
-                    </div>
-                </div>
-                <div class="panel-body" style="height:310px;">
-                    <div style="margin-top:70px"
-                         data-ng-if="counter.verified < 0"
-                         spinner-on="counter.verified < 0"
-                         us-spinner="{
-                                      radius: 30,
-                                      lines:13,
-                                      length: 35,
-                                      width: 8,
-                                      scale: 1,
-                                      speed: 1.5,
-                                      opacity:0.1,
-                                      corners: 1,
-                                      color:'#000',
-                                      position: 'relative',
-                                      trail: 60,
-                                      shadow: true,
-                                    }">
-
-                    </div>
-                    <a ui-sref="analysis_requests({review_state: 'verified'})">
-                        <div id="divVerified"
-                             style="width: 80%; height: 80%; float:right; box-sizing: border-box; background:#FFFFFF;"></div>
-                        <label class="btn btn-success btn-lg"
-                               data-ng-if="counter.verified >= 0"
-                               style="margin-bottom:10px;margin-left:10px;">
-                            {{counter.verified}}&nbsp;/&nbsp;{{counter.active}}
                         </label>
                     </a>
                 </div>
@@ -205,7 +123,5 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 </div>
