@@ -211,11 +211,35 @@ cost_centers_module.controller('AddCostCenterCtrl',
 		$scope.clients = [];
 		$scope.contacts= [];
 		$scope.batches = [];
+		$scope.checked_list = [];
+		$scope.lab_products = [];
 
 		$scope.loading_create = Utility.loading({
             busyText: 'Wait while creating...',
             delayHide: 500,
         });
+
+        $scope.pagination= {
+			page_nr: 0,
+			page_size: 10,
+			total: 0,
+			current: 1,
+			last: 0,
+		};
+
+		this.changePage = function(newPageNumber, oldPageNumber) {
+			if (newPageNumber !== undefined) {
+				$scope.pagination.page_nr = newPageNumber-1;
+				$scope.pagination.current = newPageNumber;
+			}
+			$scope.getLabProducts();
+		}
+
+		$scope.sort = function(keyname){
+			$scope.sortKey = keyname;   //set the sortKey to the param passed
+			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+		}
+
 
 		// :: function :: getClients()
         $scope.getClients =
@@ -252,6 +276,16 @@ cost_centers_module.controller('AddCostCenterCtrl',
                 });
             };
 
+        // :: function :: getLabProducts)=
+        $scope.getLabProducts =
+			function() {
+				this.params = {'Subject': 'active', page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
+				BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+					$scope.lab_products = data.result.objects;
+				});
+			}
+
+
 		// :: function :: update()
         $scope.update =
             function(costcenter_params) {
@@ -261,6 +295,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
             };
 
         $scope.update([]);
+        $scope.getLabProducts();
 
 		$scope.costcenter_params = {
             selectedClient: null,
@@ -271,7 +306,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
         	selectedDescription: null,
         	selectedAmount: null,
         	selectedBatches: null,
-
+			selectedLabProducts: {},
         };
 
         $scope.$watch('costcenter_params.selectedClient',
@@ -302,6 +337,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
 					'expirationDate': Utility.format_date(costcenter_params.selectedExpirationDate),
 					'subject': 'pending',
 					'rights': costcenter_params.selectedAmount != undefined?costcenter_params.selectedAmount:'',
+					'Remarks': JSON.stringify(costcenter_params.selectedLabProducts),
         		}
 				$scope.loading_create.show();
         		BikaService.createSupplyOrder(this.cc_params).success(function (data, status, header, config){
@@ -344,6 +380,41 @@ cost_centers_module.controller('AddCostCenterCtrl',
         		});
 
         	}
+
+        this.format_date =
+			function(date) {
+				if (date == null) {return "";}
+				return Utility.format_date(date);
+			};
+
+		this.format_review_state =
+			function(review_state) {
+				return Utility.format_review_state(review_state);
+		};
+
+		this.toggle =
+			function(id) {
+				var idx = $scope.checked_list.indexOf(id);
+				if (idx > -1) {
+					$scope.checked_list.splice(idx, 1);
+					delete $scope.costcenter_params.selectedLabProducts[id];
+				}
+				else {
+					$scope.checked_list.push(id);
+				}
+			}
+
+		this.toggle_all = function() {
+				if ($scope.checked_list.length < $scope.lab_products.length) {
+					_.each($scope.lab_products,function(b) {
+						$scope.checked_list.push(b.id);
+					})
+				}
+				else {
+					$scope.checked_list = [];
+					$scope.costcenter_params.selectedLabProducts = {};
+				}
+		}
 });
 
 cost_centers_module.controller('CostCenterDetailsCtrl',
@@ -351,9 +422,12 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
 		$scope.state = {costcenter_id: $stateParams.costcenter_id};
 		$scope.cost_center = null;
+		$scope.lab_products = [];
+		$scope._lab_products = [];
 		$scope.batches = [];
 
 		$scope.samples = {};
+		$scope.checked_list = [];
 
 		$scope.stats = {amount: -1, start: false};
 
@@ -372,6 +446,11 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
         		return Utility.loading(this.params);
         	};
 
+        $scope.sort = function(keyname){
+			$scope.sortKey = keyname;   //set the sortKey to the param passed
+			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+		}
+
         $scope.getCostCenter =
         	function(costcenter_id) {
 
@@ -386,7 +465,31 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						selectedAmount: $scope.cost_center.rights,
 						selectedOrderNumber: $scope.cost_center.order_number,
 						selectedBatches: null,
+						selectedLabProducts: JSON.parse($scope.cost_center.remarks),
 					};
+					var counter = 0;
+					_.each(_.keys(JSON.parse($scope.cost_center.remarks)), function(id) {
+						this.params = {'id': id};
+						$scope.checked_list.push(id);
+						BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+							$scope.lab_products.push(data.result.objects[0]);
+							counter++;
+							if (counter === _.size(JSON.parse($scope.cost_center.remarks))) {
+								this.params = {'sort_on': 'title', Subject: 'active'};
+								BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+									this.result = data.result.objects;
+									_.each(this.result, function (obj){
+										if (_.findWhere($scope.lab_products, {'id': obj['id']}) === undefined ){
+											 $scope._lab_products.push(obj);
+										}
+									});
+								});
+
+							}
+
+						});
+					});
+
         		});
         	}
 
@@ -446,6 +549,25 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 				return Utility.format_review_state(review_state);
 			};
 
+		this.get_estimated =
+			function(id) {
+				return JSON.parse($scope.cost_center.remarks)[id];
+
+			}
+
+		this.toggle =
+			function(id) {
+				var idx = $scope.checked_list.indexOf(id);
+				if (idx > -1) {
+					$scope.checked_list.splice(idx, 1);
+					delete $scope.costcenter_params.selectedLabProducts[id];
+				}
+				else {
+					$scope.checked_list.push(id);
+				}
+			}
+
+
 		$scope.count_samples = function() {
 			_.each($scope.batches,function(batch) {
 					this.params = {title: batch.id, include_fields: 'path'};
@@ -464,6 +586,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 					'title': costcenter_params.selectedTitle,
 					'description': costcenter_params.selectedDescription,
 					'expirationDate': Utility.format_date(costcenter_params.selectedExpirationDate),
+					'Remarks': JSON.stringify(costcenter_params.selectedLabProducts),
 				}
 				BikaService.updateSupplyOrder(this.params).success(function (data, status, header, config){
 					this.result = data.result;

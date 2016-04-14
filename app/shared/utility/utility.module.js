@@ -50,6 +50,28 @@ utility_module.service('Utility',
 			return time.getFullYear()+'-'+(("0" + (time.getMonth() + 1)).slice(-2))+'-'+("0" + time.getDate()).slice(-2)
 		}
 
+		this.difference_between_dates = function(d1, d2, unit) {
+
+			if (d1 === 'today' || d1 === undefined || d1 === '' || d1 === 'None' || d1 === null ) { a = new Date(); }
+			else { a = new Date(d1.toString().split('.')[0]); }
+
+			if (d2 === 'today' || d2 === undefined || d2 === '' || d2 === 'None' || d2 === null ) { b = new Date(); }
+			else { b = new Date(d2.toString().split('.')[0]); }
+
+			var d = (b-a); // difference in milliseconds
+
+			var seconds =  Math.round((d)/1000);
+			var minutes = Math.round((seconds)/60);
+			var hours = Math.round((minutes)/60);
+			var days = Math.round((hours)/24);
+
+			if (unit === undefined || unit == 'ms') {return d;}
+			if (unit == 's') {return seconds;}
+			if (unit == 'm') {return minutes;}
+			if (unit == 'h') {return hours;}
+			if (unit == 'd') {return days;}
+		}
+
 		this.format_review_state = function(review_state) {
 			if (review_state === undefined) {return "";}
 			if (review_state === 'sample_received') {review_state = 'received';}

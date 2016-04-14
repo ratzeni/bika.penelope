@@ -862,6 +862,11 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				return Utility.format_date(date);
 			};
 
+		this.check_expiration =
+			function(date) {
+				return Utility.difference_between_dates('today', date, 'd');
+			};
+
 		this.format_review_state =
 			function(review_state) {
 				return Utility.format_review_state(review_state);

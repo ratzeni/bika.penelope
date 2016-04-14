@@ -55,7 +55,7 @@
                     </thead>
                     <tbody ng-if="lab_products.length > 0">
                     <tr dir-paginate="row in lab_products | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
-                        total-items="pagination.total" current-page="pagination.current">
+                        total-items="pagination.total" current-page="pagination.current" ng-class="{'alert alert-danger': row.unit == 0,  'alert alert-warning': row.unit == 1}">
                         <td>
                             <div style="padding-left:10px;">
                                 <input type="checkbox"  value="{{row.id}}"
