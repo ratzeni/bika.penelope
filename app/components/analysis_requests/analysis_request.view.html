@@ -45,7 +45,7 @@
                         <td>Sample Type:</td>
                         <td>{{analysis_request.sample_type}}</td>
                     </tr>
-                    <tr data-ng-repeat="p in analysis_request.params" data-ng-if="analysis_request.params.length > 0">
+                    <tr data-ng-repeat="p in analysis_request.params" data-ng-if="analysis_request.params.length > 0" class="alert alert-info">
                         <td>{{p.label}}</td>
                         <td>{{p.value}}</td>
                     </tr>

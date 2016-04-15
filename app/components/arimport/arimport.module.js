@@ -40,15 +40,6 @@ arimport_module.controller('ARImportCtrl',
 					Utility.alert({title:'There\'s been an error<br/>', content:'Contact field required', alertType:'danger'});
 					return;
 				}
-//				if ($scope.arimport_params.selectedSampleType === null || $scope.arimport_params.selectedSampleType === undefined) {
-//					Utility.alert({title:'There\'s been an error<br/>', content:'SampleType field required', alertType:'danger'});
-//					return;
-//				}
-//				if (($scope.arimport_params.selectedSampleType.prefix === 'FC' || $scope.arimport_params.selectedSampleType.prefix === 'POOL')
-//					&& $scope.arimport_params.attachment_content==null) {
-//					Utility.alert({title:'There\'s been an error<br/>', content:'Missing attachment', alertType:'danger'});
-//					return;
-//				}
 
 				if ($scope.arimport_params.selectedAnalysisServices.illumina.length === 0 && $scope.arimport_params.selectedAnalysisServices.bioinfo.length === 0
 					&& $scope.arimport_params.selectedAnalysisServices.library_prep.length === 0 && $scope.arimport_params.selectedAnalysisServices.extraction.length === 0) {
@@ -74,7 +65,7 @@ arimport_module.controller('ARImportCtrl',
 					else {
 						_.each($scope.pools, function(pool) {
 						    $scope.submit_pool(arimport_params, pool);
-						    //$timeout(function() {var delay=true;}, 180000);
+
 						});
 					}
 
@@ -83,7 +74,7 @@ arimport_module.controller('ARImportCtrl',
 					return;
 				}
 
-				//$scope.loading.hide();
+
 			};
 
 		$scope.submit_pool =
@@ -105,13 +96,12 @@ arimport_module.controller('ARImportCtrl',
 					attachment_content: arimport_params.attachment_content,
 					client_samples: _.where(arimport_params.client_samples, {'pool': pool}),
 				};
-				_params.client_samples.unshift({index: 1, sample: pool, pool: pool});
+				this.params.client_samples.unshift({index: 1, sample: pool, pool: pool});
 				$scope.import(this.params);
 			};
 		// :: function :: ARImport()
 		$scope.import =
 			function(arimport_params) {
-
 				$scope.loading_import.show()
 				var outcome = {
 					batch_id: null,
@@ -128,8 +118,6 @@ arimport_module.controller('ARImportCtrl',
 					rights: arimport_params.selectedCostCenter.id,
 					subject: 'open',
 				}
-			   
-			    //console.log(this.batch_params);
 
 				BikaService.createBatch(this.batch_params).success(function (data, status, header, config){
 
@@ -142,9 +130,12 @@ arimport_module.controller('ARImportCtrl',
 
 						if (_.size(sample_data) > 2) {
 							_.each(sample_header,function(obj) {
-								values.push($scope.format_csv_field(obj)+"="+sample_data[$scope.format_csv_field(obj)]);
+
+								this.field = {};
+								this.field[$scope.format_csv_field(obj)] = sample_data[$scope.format_csv_field(obj)];
+								values.push(this.field);
 							});
-							return values.join('|');
+							return JSON.stringify(values);
 						}
 						return "";
 
@@ -190,6 +181,9 @@ arimport_module.controller('ARImportCtrl',
 							contacts.push(c.id);
 						});
 
+						if (arimport_params.selectedSampleType.prefix === 'FC') {
+							arimport_params.client_samples.unshift({index: 1, sample:  $scope.format_csv_field($scope.arimport_params.single_sample)});
+						}
                     	// creating analysis request
                     	_.each(arimport_params.client_samples, function(client_samples) {
                     		this.ar_params = {
@@ -215,6 +209,9 @@ arimport_module.controller('ARImportCtrl',
 									outcome.arequest_ids.push({ar_id:result['ar_id'], sample_id:result['sample_id']});
 									if (outcome.arequest_ids.length === arimport_params.client_samples.length) {
 										Utility.alert({title:'Success', content: 'Your Batch has been successfully created.', alertType:'success'});
+										if (arimport_params.selectedSampleType.prefix !== 'POOL') {
+											$state.go('batch',{batch_id: outcome.batch_id});
+										}
 									}
 								}
 								else {
@@ -227,14 +224,8 @@ arimport_module.controller('ARImportCtrl',
 							});
 
                     	});
-
 						$scope.loading_import.hide();
 						Utility.alert({title:'', content: 'Wait while importing samples', alertType:'info'});
-						if (arimport_params.selectedSampleType.prefix !== 'POOL') {
-							$state.go('batch',{batch_id: outcome.batch_id});
-						}
-
-
                     }
                     else {
                     	console.log(result['message']);

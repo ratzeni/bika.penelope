@@ -92,7 +92,9 @@ utility_module.service('Utility',
 		}
 
 		this.format_csv_field = function(field) {
-			return field.replace(/["']+/g, '');
+			field = field.replace(/["']+/g, '');
+			field = field.replace(/(?:\r\n|\r|\n)/g, '');
+			return field;
 		}
 
 		this.alert = function(params) {

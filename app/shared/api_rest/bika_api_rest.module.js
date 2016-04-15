@@ -267,27 +267,27 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
     this.receiveSample = function(params) {
     	method = config.bikaApiRest.methods.receive_sample;
-        return BikaApiRestService.call('read', method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.submit = function(params) {
     	method = config.bikaApiRest.methods.submit;
-        return BikaApiRestService.call('read', method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.assign = function(params) {
     	method = config.bikaApiRest.methods.assign;
-        return BikaApiRestService.call('read', method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.verify = function(params) {
     	method = config.bikaApiRest.methods.verify;
-        return BikaApiRestService.call('read', method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
     this.publish = function(params) {
     	method = config.bikaApiRest.methods.publish;
-        return BikaApiRestService.call('read', method, params);
+        return BikaApiRestService.call('write', method, params);
     }
 
 	this.activateSupplyOrder = function(params) {
