@@ -64,7 +64,7 @@
 
                 </div>
                 <label title="published" ng-if="worksheet_details.length > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{worksheet_details.length}}</label>
-                <input type="text" ng-model="search" ng-if="worksheet_details.length > 0" class="form-control pull-right" placeholder="Search...">
+                <input type="text" ng-model="search" ng-show="worksheet_details.length > 0" class="form-control pull-right" placeholder="Search...">
             </div>
         </form>
         <div class="col-sm-12 controls" style="margin-top:10px;min-height:350px;">
@@ -123,10 +123,16 @@
                         </div>
                     </td>
                     <td>{{row.rights}}</td>
-                    <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.id}}</span></a></td>
-                    <td><a class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.sample_id}}</span></a></td>
+                    <td><span data-ng-if="currentUser.role=='Analyst'">{{row.id}}</span>
+                        <a data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'" class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.id}}</span></a>
+                    </td>
+                    <td><span data-ng-if="currentUser.role=='Analyst'">{{row.sample_id}}</span>
+                        <a data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'" class="pull-left" ui-sref="analysis_request({analysis_request_id: row.id})" style="text-decoration: none;"><span>{{row.sample_id}}</span></a>
+                    </td>
                     <td>{{row.client_sample_id}}</td>
-                    <td><a class="pull-left" ui-sref="batch({batch_id: row.batch_id})" style="text-decoration: none;"><span>{{row.batch_title}}</span></a></td>
+                    <td><span data-ng-if="currentUser.role=='Analyst'">{{row.batch_title}}</span>
+                        <a data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"  class="pull-left" ui-sref="batch({batch_id: row.batch_id})" style="text-decoration: none;"><span>{{row.batch_title}}</span></a>
+                    </td>
                     <td>{{row.sample_type}}</td>
                     <td>{{a.keyword}}</td>
                     <td  ng-class="{'alert alert-warning': a.result.length == 0,'alert alert-success': a.result == '1', 'alert alert-danger': a.result == '0' }">

@@ -11,7 +11,7 @@ blackboard_module.controller('BlackBoardCtrl',
 		$scope.analysis_requests = [];
 		$scope.analysis_results = [];
 		$scope.checked_list = [];
-
+		$scope.currentUser = $rootScope.currentUser;
 		$scope.csv = {sample_list: []};
 
 		this.in_blackboard_page = true;

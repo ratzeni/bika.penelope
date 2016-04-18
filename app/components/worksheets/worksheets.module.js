@@ -7,6 +7,8 @@ worksheets_module.run(function($rootScope){
 worksheets_module.controller('WorksheetsCtrl',
 	function(BikaService, Utility, config, ngCart, $scope, $rootScope, $state) {
 
+
+
 		$scope.loading_search = Utility.loading({
             busyText: 'Wait while searching worksheets...',
             delayHide: 1000,

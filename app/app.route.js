@@ -7,7 +7,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             templateUrl: 'app/components/home/home.home.view.html',
             controller: 'HomeCtrl',
             data: {
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
         })
         .state('batches', {
@@ -15,7 +15,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             templateUrl: 'app/components/batches/batches.home.view.html',
 
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
 
         })
@@ -26,7 +26,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
 				$stateParams.batch_id
 			},
            	data: {
-                  authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                  authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
 
 
@@ -39,7 +39,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
 				$stateParams.content
 			},
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
@@ -50,7 +50,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
 				$stateParams.content
 			},
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
@@ -58,7 +58,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/samplesheet/link_to_run',
             templateUrl: 'app/shared/attachment/samplesheet_link2run.home.view.html',
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
@@ -69,7 +69,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
 				$stateParams.review_state
 			},
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
 
         })
@@ -80,7 +80,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
 				$stateParams.analysis_request_id
 			},
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
 
         })
@@ -144,17 +144,8 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/blackboard',
             templateUrl: 'app/components/blackboard/blackboard.home.view.html',
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
-        })
-        .state('export_results', {
-            url: '/nglimstools/export_results',
-            templateUrl: 'app/components/nglimstools/export_results.view.html',
-            controller: 'ExportResultsCtrl',
-            data: {
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
-            }
-
         })
         .state('login', {
             url: '/login',

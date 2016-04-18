@@ -10,7 +10,7 @@
                     </div>
                     <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
                     <label title="published" ng-if="pagination.total == 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.total}}</label>
-                    <input type="text" ng-model="search" ng-if="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
+                    <input type="text" ng-model="search" ng-show="pagination.total > 0" class="form-control pull-right" placeholder="Search...">
                 </div>
             </form>
             <div class="col-sm-12 controls" style="margin-top:10px;">
