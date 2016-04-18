@@ -218,6 +218,7 @@
         </div>
          <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="analysis_requests.length > 0">
              <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
+             <ng-include src="'app/shared/review_state/workflow_transitions.btns.html'"></ng-include>
              <ng-include  ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
                              src="'app/components/batches/batch.btns.html'"></ng-include>
              <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
