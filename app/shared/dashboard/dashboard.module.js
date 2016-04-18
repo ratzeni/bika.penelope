@@ -21,10 +21,13 @@ dashboard_module.service('DashboardService', function(BikaService, $rootScope) {
 		var counter = $rootScope.counter;
 
  		this.samples_review_state = ['sample_due','sample_received'];
-		this.ars_review_state = ['active', 'published','verified'];
-		this.services_review_state = ['to_be_verified'];
-		this.worksheets_review_state = ['assigned','worksheets'];
-		this.batches_review_state = ['batches'];
+		this.ars_review_state = ['active', 'published'];
+		//this.services_review_state = ['to_be_verified'];
+		this.services_review_state = [];
+		//this.worksheets_review_state = ['assigned','worksheets'];
+		this.worksheets_review_state = [];
+		//this.batches_review_state = ['batches'];
+		this.batches_review_state = [];
 
 		update_counter =
 			function (review_state, count, counter) {

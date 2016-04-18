@@ -10,6 +10,7 @@ home_module.controller('HomeCtrl',
 
 		$scope.counter = $rootScope.counter;
 
+
 		$scope.$watch('counter.sample_due',
             function (newValue, oldValue) {
                 // Ignore initial setup.
@@ -44,4 +45,24 @@ home_module.controller('HomeCtrl',
 
 			});
 
+		$scope.$watch('counter.active',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+					radialProgress(document.getElementById('divSampleDue'))
+						.diameter(200)
+						.value(Utility.percentage($scope.counter.sample_due, $scope.counter.active))
+						.render();
+
+					radialProgress(document.getElementById('divSampleReceived'))
+						.diameter(200)
+						.value(Utility.percentage($scope.counter.sample_received, $scope.counter.active))
+						.render();
+
+					radialProgress(document.getElementById('divPublished'))
+						.diameter(200)
+						.value(Utility.percentage($scope.counter.published, $scope.counter.active))
+						.render();
+
+			});
 });
