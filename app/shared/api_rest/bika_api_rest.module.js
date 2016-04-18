@@ -290,6 +290,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call('write', method, params);
     }
 
+	this.republish = function(params) {
+    	method = config.bikaApiRest.methods.republish;
+        return BikaApiRestService.call('write', method, params);
+    }
+
 	this.activateSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.activate_supply_order;
         return BikaApiRestService.call('read', method, params);

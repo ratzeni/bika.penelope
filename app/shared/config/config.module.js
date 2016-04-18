@@ -42,6 +42,7 @@ angular
                 verify: '/bika/action/verify',
                 assign: '/bika/action/assign',
                 publish: '/bika/action/publish',
+                republish: '/bika/action/republish',
                 activate_supply_order: '/bika/action/activate_supply_order',
                 deactivate_supply_order: '/bika/action/deactivate_supply_order',
                 activate_lab_product: '/bika/action/activate_lab_product',

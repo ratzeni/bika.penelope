@@ -539,6 +539,36 @@ batches_module.controller('BatchDetailsCtrl',
 				 });
 			}
 
+		$scope.republish =
+			function(request_id, analysis_id) {
+				if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to publish<br/>', content:'Please select at least a Sample', alertType:'warning'});
+					return;
+				}
+				$scope.loading_change_review_state('publishing').show();
+				this.params = {f: $scope._get_action_params(request_id, analysis_id,'publish')}
+
+				BikaService.republish(this.params).success(function (data, status, header, config){
+					this.result = data.result;
+					if (this.result.success === 'True') {
+						this.params = {input_values: $scope._get_input_values_review_state(request_id.join('|'), 'published')};
+						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
+							$scope.checked_list = [];
+							$scope.loading_change_review_state('receiving samples').hide();
+							//$scope.getAnalysisRequests($scope.batch.id, $scope.review_state);
+							$state.go('batch',{'batch_id': $scope.batch.id},{reload: true});
+
+						});
+
+					}
+					else {
+				 		Utility.alert({title:'Error while publishing..', content: this.result['message'], alertType:'danger'});
+				 		$scope.getAnalysisRequests($stateParams.batch_id);
+						return;
+				 	}
+				 });
+			}
+
 		$scope._get_review_params =
 			function(request_id) {
 
@@ -627,6 +657,9 @@ batches_module.controller('BatchDetailsCtrl',
 			function (action, request_id, analysis_id) {
 				if (action === 'publish') {
 					 $scope.publish(request_id, analysis_id);
+				}
+				else if (action === 'republish') {
+					 $scope.republish(request_id, analysis_id);
 				}
 
 			}

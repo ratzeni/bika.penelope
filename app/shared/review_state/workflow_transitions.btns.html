@@ -21,6 +21,12 @@
     <span class="glyphicon glyphicon-globe">
     </span>&nbsp;Publish
 </button>
+<button type="button" class="btn btn-success" aria-hidden="true"
+         data-ng-show="ctrl.check_transitions('republish', workflow_transitions)"
+        data-ng-click="ctrl.change_workflow_review_state('republish', checked_list, workflow_params.analyses)">
+    <span class="glyphicon glyphicon-globe">
+    </span>&nbsp;Republish
+</button>
 <div id="collapseAssignForm"  class="panel panel-default" style="margin-top:10px;">
     <div class="panel-heading">
         <div class="panel-title">Assign to a worksheet</div>
