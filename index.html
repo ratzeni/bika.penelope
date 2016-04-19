@@ -99,10 +99,13 @@
                         </li>
                         <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
                             ng-class="getClass('analysis_requests')"><a ui-sref="analysis_requests">Analysis Request</a></li>
-                        <li ng-class="getClass('worksheets')">
+                        <li data-ng-if="currentUser.role!='LabClerk'" ng-class="getClass('worksheets')">
                             <a ui-sref="worksheets">Worksheets</a>
                         </li>
-                        <li>
+                        <li data-ng-if="currentUser.is_clerk=='True'" ng-class="getClass('lab_products')">
+                            <a ui-sref="lab_products">Lab Products</a>
+                        </li>
+                        <li data-ng-if="currentUser.role!='LabClerk'">
                             <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
                                 Samplesheets
                                 <span class="caret"></span>

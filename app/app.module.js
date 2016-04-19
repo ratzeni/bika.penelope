@@ -32,7 +32,7 @@ var main_module = angular.module('MainApp',[
 
 // :: MAIN CONTROLLER
 main_module.controller('MainCtrl',
-	function($scope, $rootScope, $state, Auth, AUTH_EVENTS, USER_ROLES, $window){
+	function(Utility, BikaService, $scope, $rootScope, $state, Auth, AUTH_EVENTS, USER_ROLES, $window){
 		// this is the parent controller for all controllers.
 		// Manages auth login functions and each controller
 		// inherits from this controller

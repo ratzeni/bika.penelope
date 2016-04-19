@@ -88,7 +88,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/worksheets',
             templateUrl: 'app/components/worksheets/worksheets.home.view.html',
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
@@ -96,7 +96,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/worksheet/:worksheet_id',
             templateUrl: 'app/components/worksheets/worksheet.home.view.html',
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.clerk, USER_ROLES.analyst]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
@@ -128,7 +128,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/lab_products',
             templateUrl: 'app/components/admin/lab_products/lab_products.home.view.html',
             data: {
-                authorizedRoles: [USER_ROLES.admin]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.clerk]
             }
 
         })
@@ -136,7 +136,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/lab_product/:labproduct_id',
             templateUrl: 'app/components/admin/lab_products/lab_product.home.view.html',
             data: {
-                authorizedRoles: [USER_ROLES.admin]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.clerk]
             }
 
         })

@@ -68,6 +68,7 @@ login_module.factory('Auth',
         			user.role = data.result.user.role;
         			user.userid = data.result.user.userid;
         			user.fullname = data.result.user.fullname;
+					user.is_clerk = data.result.user.is_clerk;
 
         			//user.userRole = bika_user.role;
         			//set the browser session, to avoid relogin on refresh
@@ -148,6 +149,9 @@ function(Utility, $scope, $rootScope, $state, $window, $timeout, Auth ) {
 			//$state.go('home');
 			if ($rootScope.currentUser.role === 'Analyst') {
 				$state.go('worksheets');
+			}
+			else if($rootScope.currentUser.role === 'LabClerk') {
+				$state.go('lab_products');
 			}
 			else {$state.go('batches');}
 
