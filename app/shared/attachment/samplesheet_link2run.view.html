@@ -114,6 +114,70 @@
                 </div>
 
                 </div>
+                <div class="col-sm-12 controls" style="margin-top:10px;" data-ng-if="samplesheet_params.reagents !== null">
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                SBS
+                            </div>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.reagents.sbs.kit" class="form-control"
+                                   placeholder="Sbs kit..."  ng-readonly="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                PE
+                            </div>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.reagents.pe.kit" class="form-control"
+                                   placeholder="Pe kit..."  ng-readonly="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                Index
+                            </div>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.reagents.index.kit" class="form-control"
+                                   placeholder="Index kit..."  ng-readonly="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 controls" style="margin-top:5px;" data-ng-if="samplesheet_params.reagents !== null">
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="glyphicon glyphicon-barcode"></i>
+                            </div>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.reagents.sbs.id" class="form-control"
+                                   placeholder="Sbs barcode..."  ng-readonly="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="glyphicon glyphicon-barcode"></i>
+                            </div>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.reagents.pe.id" class="form-control"
+                                   placeholder="Pe barcode..."  ng-readonly="1">
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="glyphicon glyphicon-barcode"></i>
+                            </div>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.reagents.index.id" class="form-control"
+                                   placeholder="Index barcode..."  ng-readonly="1">
+                        </div>
+                    </div>
+                </div>
                 <div class="col-sm-12 controls" style="margin-top:10px;" >
                         <div class="col-sm-6 input-inline pull-right">
                             <button type="button" class="btn btn-success pull-right"

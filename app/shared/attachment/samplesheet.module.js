@@ -96,14 +96,22 @@ samplesheet_module.controller('Link2RunCtrl',
 	function(BikaService, IrodsService, Utility, $stateParams, $state, config, $scope, $rootScope) {
 		//$scope.run_folders = ['160210_SN526_0254_BHGC35BCXX','160226_SN526_0255_BC8490ACXX','160308_SN526_0256_BC7WNWACXX'];
 
-
+		$scope.loading = Utility.loading({
+            busyText: 'Wait while loading runs list...',
+            delayHide: 5000,
+        });
+        $scope.importing = Utility.loading({
+            busyText: 'Wait while importing samplesheet...',
+            delayHide: 6000,
+        });
 
 		$scope.get_running_folders =
 			function() {
 				this.params = {};
+				$scope.loading.show();
 				IrodsService.getRunningFolders(this.params).success(function (data, status, header, config){
+					$scope.loading.hide();
 					$scope.run_folders = data.result.objects;
-					console.log($scope.run_folders);
 				});
 			}
 
@@ -130,6 +138,7 @@ samplesheet_module.controller('Link2RunCtrl',
 			attachment: null,
 			samplesheet: $scope.attachment.samplesheet.length>0?$scope.attachment.samplesheet:null,
 			switchRun: false,
+			reagents: null,
 		};
 
 		$scope.reads = config.bikaApiRest.data_source.reads;
@@ -147,6 +156,15 @@ samplesheet_module.controller('Link2RunCtrl',
 				 	index1_cycles: samplesheet_params.i1.value,
 				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2.value:'',
 				 	is_rapid: samplesheet_params.switchMode.toString(),
+					date: samplesheet_params.run_folder.run_parameters.run_info.date,
+					scanner_id: samplesheet_params.run_folder.run_parameters.run_info.scanner_id,
+					scanner_nickname: samplesheet_params.instrument,
+					pe_kit: samplesheet_params.reagents.pe.kit,
+					sbs_kit: samplesheet_params.reagents.sbs.kit,
+					index_kit: samplesheet_params.reagents.index.kit,
+					pe_id: samplesheet_params.reagents.pe.id,
+					sbs_id: samplesheet_params.reagents.sbs.id,
+					index_id: samplesheet_params.reagents.index.id,
 				};
 
 				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
@@ -158,6 +176,7 @@ samplesheet_module.controller('Link2RunCtrl',
 	 					content: data.result.error.join(" ") + " " +  data.result.objects.join(" "),
 	 					alertType:'danger'});
 					}
+					$scope.importing.hide();
 
 				});
 	 		}
@@ -170,6 +189,7 @@ samplesheet_module.controller('Link2RunCtrl',
 	 			var start_sample_list = false;
 	 			var ilanes = 0;
 	 			var isampleid = 0;
+	 			$scope.importing.show();
 	 			_.each(samplesheet_params.samplesheet, function(row) {
 	 				if (start_sample_list) {
 	 					if (row[ilanes] !== undefined && row[ilanes] !== ''  && !isNaN(row[ilanes])) {
@@ -178,16 +198,15 @@ samplesheet_module.controller('Link2RunCtrl',
 	 					if (_.indexOf(samples,row[isampleid]) === -1 && row[isampleid] !== undefined && row[isampleid] !== '') {
 	 						samples.push(row[isampleid]);
 	 					}
-
 					}
 
 					if (_.indexOf(row,'Sample_ID') !== -1){
 						start_sample_list = true;
 						isampleid = _.indexOf(row,'Sample_ID');
 						ilanes = _.indexOf(row,'Lane');
-
 					}
 	 			});
+
 				nlanes = samplesheet_params.switchMode?2:8;
 	 			if (_.keys(lanes).length != nlanes) {
 	 				Utility.alert({title:'There\'s been an error<br/>',
@@ -238,6 +257,7 @@ samplesheet_module.controller('Link2RunCtrl',
 					$scope.samplesheet_params.i1 = null;
 					$scope.samplesheet_params.i2 = null;
 					$scope.samplesheet_params.switchMode = true;
+					$scope.samplesheet_params.reagents = null;
 
                 	if ( newValue != undefined && newValue.running_folder === 'MISSING RUN FOLDER') {
                 		$scope.samplesheet_params.switchRun = true;
@@ -290,6 +310,10 @@ samplesheet_module.controller('Link2RunCtrl',
 					}
                 }
 
+                if (_.size(newValue.run_parameters) > 0) {
+                	$scope.samplesheet_params.reagents = newValue.run_parameters.reagents
+                }
+
                 $scope.restart();
             });
 
@@ -335,7 +359,7 @@ samplesheet_module.controller('Link2RunCtrl',
         $scope.restart =
         	function(){
         		BikaService.checkStatus().success(function (data, status, header, config){
-				   resut = data;
+				   this.result = data;
 				});
 			}
 
