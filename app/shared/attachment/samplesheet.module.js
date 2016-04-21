@@ -96,22 +96,24 @@ samplesheet_module.controller('Link2RunCtrl',
 	function(BikaService, IrodsService, Utility, $stateParams, $state, config, $scope, $rootScope) {
 		//$scope.run_folders = ['160210_SN526_0254_BHGC35BCXX','160226_SN526_0255_BC8490ACXX','160308_SN526_0256_BC7WNWACXX'];
 
-		$scope.attachment = {content:[], sample_list:[], samplesheet: []};
 
-		if ($stateParams.content !== undefined) {
-			$scope.state = {content:Utility.format_html($stateParams.content)};
-			$scope.attachment = {content:[], sample_list:[], samplesheet: JSON.parse($scope.state.content)};
-		}
 
 		$scope.get_running_folders =
 			function() {
-				this.params = {}
+				this.params = {};
 				IrodsService.getRunningFolders(this.params).success(function (data, status, header, config){
 					$scope.run_folders = data.result.objects;
+					console.log($scope.run_folders);
 				});
 			}
 
 		$scope.get_running_folders();
+
+		$scope.attachment = {content:[], sample_list:[], samplesheet: []};
+		if ($stateParams.content !== undefined) {
+			$scope.state = {content:Utility.format_html($stateParams.content)};
+			$scope.attachment = {content:[], sample_list:[], samplesheet: JSON.parse($scope.state.content)};
+		}
 
 		$scope.samplesheet_params = {
 			run_folder: null,
@@ -245,7 +247,8 @@ samplesheet_module.controller('Link2RunCtrl',
                 	return;
                 }
 				$scope.samplesheet_params.switchRun = false;
-                pieces = newValue.running_folder.split('_')
+                pieces = newValue.running_folder.split('_');
+                //console.log(newValue.run_parameters); return;
                 $scope.samplesheet_params.fcid = pieces[3].substring(1);
                 $scope.samplesheet_params.date = "20"+pieces[0].substring(0,2)+"/"+pieces[0].substring(2,4)+"/"+pieces[0].substring(4,6);
                 $scope.samplesheet_params.instrument = config.instruments[pieces[1]];
@@ -286,6 +289,7 @@ samplesheet_module.controller('Link2RunCtrl',
 
 					}
                 }
+
                 $scope.restart();
             });
 
