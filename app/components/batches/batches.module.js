@@ -84,10 +84,14 @@ batches_module.controller('BatchesCtrl',
         $scope.closeBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('closing batches').show();
-				this.params = {ids: batch_id};
+				this.params = {f: $scope._get_review_params(batch_id)};
+
 				BikaService.closeBatch(this.params).success(function (data, status, header, config){
+					console.log(data);
 					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'closed')};
+					console.log(this.params);
 					BikaService.updateBatches(this.params).success(function (data, status, header, config){
+						console.log(data);
 						$scope.loading_change_review_state('closing batches').hide();
 						$scope.checked_list = [];
 				 		$scope.getBatches($scope.review_state);
@@ -99,7 +103,7 @@ batches_module.controller('BatchesCtrl',
 		$scope.openBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('opening batches').show();
-				this.params = {ids: batch_id};
+				this.params = {f: $scope._get_review_params(batch_id)};
 				BikaService.openBatch(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'open')};
 					BikaService.updateBatches(this.params).success(function (data, status, header, config){
@@ -115,7 +119,7 @@ batches_module.controller('BatchesCtrl',
 		$scope.cancelBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('deleting batches').show();
-				this.params = {id: batch_id};
+				this.params = {f: $scope._get_review_params(batch_id)};
 				BikaService.cancelBatch(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'cancelled')};
 					BikaService.updateBatches(this.params).success(function (data, status, header, config){
@@ -131,7 +135,7 @@ batches_module.controller('BatchesCtrl',
 		$scope.reinstateBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('reinstating batches').show();
-				this.params = {ids: batch_id};
+				this.params = {f: $scope._get_review_params(batch_id)};
 				BikaService.reinstateBatch(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(batch_id)};
 					BikaService.updateBatches(this.params).success(function (data, status, header, config){
@@ -145,13 +149,33 @@ batches_module.controller('BatchesCtrl',
 
 		$scope._get_input_values_review_state =
 			function (batch_id, review_state) {
-				batch_id = batch_id.split('|');
+//				batch_id = batch_id.split('|');
 				var input_values = {};
 				_.each(batch_id,function(id) {
 					batch = _.findWhere($scope.batches, {'id': id});
 					input_values[batch.path] = {subject: review_state!==undefined?review_state:batch.review_state};
 				});
 				return JSON.stringify(input_values);
+			}
+
+		$scope._get_review_params =
+			function(batch_id) {
+
+				if (!Array.isArray(batch_id)) {
+					var f = [];
+					this.batch = _.findWhere($scope.batches, {'id':batch_id});
+					f.push(this.batch.path);
+					return JSON.stringify(f);
+				}
+				else if (Array.isArray(batch_id)) {
+					var f = [];
+					_.each(batch_id,function(id) {
+						this.batch = _.findWhere($scope.batches, {'id':id});
+						f.push(this.batch.path);
+					});
+					return JSON.stringify(f);
+				}
+
 			}
 
 
@@ -212,8 +236,9 @@ batches_module.controller('BatchesCtrl',
 		this.change_review_state =
 			function (action, batch_id) {
 				if (batch_id === undefined) {
-					var batch_id = $scope.checked_list.join('|');
+					var batch_id = $scope.checked_list;
 				}
+				else { batch_id = [batch_id];}
 
 				if (action === 'close') {
 					 $scope.closeBatch(batch_id);
