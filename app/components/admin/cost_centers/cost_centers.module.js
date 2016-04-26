@@ -307,6 +307,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
         	selectedAmount: null,
         	selectedBatches: null,
 			selectedLabProducts: {},
+			selectedEstimatedCost: null,
         };
 
         $scope.$watch('costcenter_params.selectedClient',
@@ -336,6 +337,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
 					'description': costcenter_params.selectedDescription,
 					'expirationDate': Utility.format_date(costcenter_params.selectedExpirationDate),
 					'subject': 'pending',
+					'location': costcenter_params.selectedEstimatedCost != undefined?costcenter_params.selectedEstimatedCost:'',
 					'rights': costcenter_params.selectedAmount != undefined?costcenter_params.selectedAmount:'',
 					'Remarks': JSON.stringify(costcenter_params.selectedLabProducts),
         		}
@@ -436,6 +438,11 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
             delayHide: 1000,
         });
 
+        $scope.loading_update = Utility.loading({
+            busyText: 'Wait while updating...',
+            delayHide: 500,
+        });
+
         $scope.loading_change_review_state =
         	function(text) {
         		this.params = {
@@ -465,6 +472,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						selectedAmount: $scope.cost_center.rights,
 						selectedOrderNumber: $scope.cost_center.order_number,
 						selectedBatches: null,
+						selectedEstimatedCost: $scope.cost_center.location,
 						selectedLabProducts: JSON.parse($scope.cost_center.remarks),
 					};
 					var counter = 0;
@@ -585,9 +593,12 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 					'OrderNumber': costcenter_params.selectedOrderNumber,
 					'title': costcenter_params.selectedTitle,
 					'description': costcenter_params.selectedDescription,
+					'location': costcenter_params.selectedEstimatedCost,
+					'rights': costcenter_params.selectedAmount,
 					'expirationDate': Utility.format_date(costcenter_params.selectedExpirationDate),
 					'Remarks': JSON.stringify(costcenter_params.selectedLabProducts),
 				}
+				$scope.loading_update.show();
 				BikaService.updateSupplyOrder(this.params).success(function (data, status, header, config){
 					this.result = data.result;
 					if (this.result['success'] === 'True') {
@@ -612,11 +623,12 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 							$state.go('cost_center',{'costcenter_id': $scope.cost_center.id},{reload: true});
                     	}
                     	else {
-							$scope.loading_create.hide();
-							Utility.alert({title:'Success', content: 'Your Cost Center has been successfully created with ID: '+obj_id, alertType:'success'});
+							$scope.loading_update.hide();
+							Utility.alert({title:'Success', content: 'Your Cost Center has been successfully edited', alertType:'success'});
+							$state.go('cost_center',{'costcenter_id': $scope.cost_center.id},{reload: true});
 
                     	}
-						$state.go('cost_center',{'costcenter_id': $scope.cost_center.id},{reload: true});
+
 					}
 					else {
 						Utility.alert({title:'Error while editing...', content: result['message'], alertType:'danger'});

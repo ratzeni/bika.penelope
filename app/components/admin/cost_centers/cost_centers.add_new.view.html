@@ -55,7 +55,7 @@
                                 </div>
                     </div>
                     <div class="col-sm-12" style="margin-top:10px;" ng-if="costcenter_params.selectedDescription!=null">
-                        <div class="input-inline col-sm-6">
+                        <div class="input-inline col-sm-4">
                             <select data-nq-select="" data-ng-required="true" data-min-required="1"
                                     data-qo-placeholder="Batches.." name="batches"
                                     data-qo-max-length="0" data-name="services"
@@ -65,7 +65,7 @@
                                     data-ng-options="b.title for b in batches">
                             </select>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <i class="glyphicon glyphicon-euro"></i>
@@ -76,6 +76,20 @@
                                    data-ng-model="costcenter_params.selectedAmount"
 
                                    placeholder="Amount..."/>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="glyphicon glyphicon-euro"></i>
+                                </div>
+                                <input type="text"
+                                   class="form-control"
+                                   data-name="estimed"
+                                   data-ng-model="costcenter_params.selectedEstimatedCost"
+
+                                   placeholder="Reagents's estimated cost..."/>
 
                             </div>
                         </div>

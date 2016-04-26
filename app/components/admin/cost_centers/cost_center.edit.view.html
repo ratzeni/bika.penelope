@@ -13,7 +13,7 @@
                                    data-nq-datepicker="" data-qo-format="YYYY-MM-DD" data-qo-mode='date'
                                    placeholder="datepicker" data-ng-required="true" name="expiration_date" required>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-euro"></i>
@@ -22,10 +22,20 @@
                            class="form-control"
                            data-name="amount"
                            data-ng-model="costcenter_params.selectedAmount"
-
                            placeholder="Amount..."/>
-
 				    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-euro"></i>
+                        </div>
+                        <input type="text"
+                               class="form-control"
+                               data-name="estimed"
+                               data-ng-model="costcenter_params.selectedEstimatedCost"
+                               placeholder="Reagents's estimated cost..."/>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-12" style="margin-top:10px;">
