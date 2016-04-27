@@ -144,7 +144,10 @@ cost_centers_module.controller('CostCentersCtrl',
 		this.change_review_state =
 			function (action, supply_order_id) {
 				if (supply_order_id === undefined) {
-					var supply_order_id = $scope.checked_list.join('|');
+					var supply_order_id = $scope.checked_list;
+				}
+				else {
+					var supply_order_id = [supply_order_id]
 				}
 
 				if (action === 'activate') {
@@ -161,7 +164,7 @@ cost_centers_module.controller('CostCentersCtrl',
 		$scope.activateSupplyOrder =
 			function(supply_order_id) {
 				$scope.loading_change_review_state('activating').show();
-				this.params = {ids: supply_order_id};
+				this.params = {f: $scope._get_review_params(supply_order_id)};
 				BikaService.activateSupplyOrder(this.params).success(function (data, status, header, config){
 					$scope.checked_list = [];
 			 		$scope.getSupplyOrders($scope.review_state);
@@ -171,7 +174,7 @@ cost_centers_module.controller('CostCentersCtrl',
 		$scope.deactivateSupplyOrder =
 			function(supply_order_id) {
 				$scope.loading_change_review_state('deactivating').show();
-				this.params = {ids: supply_order_id};
+				this.params = {f: $scope._get_review_params(supply_order_id)};
 				BikaService.deactivateSupplyOrder(this.params).success(function (data, status, header, config){
 					$scope.loading_change_review_state('deactivating').hide();
 					$scope.checked_list = [];
@@ -182,7 +185,7 @@ cost_centers_module.controller('CostCentersCtrl',
 		$scope.dispatchSupplyOrder =
 			function(supply_order_id) {
 				$scope.loading_change_review_state('dispatching').show();
-				this.params = {ids: supply_order_id};
+				this.params = {f: $scope._get_review_params(supply_order_id)};
 				BikaService.dispatchSupplyOrder(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(supply_order_id,'dispatched')};
 					BikaService.updateSupplyOrders(params).success(function (data, status, header, config){
@@ -195,13 +198,33 @@ cost_centers_module.controller('CostCentersCtrl',
 
 		$scope._get_input_values_review_state =
 			function (supply_order_id, review_state) {
-				supply_order_id = supply_order_id.split('|');
 				var input_values = {};
 				_.each(supply_order_id,function(id) {
 					supply_order = _.findWhere($scope.supply_orders, {'id': id});
 					input_values[supply_order.path] = {subject: review_state!==undefined?review_state:supply_order.review_state};
 				});
 				return JSON.stringify(input_values);
+			}
+
+
+		$scope._get_review_params =
+			function(supply_order_id) {
+
+				if (!Array.isArray(supply_order_id)) {
+					var f = [];
+					this.supply_order = _.findWhere($scope.supply_orders, {'id': supply_order_id});
+					f.push(this.supply_order.path);
+					return JSON.stringify(f);
+				}
+				else if (Array.isArray(supply_order_id)) {
+					var f = [];
+					_.each(supply_order_id,function(id) {
+						this.supply_order = _.findWhere($scope.supply_orders, {'id': id});
+						f.push(this.supply_order.path);
+					});
+					return JSON.stringify(f);
+				}
+
 			}
 });
 

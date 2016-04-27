@@ -54,8 +54,8 @@
                     <th ng-click="sort('review_state')">State
                         <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th><span class="fic glyphicon glyphicon-wrench" ></span></th>
-                    <th><span class="fic glyphicon glyphicon-blackboard" ></span></th>
+                    <!--<th><span class="fic glyphicon glyphicon-wrench" ></span></th>-->
+                    <!--<th><span class="fic glyphicon glyphicon-blackboard" ></span></th>-->
 
                 </tr>
                 </thead>
@@ -153,14 +153,14 @@
                     </td>
 
                     <td>{{ctrl.format_review_state(row.review_state)}}</td>
-                    <td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include>
+                    <!--<td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include>-->
 
-                    </td>
-                    <td> <ngcart-addtocart id="{{  row.id }}" name="{{ row.id }}" price="1" quantity="1" mini="true"
-                              quantity-max="1" data="row">
-                            <span class="glyphicon glyphicon-plus-sign"></span>
-                        </ngcart-addtocart>
-                    </td>
+                    <!--</td>-->
+                    <!--<td> <ngcart-addtocart id="{{  row.id }}" name="{{ row.id }}" price="1" quantity="1" mini="true"-->
+                              <!--quantity-max="1" data="row">-->
+                            <!--<span class="glyphicon glyphicon-plus-sign"></span>-->
+                        <!--</ngcart-addtocart>-->
+                    <!--</td>-->
                 </tr>
                 </tbody>
             </table>
@@ -178,9 +178,9 @@
 
 
         </div>
-         <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="analysis_requests.length > 0">
-             <ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>
-             <ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>
-        </div>
+         <!--<div class="col-sm-12 controls" style="margin-top:10px;" ng-if="analysis_requests.length > 0">-->
+             <!--<ng-include src="'app/shared/review_state/review_state.btns.html'"></ng-include>-->
+             <!--<ng-include src="'app/shared/blackboard/toggle.btns.html'" class="pull-right"></ng-include>-->
+        <!--</div>-->
     </div>
 </div>

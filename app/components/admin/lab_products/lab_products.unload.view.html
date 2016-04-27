@@ -35,18 +35,6 @@
                 </div>
             </div>
             <div class="col-sm-12" style="margin-top:10px;" data-ng-if="unloading_params.title !== null && unloading_params.title.length > 0">
-
-
-                 <div class="input-inline col-sm-4" data-ng-show="unloading_params.rgt_barcode.length > 0">
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <i class="glyphicon glyphicon-barcode"></i>
-                        </div>
-                        <input type="text" ng-model="unloading_params.lot_barcode" class="form-control"
-                               placeholder="LOT Barcode..."
-                               data-ng-required="true" required ng-readonly="1" >
-                    </div>
-                </div>
                 <div class="input-inline col-sm-4">
                     <div class="input-group">
                         <div class="input-group-addon">
@@ -58,7 +46,17 @@
                                data-ng-required="true" required>
                     </div>
                 </div>
-                 <div class="input-inline col-sm-4">
+                <div class="input-inline col-sm-4" data-ng-show="unloading_params.rgt_barcode.length > 0">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="glyphicon glyphicon-barcode"></i>
+                        </div>
+                        <input type="text" ng-model="unloading_params.lot_barcode" class="form-control"
+                               placeholder="LOT Barcode..."
+                               data-ng-required="true" required ng-readonly="1" >
+                    </div>
+                </div>
+                <div class="input-inline col-sm-4">
                     <div class="input-group" data-ng-if="unloading_params.rgt_barcode.length > 0">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-pencil"></i>

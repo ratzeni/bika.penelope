@@ -129,8 +129,9 @@ lab_products_module.controller('LabProductsCtrl',
 		this.change_review_state =
 			function (action, lab_product_id) {
 				if (lab_product_id === undefined) {
-					var lab_product_id = $scope.checked_list.join('|');
+					var lab_product_id = $scope.checked_list;
 				}
+				else {var lab_product_id = [lab_product_id];}
 
 				if (action === 'activate') {
 					 $scope.activateLabProduct(lab_product_id);
@@ -144,7 +145,7 @@ lab_products_module.controller('LabProductsCtrl',
 		$scope.activateLabProduct =
 			function(lab_product_id) {
 				$scope.loading_change_review_state('activating').show();
-				this.params = {ids: lab_product_id};
+				this.params = {f: $scope._get_review_params(lab_product_id)};
 				BikaService.activateLabProduct(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(lab_product_id,'active')};
 					BikaService.updateLabProducts(this.params).success(function (data, status, header, config){
@@ -158,7 +159,7 @@ lab_products_module.controller('LabProductsCtrl',
 		$scope.deactivateLabProduct =
 			function(lab_product_id) {
 				$scope.loading_change_review_state('deactivating').show();
-				this.params = {ids: lab_product_id};
+				this.params = {f: $scope._get_review_params(lab_product_id)};
 				BikaService.deactivateLabProduct(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(lab_product_id,'deactivate')};
 					BikaService.updateLabProducts(this.params).success(function (data, status, header, config){
@@ -172,13 +173,25 @@ lab_products_module.controller('LabProductsCtrl',
 
 		$scope._get_input_values_review_state =
 			function (lab_product_id, review_state) {
-				lab_product_id = lab_product_id.split('|');
+				//lab_product_id = lab_product_id.split('|');
 				var input_values = {};
 				_.each(lab_product_id,function(id) {
 					lab_product = _.findWhere($scope.lab_products, {'id': id});
 					input_values[lab_product.path] = {subject: review_state!==undefined?review_state:lab_product.review_state};
 				});
 				return JSON.stringify(input_values);
+			}
+
+		$scope._get_review_params =
+			function(lab_product_id) {
+				var f = [];
+				_.each(lab_product_id,function(id) {
+					this.lab_product = _.findWhere($scope.lab_products, {'id': id});
+					f.push(this.lab_product.path);
+				});
+				return JSON.stringify(f);
+
+
 			}
 
 });
@@ -692,9 +705,8 @@ lab_products_module.controller('UnloadingLabProductCtrl',
 							units[lab_product.barcode] = {obj_path: this.product.path, Unit: this.product.unit};
 						}
 						units[lab_product.barcode].Unit--;
-						this.params = {
-							id: 'labproduct-'+lab_product.rgt_barcode,
-						}
+						this.product = _.findWhere($scope.inventory,  {id: 'labproduct-'+lab_product.rgt_barcode});
+						this.params = {f: JSON.stringify([this.product.path])}
 						$scope.loading_change_review_state('unloading').show();
 						BikaService.deactivateLabProduct(this.params).success(function (data, status, header, config){
 							this.product = _.findWhere($scope.inventory,  {id: 'labproduct-'+lab_product.rgt_barcode});
@@ -921,8 +933,8 @@ lab_products_module.controller('LabProductDetailsCtrl',
 		this.change_review_state =
 			function (action, lab_product_id) {
 				if (lab_product_id === undefined) {
-					var lab_product_id = $scope.checked_list.join('|');
-				}
+					var lab_product_id = $scope.checked_list;
+				} else {var lab_product_id = [lab_product_id];}
 
 				if (action === 'unload') {
 					 $scope.unloadLabProduct(lab_product_id);
@@ -939,7 +951,7 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					return;
 				}
 				$scope.loading_change_review_state('unloading').show();
-				this.params = {ids: lab_product_id};
+				this.params = {f: $scope._get_review_params(lab_product_id)};
 				BikaService.deactivateLabProduct(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(lab_product_id,'unloaded')};
 					BikaService.updateLabProducts(this.params).success(function (data, status, header, config){
@@ -963,7 +975,7 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					return;
 				}
 				$scope.loading_change_review_state('loading').show();
-				this.params = {ids: lab_product_id};
+				this.params = {f: $scope._get_review_params(lab_product_id)};
 				BikaService.activateLabProduct(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(lab_product_id,'loaded')};
 					BikaService.updateLabProducts(this.params).success(function (data, status, header, config){
@@ -983,13 +995,25 @@ lab_products_module.controller('LabProductDetailsCtrl',
 
 		$scope._get_input_values_review_state =
 			function (lab_product_id, review_state) {
-				lab_product_id = lab_product_id.split('|');
+				//lab_product_id = lab_product_id.split('|');
 				var input_values = {};
 				_.each(lab_product_id,function(id) {
 					this.lab_product = _.findWhere($scope.lab_products, {'id': id});
 					input_values[this.lab_product.path] = {subject: review_state!==undefined?review_state:this.lab_product.review_state};
 				});
 				return JSON.stringify(input_values);
+			}
+
+		$scope._get_review_params =
+			function(lab_product_id) {
+				var f = [];
+				_.each(lab_product_id,function(id) {
+					this.lab_product = _.findWhere($scope.lab_products, {'id': id});
+					f.push(this.lab_product.path);
+				});
+				return JSON.stringify(f);
+
+
 			}
 
 

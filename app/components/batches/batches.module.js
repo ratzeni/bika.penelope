@@ -91,7 +91,6 @@ batches_module.controller('BatchesCtrl',
 					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'closed')};
 					console.log(this.params);
 					BikaService.updateBatches(this.params).success(function (data, status, header, config){
-						console.log(data);
 						$scope.loading_change_review_state('closing batches').hide();
 						$scope.checked_list = [];
 				 		$scope.getBatches($scope.review_state);
@@ -490,13 +489,13 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.cancelAnalysisRequest =
 			function(id) {
 				$scope.loading_change_review_state('deleting analysis requests').show();
-				this.params = {ids: id};
+				this.params = {f: $scope._get_review_params(id)};
 				BikaService.cancelAnalysisRequest(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(id,'cancelled')};
 					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.checked_list = [];
 						$scope.loading_change_review_state('deleting analysis requests').hide();
-						$scope.getBatch($stateParams.batch_id);
+						$state.go('batch',{'batch_id': $scope.batch.id},{reload: true});
 					});
 				});
 
@@ -505,13 +504,13 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.reinstateAnalysisRequest =
 			function(id) {
 				$scope.loading_change_review_state('reinstating analysis requests').show();
-				this.params = {ids: id};
+				this.params = {f: $scope._get_review_params(id)};
 				BikaService.reinstateAnalysisRequest(this.params).success(function (data, status, header, config){
-				 	this.params = {input_values: $scope._get_input_values_review_state(id)};
+				 	this.params = {input_values: $scope._get_input_values_review_state(id, 'reinstated')};
 					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 						$scope.checked_list = [];
 						$scope.loading_change_review_state('reinstating analysis requests').hide();
-						$scope.getBatch($stateParams.batch_id);
+						$state.go('batch',{'batch_id': $scope.batch.id},{reload: true});
 					});
 				 });
 
@@ -520,7 +519,7 @@ batches_module.controller('BatchDetailsCtrl',
 		$scope.receiveSample =
 			function(id) {
 				$scope.loading_change_review_state('receiving samples').show();
-				this.params = {f: $scope._get_review_params(id.split('|'))};
+				this.params = {f: $scope._get_review_params(id)};
 				BikaService.receiveSample(this.params).success(function (data, status, header, config){
 					this.params = {input_values: $scope._get_input_values_review_state(id, 'sample_received')};
 					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
@@ -546,7 +545,7 @@ batches_module.controller('BatchDetailsCtrl',
 				BikaService.publish(this.params).success(function (data, status, header, config){
 					this.result = data.result;
 					if (this.result.success === 'True') {
-						this.params = {input_values: $scope._get_input_values_review_state(request_id.join('|'), 'published')};
+						this.params = {input_values: $scope._get_input_values_review_state(request_id, 'published')};
 						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 							$scope.checked_list = [];
 							$scope.loading_change_review_state('receiving samples').hide();
@@ -576,7 +575,7 @@ batches_module.controller('BatchDetailsCtrl',
 				BikaService.republish(this.params).success(function (data, status, header, config){
 					this.result = data.result;
 					if (this.result.success === 'True') {
-						this.params = {input_values: $scope._get_input_values_review_state(request_id.join('|'), 'published')};
+						this.params = {input_values: $scope._get_input_values_review_state(request_id, 'published')};
 						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
 							$scope.checked_list = [];
 							$scope.loading_change_review_state('receiving samples').hide();
@@ -620,10 +619,11 @@ batches_module.controller('BatchDetailsCtrl',
 
 		$scope._get_input_values_ =
 			function (ar_id, review_state) {
-				ar_id = ar_id.split('|');
+				//ar_id = ar_id.split('|');
 				var input_values = {};
 				_.each(ar_id,function(id) {
 					ar = _.findWhere($scope.analysis_requests, {'id': id});
+					console.log(ar);
 					input_values[ar.path] = {subject: review_state!==undefined?review_state:ar.review_state};
 				});
 				return JSON.stringify(input_values);
@@ -631,12 +631,21 @@ batches_module.controller('BatchDetailsCtrl',
 
 		$scope._get_input_values_review_state =
 			function (ar_id, review_state) {
-				ar_id = ar_id.split('|');
+				//ar_id = ar_id.split('|');
 				var input_values = {};
 				_.each(ar_id,function(id) {
 					ar = _.findWhere($scope.analysis_requests, {'id': id});
 					if (review_state === "published") {
 						input_values[ar.path] = {subject: review_state!==undefined?review_state:ar.review_state, DatePublished: Utility.format_date()};
+					}
+					else if (review_state === 'reinstated'){
+
+						if (ar.date_received === undefined || ar.date_received === null || ar.date_received === 'None' || ar.date_received.length === 0) {
+							input_values[ar.path] = {subject: 'sample_due'};
+						}
+						else {
+							input_values[ar.path] = {subject: 'sample_received'};
+						}
 					}
 					else {
 						input_values[ar.path] = {subject: review_state!==undefined?review_state:ar.review_state};
@@ -665,8 +674,10 @@ batches_module.controller('BatchDetailsCtrl',
 		this.change_review_state =
 			function (action, id) {
 				if (id === undefined) {
-					var id = $scope.checked_list.join('|');
+					var id = $scope.checked_list;
 				}
+				else {var id = [id];}
+
 				if (action === 'receive') {
 					$scope.receiveSample(id);
 				}
