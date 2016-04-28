@@ -2,8 +2,12 @@ angular
     .module('InitModule', [])
     .constant('init', {
         apiRest: {
-        	url: 'DUMMY_REST_URL',
-        	callback: 'JSON_CALLBACK',
+        	read: {
+        		url: 'DUMMY_READ_REST_URL',
+        	},
+        	write: {
+        		url: 'DUMMY_WRITE_REST_URL',
+        	},
         },
         bikaApiRest: {
         	host: 'DUMMY_BIKA_HOST',
@@ -15,8 +19,9 @@ angular
         sshApiRest: {
         	host: 'DUMMY_SSH_HOST',
         	user: 'DUMMY_SSH_USER',
-        	run_folder: 'DUMMY_RUN_FOLDER',
         	tmp_folder: 'DUMMY_TMP_FOLDER',
+        	run_folders: [DUMMY_RUN_FOLDERS],
         	run_info_file: 'DUMMY_RUN_INFO_FILE',
+        	run_parameters_file:  'DUMMY_RUN_PARAMTERS_FILE',
         }
 	});
