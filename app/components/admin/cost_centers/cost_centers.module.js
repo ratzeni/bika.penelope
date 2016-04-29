@@ -483,7 +483,6 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
         $scope.getCostCenter =
         	function(costcenter_id) {
-
                 this.params = {sort_on: 'Date', sort_order: 'descending', id: costcenter_id};
                 BikaService.getSupplyOrders(this.params).success(function (data, status, header, config){
                     $scope.cost_center = data.result.objects[0];
@@ -496,30 +495,31 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						selectedOrderNumber: $scope.cost_center.order_number,
 						selectedBatches: null,
 						selectedEstimatedCost: $scope.cost_center.location,
-						selectedLabProducts: JSON.parse($scope.cost_center.remarks),
+						selectedLabProducts: $scope.cost_center.remarks!==''?JSON.parse($scope.cost_center.remarks):$scope.cost_center.remarks,
 					};
 					var counter = 0;
-					_.each(_.keys(JSON.parse($scope.cost_center.remarks)), function(id) {
-						this.params = {'id': id};
-						$scope.checked_list.push(id);
-						BikaService.getLabProducts(this.params).success(function (data, status, header, config){
-							$scope.lab_products.push(data.result.objects[0]);
-							counter++;
-							if (counter === _.size(JSON.parse($scope.cost_center.remarks))) {
-								this.params = {'sort_on': 'title', Subject: 'active'};
-								BikaService.getLabProducts(this.params).success(function (data, status, header, config){
-									this.result = data.result.objects;
-									_.each(this.result, function (obj){
-										if (_.findWhere($scope.lab_products, {'id': obj['id']}) === undefined ){
-											 $scope._lab_products.push(obj);
-										}
+					if ($scope.cost_center.remarks !== '') {
+						_.each(_.keys(JSON.parse($scope.cost_center.remarks)), function(id) {
+							this.params = {'id': id};
+							$scope.checked_list.push(id);
+							BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+								$scope.lab_products.push(data.result.objects[0]);
+								counter++;
+								if (counter === _.size(JSON.parse($scope.cost_center.remarks))) {
+									this.params = {'sort_on': 'title', Subject: 'active'};
+									BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+										this.result = data.result.objects;
+										_.each(this.result, function (obj){
+											if (_.findWhere($scope.lab_products, {'id': obj['id']}) === undefined ){
+												 $scope._lab_products.push(obj);
+											}
+										});
 									});
-								});
-
-							}
-
+								}
+							});
 						});
-					});
+					}
+
 
         		});
         	}
@@ -541,6 +541,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
                     	}
                     	else if (batch.cost_center != $scope.state.costcenter_id
                     	 		&& batch.cost_center == ''
+                    	 		&& $scope.cost_center !== null
                     			&& batch.client == $scope.get_client($scope.cost_center.client_id)) {
                     		all_batches.push(batch);
                     	}
@@ -558,6 +559,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
 		this.get_client =
 			function(client_id) {
+				if (client_id)
 				this.client = _.findWhere($scope.clients, {id: client_id});
 
 				return this.client.title;
