@@ -584,7 +584,6 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 		this.get_estimated =
 			function(id) {
 				return JSON.parse($scope.cost_center.remarks)[id];
-
 			}
 
 		this.toggle =
@@ -598,7 +597,6 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 					$scope.checked_list.push(id);
 				}
 			}
-
 
 		$scope.count_samples = function() {
 			_.each($scope.batches,function(batch) {
