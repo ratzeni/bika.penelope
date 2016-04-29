@@ -519,8 +519,6 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 							});
 						});
 					}
-
-
         		});
         	}
 
@@ -545,13 +543,11 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
                     			&& batch.client == $scope.get_client($scope.cost_center.client_id)) {
                     		all_batches.push(batch);
                     	}
-
                     });
                     $scope.data= {all_batches: all_batches};
                     $scope.loading_search.hide();
                     $scope.count_samples();
             	});
-
             });
 		}
 
@@ -569,8 +565,10 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 		$scope.get_client =
 			function(client_id) {
 				this.client = _.findWhere($scope.clients, {id: client_id});
-
-				return this.client.title;
+				if (this.client !== undefined) {
+                	return this.client.title;
+                }
+				return '';
 			}
 
 		this.format_date =
