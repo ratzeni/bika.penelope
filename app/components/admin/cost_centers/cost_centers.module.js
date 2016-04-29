@@ -559,10 +559,11 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
 		this.get_client =
 			function(client_id) {
-				if (client_id)
 				this.client = _.findWhere($scope.clients, {id: client_id});
-
-				return this.client.title;
+                if (this.client !== undefined) {
+                	return this.client.title;
+                }
+				return '';
 			}
 
 		$scope.get_client =
