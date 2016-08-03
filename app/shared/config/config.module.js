@@ -82,6 +82,7 @@ angular
 					{label: '301', value: '301'},
 				],
 				indexes: [
+					{label: '0', value: '0'},
 					{label: '6', value: '6'},
 					{label: '7', value: '7'},
 					{label: '8', value: '8'},

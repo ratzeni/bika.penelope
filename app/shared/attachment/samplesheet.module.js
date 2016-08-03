@@ -151,23 +151,24 @@ samplesheet_module.controller('Link2RunCtrl',
 				 	samplesheet: JSON.stringify(samplesheet_params.samplesheet),
 				 	run: samplesheet_params.run_folder.running_folder,
 				 	fcid: samplesheet_params.fcid,
-				 	read1_cycles: samplesheet_params.r1.value,
+				 	read1_cycles: samplesheet_params.r1!=null?samplesheet_params.r1.value:'',
 				 	read2_cycles: samplesheet_params.r2!=null?samplesheet_params.r2.value:'',
-				 	index1_cycles: samplesheet_params.i1.value,
+				 	index1_cycles: samplesheet_params.i1!=null?samplesheet_params.i1.value:'',
 				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2.value:'',
 				 	is_rapid: samplesheet_params.switchMode.toString(),
 					date: samplesheet_params.run_folder.run_parameters.run_info.date,
 					scanner_id: samplesheet_params.run_folder.run_parameters.run_info.scanner_id,
 					scanner_nickname: samplesheet_params.instrument,
-					pe_kit: samplesheet_params.reagents.pe.kit,
-					sbs_kit: samplesheet_params.reagents.sbs.kit,
-					index_kit: samplesheet_params.reagents.index.kit,
-					pe_id: samplesheet_params.reagents.pe.id,
-					sbs_id: samplesheet_params.reagents.sbs.id,
-					index_id: samplesheet_params.reagents.index.id,
+					pe_kit: samplesheet_params.reagents.pe.kit!=null?samplesheet_params.reagents.pe.kit:'',
+					sbs_kit: samplesheet_params.reagents.sbs.kit!=null?samplesheet_params.reagents.sbs.kit:'',
+					index_kit: samplesheet_params.reagents.index.kit!=null?samplesheet_params.reagents.index.kit:'',
+					pe_id: samplesheet_params.reagents.pe.id!=null?samplesheet_params.reagents.pe.id:'',
+					sbs_id: samplesheet_params.reagents.sbs.id!=null?samplesheet_params.reagents.sbs.id:'',
+					index_id: samplesheet_params.reagents.index.id!=null?samplesheet_params.reagents.index.id:'',
 				};
 
 				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
+
 					if (data.result.success === 'True') {
 						Utility.alert({title:'Success', content: 'Samplesheet has been successfully imported', alertType:'success'});
 					}
@@ -190,6 +191,7 @@ samplesheet_module.controller('Link2RunCtrl',
 	 			var ilanes = 0;
 	 			var isampleid = 0;
 	 			$scope.importing.show();
+
 	 			_.each(samplesheet_params.samplesheet, function(row) {
 	 				if (start_sample_list) {
 	 					if (row[ilanes] !== undefined && row[ilanes] !== ''  && !isNaN(row[ilanes])) {
