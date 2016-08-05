@@ -147,6 +147,7 @@ samplesheet_module.controller('Link2RunCtrl',
 	 	$scope.link_samplesheet =
 	 		function(samplesheet_params) {
 				this.params = {
+					root_path: samplesheet_params.run_folder.path,
 					illumina_run_directory: samplesheet_params.run_folder.running_folder,
 				 	samplesheet: JSON.stringify(samplesheet_params.samplesheet),
 				 	run: samplesheet_params.run_folder.running_folder,
@@ -165,7 +166,7 @@ samplesheet_module.controller('Link2RunCtrl',
 					pe_id: samplesheet_params.reagents.pe.id!=null?samplesheet_params.reagents.pe.id:'',
 					sbs_id: samplesheet_params.reagents.sbs.id!=null?samplesheet_params.reagents.sbs.id:'',
 					index_id: samplesheet_params.reagents.index.id!=null?samplesheet_params.reagents.index.id:'',
-				};
+				}
 
 				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
 
