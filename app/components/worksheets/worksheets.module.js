@@ -27,6 +27,8 @@ worksheets_module.controller('WorksheetsCtrl',
 
 		$scope.checked_list = [];
 		$scope.review_state = 'open';
+		$scope.analysts = [];
+		$scope.reassign_params = {analyst: null};
 
 		$scope.pagination= {
 			page_nr: 0,
@@ -87,6 +89,14 @@ worksheets_module.controller('WorksheetsCtrl',
                 });
             };
 
+        $scope.getAnalysists =
+			function() {
+				BikaService.getAnalystUsers().success(function (data, status, header, config){
+					$scope.analysts = data.result.objects;
+				});
+			}
+
+		$scope.getAnalysists();
         $scope.getWorksheets($scope.review_state);
 
         this.format_date =
@@ -131,6 +141,20 @@ worksheets_module.controller('WorksheetsCtrl',
 					$scope.checked_list = [];
 				}
 		}
+
+		$scope.reassignWorksheet =
+			function(worksheet_id) {
+				$scope.loading_change_review_state('reassigning worksheets').show();
+				this.params = {input_values: $scope._get_input_values_analyst(worksheet_id, $scope.reassign_params.analyst)};
+				BikaService.updateWorksheets(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_analyses(worksheet_id, $scope.reassign_params.analyst)};
+					BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
+						$scope.loading_change_review_state('reassigning worksheets').hide();
+						$scope.checked_list = [];
+				 		$scope.getWorksheets($scope.review_state);
+					});
+				});
+			}
 
 		$scope.closeWorksheet =
 			function(worksheet_id) {
@@ -192,10 +216,58 @@ worksheets_module.controller('WorksheetsCtrl',
 				}
 			}
 
+		$scope._get_input_values_analyst =
+			function (worksheet_id, analyst) {
+				if (!Array.isArray(worksheet_id)) {
+					var input_values = {};
+					input_values[$scope._get_worksheet_path(worksheet_id)] = {Analyst: analyst.userid};
+					return JSON.stringify(input_values);
+				}
+				else if (Array.isArray(worksheet_id)) {
+					var input_values = {};
+					_.each(worksheet_id,function(id) {
+						input_values[$scope._get_worksheet_path(id)] = {Analyst: analyst.userid};
+					});
+					return JSON.stringify(input_values);
+				}
+			}
+
+		$scope._get_input_values_analyses =
+			function (worksheet_id, analyst) {
+				function get_analyses(worksheet_id) {
+					this.worksheet = _.findWhere($scope.worksheets, {'id': worksheet_id});
+					this.analyses = [];
+					_.each(JSON.parse(this.worksheet.remarks), function(remarks) {
+						this.analyses.push(remarks.obj_path);
+					});
+					return this.analyses;
+				}
+
+				if (!Array.isArray(worksheet_id)) {
+					var input_values = {};
+					this.analyses = get_analyses(worksheet_id);
+					_.each(this.analyses, function(path) {
+						input_values[path] = {Analyst: analyst.userid};
+					});
+
+					return JSON.stringify(input_values);
+				}
+				else if (Array.isArray(worksheet_id)) {
+					var input_values = {};
+					_.each(worksheet_id,function(id) {
+						this.analyses = get_analyses(id);
+						_.each(this.analyses, function(path) {
+							input_values[path] = {Analyst: analyst.userid};
+						});
+					});
+					return JSON.stringify(input_values);
+				}
+			}
+
 		$scope._get_worksheet_path =
 			function(worksheet_id) {
-				worksheet = _.findWhere($scope.worksheets, {'id': worksheet_id});
-				return worksheet.path;
+				this.worksheet = _.findWhere($scope.worksheets, {'id': worksheet_id});
+				return this.worksheet.path;
 			}
 
 		this.change_review_state =
@@ -215,6 +287,9 @@ worksheets_module.controller('WorksheetsCtrl',
 				}
 				else if (action === 'reinstate') {
 					 $scope.reinstateWorksheet(worksheet_id);
+				}
+				else if (action === 'reassign') {
+					$scope.reassignWorksheet(worksheet_id);
 				}
 			}
 
