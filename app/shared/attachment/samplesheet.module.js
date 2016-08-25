@@ -218,7 +218,6 @@ samplesheet_module.controller('Link2RunCtrl',
 	 				return;
 	 			}
 
-
 				if (nlanes==2 && !_.isEqual(_.keys(lanes),['1','2'])) {
 	 				Utility.alert({title:'There\'s been an error<br/>',
 	 					content: "Expecting 1,2 lanes, found " + _.keys(lanes).join(','),

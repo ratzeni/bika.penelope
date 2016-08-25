@@ -1,29 +1,34 @@
 <button type="button" class="btn btn-default" aria-hidden="true"
         data-ng-if="ctrl.check_transitions('activate')"
+        data-ng-disabled="checked_list.length == 0"
         data-ng-click="ctrl.change_review_state('activate')">
     <span class="glyphicon glyphicon-folder-open">
     </span>&nbsp;Active
 </button>
 <button type="button" class="btn btn-danger" aria-hidden="true"
         data-ng-if="ctrl.check_transitions('deactivate')"
+        data-ng-disabled="checked_list.length == 0"
         data-ng-click="ctrl.change_review_state('deactivate')">
     <span class="glyphicon glyphicon-folder-close">
     </span>&nbsp;Deactive
 </button>
 <button type="button" class="btn btn-danger" aria-hidden="true"
         data-ng-if="ctrl.check_transitions('unload')"
+        data-ng-disabled="checked_list.length == 0"
         data-ng-click="ctrl.change_review_state('unload')">
     <span class="glyphicon glyphicon-cloud-download">
     </span>&nbsp;Unload
 </button>
 <button type="button" class="btn btn-success" aria-hidden="true"
         data-ng-if="ctrl.check_transitions('load')"
+        data-ng-disabled="checked_list.length == 0"
         data-ng-click="ctrl.change_review_state('load')">
     <span class="glyphicon glyphicon-cloud-upload">
     </span>&nbsp;Load
 </button>
 <button type="button" class="btn btn-warning" aria-hidden="true"
         ng-show="ctrl.check_transitions('unload')"
+        data-ng-disabled="checked_list.length == 0"
         data-nq-collapse="" data-target-id="#collapseEditLabProductForm" data-collapsed="true">
     <span class="glyphicon glyphicon-edit">
     </span>&nbsp;Edit
