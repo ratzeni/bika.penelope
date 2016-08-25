@@ -218,6 +218,21 @@ samplesheet_module.controller('Link2RunCtrl',
 	 				return;
 	 			}
 
+
+				if (nlanes==2 && !_.isEqual(_.keys(lanes),['1','2'])) {
+	 				Utility.alert({title:'There\'s been an error<br/>',
+	 					content: "Expecting 1,2 lanes, found " + _.keys(lanes).join(','),
+	 					alertType:'danger'});
+	 				return;
+	 			}
+
+	 			if (nlanes==8 && !_.isEqual(_.keys(lanes),['1','2','3','4','5','6','7','8'])) {
+	 				Utility.alert({title:'There\'s been an error<br/>',
+	 					content: "Expecting 1,2,3,4,5,6,7,8 lanes, found "+ _.keys(lanes).join(','),
+	 					alertType:'danger'});
+	 				return;
+	 			}
+
 	 			this.params = {ids: samples.join('|')}
 	 			BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
 	 				if (data.result.objects.length < samples.length) {
