@@ -92,7 +92,10 @@ login_module.factory('Auth',
 
     		})
     		.error(function() {
-    			console.log('errore');
+    			//error();
+    			Utility.alert({title:'There\'s been an error<br/>',
+    						content: "Server Down. Please contact ratzeni@crs4.it",
+	 						alertType:'danger'});
 
     		});
 
@@ -115,7 +118,7 @@ login_module.factory('Auth',
 		};
 
 		//log out the user and broadcast the logoutSuccess event
-		authService.loading = Utility.loading({busyText: 'Wait while Logout...', theme: 'danger', showBar: true, delayHide: 1000});
+		authService.loading = Utility.loading({busyText: 'Wait while Logout...', theme: 'danger', showBar: true, delayHide: 2000});
 		authService.logout = function(){
 			ngCart.empty();
 			authService.loading.show();
@@ -139,7 +142,7 @@ function(Utility, $scope, $rootScope, $state, $window, $timeout, Auth ) {
 	$scope.$state = $state;
 	$scope.loginForm = {};
 	$scope.error = false;
-	$scope.loading = Utility.loading({busyText: 'Wait while Login...', theme: 'success', showBar: true, delayHide: 2000});
+	$scope.loading = Utility.loading({busyText: 'Wait while Login...', theme: 'success', showBar: true, delayHide: 1000});
 
 	//Performs the login function, by sending a request to the server with the Auth service
 	self.login = login;

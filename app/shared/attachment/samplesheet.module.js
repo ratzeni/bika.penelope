@@ -102,7 +102,7 @@ samplesheet_module.controller('Link2RunCtrl',
         });
         $scope.importing = Utility.loading({
             busyText: 'Wait while importing samplesheet...',
-            delayHide: 6000,
+            delayHide: 10000,
         });
 
 		$scope.get_running_folders =

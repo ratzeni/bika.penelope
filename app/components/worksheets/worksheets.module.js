@@ -681,7 +681,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 
 		this.add_to_blackboard =
 			function(ids) {
-				console.log(ids);
+				//console.log(ids);
 				_.each(ids,function(id) {
 					$scope.loading_blackboard.show();
 					ar = _.findWhere($scope.worksheet_details, {'id': id.request_id});
