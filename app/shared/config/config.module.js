@@ -78,6 +78,7 @@ angular
 					{label: '51', value: '51'},
 					{label: '76', value: '76'},
 					{label: '101', value: '101'},
+					{label: '151', value: '151'},
 					{label: '251', value: '251'},
 					{label: '301', value: '301'},
 				],
