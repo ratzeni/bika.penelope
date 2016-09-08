@@ -43,7 +43,7 @@ irods_api_rest_module.service('IrodsService', function(IrodsApiRestService, init
         _.extend(params,init.irodsApiRest);
 
     	this.method = config.irodsApiRest.methods.put_samplesheet;
-        return IrodsApiRestService.call('read',this.method, this.params);
+        return IrodsApiRestService.call('write',this.method, this.params);
     }
 
 });

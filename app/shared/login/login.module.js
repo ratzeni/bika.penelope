@@ -142,7 +142,7 @@ function(Utility, $scope, $rootScope, $state, $window, $timeout, Auth ) {
 	$scope.$state = $state;
 	$scope.loginForm = {};
 	$scope.error = false;
-	$scope.loading = Utility.loading({busyText: 'Wait while Login...', theme: 'success', showBar: true, delayHide: 1000});
+	$scope.loading = Utility.loading({busyText: 'Wait while Login...', theme: 'success', showBar: true, delayHide: 5000});
 
 	//Performs the login function, by sending a request to the server with the Auth service
 	self.login = login;

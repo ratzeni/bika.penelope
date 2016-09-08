@@ -315,6 +315,9 @@ samplesheet_module.controller('Link2RunCtrl',
                 			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'}));
                 		}
 					}
+					else {
+						$scope.samplesheet_params.i1 =  _.findWhere($scope.indexes, {'value': '0'});
+					}
 					if (newValue.run_info.fc_layout.length > 0) {
 						fc_layout = newValue.run_info.fc_layout[0];
 						if (fc_layout.LaneCount === '8') {
