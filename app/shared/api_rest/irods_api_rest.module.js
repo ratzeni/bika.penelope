@@ -53,7 +53,7 @@ irods_api_rest_module.service('IrodsService', function(IrodsApiRestService, init
         _.extend(this.params,init.irodsApiRest);
 
     	this.method = config.irodsApiRest.methods.get_samplesheet;
-        return IrodsApiRestService.call('write',this.method, this.params);
+        return IrodsApiRestService.call('read',this.method, this.params);
     }
 
     this.getRuns = function(params) {
@@ -63,7 +63,7 @@ irods_api_rest_module.service('IrodsService', function(IrodsApiRestService, init
         _.extend(this.params,init.irodsApiRest);
 
     	this.method = config.irodsApiRest.methods.get_runs;
-        return IrodsApiRestService.call('write', this.method, this.params);
+        return IrodsApiRestService.call('read', this.method, this.params);
     }
 
     this.checkRuns = function(params) {
@@ -72,7 +72,7 @@ irods_api_rest_module.service('IrodsService', function(IrodsApiRestService, init
         _.extend(this.params,init.sshApiRest);
 
     	this.method = config.irodsApiRest.methods.check_runs;
-        return IrodsApiRestService.call('write', this.method, this.params);
+        return IrodsApiRestService.call('read', this.method, this.params);
     }
 
 });

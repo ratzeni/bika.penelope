@@ -144,7 +144,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/runs',
             templateUrl: 'app/components/admin/runs/runs.home.view.html',
             data: {
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
@@ -152,7 +152,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/run/:rd_label',
             templateUrl: 'app/components/admin/runs/run.home.view.html',
             data: {
-                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
