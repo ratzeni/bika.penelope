@@ -40,10 +40,39 @@ irods_api_rest_module.service('IrodsService', function(IrodsApiRestService, init
 
 		this.params = (params !== undefined)?params:{}
         _.extend(this.params,init.sshApiRest);
-        _.extend(params,init.irodsApiRest);
+        _.extend(this.params,init.irodsApiRest);
 
     	this.method = config.irodsApiRest.methods.put_samplesheet;
         return IrodsApiRestService.call('write',this.method, this.params);
+    }
+
+    this.getSamplesheet = function(params) {
+
+		this.params = (params !== undefined)?params:{}
+        _.extend(this.params,init.sshApiRest);
+        _.extend(this.params,init.irodsApiRest);
+
+    	this.method = config.irodsApiRest.methods.get_samplesheet;
+        return IrodsApiRestService.call('write',this.method, this.params);
+    }
+
+    this.getRuns = function(params) {
+
+		this.params = (params !== undefined)?params:{}
+        _.extend(this.params,init.sshApiRest);
+        _.extend(this.params,init.irodsApiRest);
+
+    	this.method = config.irodsApiRest.methods.get_runs;
+        return IrodsApiRestService.call('write', this.method, this.params);
+    }
+
+    this.checkRuns = function(params) {
+
+		this.params = (params !== undefined)?params:{}
+        _.extend(this.params,init.sshApiRest);
+
+    	this.method = config.irodsApiRest.methods.check_runs;
+        return IrodsApiRestService.call('write', this.method, this.params);
     }
 
 });

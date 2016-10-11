@@ -33,6 +33,7 @@
                                data-ng-checked="workflow_params.analyses.indexOf(a.id) > -1"
                                data-ng-click="ctrl.toggle_analyses(a.id)">
                     </th>
+                    <th>Runs</th>
                     <th ng-click="sort('review_state')">State
                         <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
@@ -75,6 +76,17 @@
                                 <span class="glyphicon glyphicon-user pull-left"></span>&nbsp;<span class="pull-left" style="margin-left:5px;">{{a.analyst}}</span>
                             </label>
                         </div>
+                    </td>
+                    <td>
+                        <table>
+                            <tr ng-repeat="r in row.runs">
+                                <td>
+                                    <a class="pull-left" ui-sref="run({rd_label: r})" style="text-decoration: none;">
+                                        <span class="small">{{r}}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                     <td>{{ctrl.format_review_state(row.review_state)}}</td>
                     <!--<td><ng-include src="'app/shared/review_state/review_state.btns.mini.html'"></ng-include></td>-->

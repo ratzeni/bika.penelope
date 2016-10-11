@@ -76,6 +76,19 @@
                         <td ng-if="analysis_request.date!=='None'">{{ctrl.format_date(analysis_request.date)}}</td>
                         <td ng-if="analysis_request.date==='None'"><span class="glyphicon glyphicon-remove"></span></td>
                     </tr>
+                    <tr>
+                        <td>Runs</td>
+                        <td>
+                            <table>
+                            <tr ng-repeat="r in analysis_request.runs">
+                                <td>
+                                    <a class="pull-left" ui-sref="run({rd_label: r})" style="text-decoration: none;">
+                                        <span class="small">{{r}}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                        </td>
                     </tr>
                 </table>
             </div>

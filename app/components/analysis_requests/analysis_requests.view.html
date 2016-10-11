@@ -48,6 +48,8 @@
                     </th>
                     <th>Analyses
                     </th>
+                    <th>Runs
+                    </th>
                     <th ng-click="sort('date')">Date
                         <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
@@ -115,6 +117,17 @@
                         </div>
 
 
+                    </td>
+                    <td>
+                        <table>
+                            <tr ng-repeat="r in row.runs">
+                                <td>
+                                    <a class="pull-left" ui-sref="run({rd_label: r})" style="text-decoration: none;">
+                                        <span class="small">{{r}}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                     <td>
                         {{ctrl.format_date(row.date)}}

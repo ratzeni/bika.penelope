@@ -145,7 +145,20 @@ samplesheet_module.controller('Link2RunCtrl',
 		$scope.indexes = config.bikaApiRest.data_source.indexes;
 
 	 	$scope.link_samplesheet =
-	 		function(samplesheet_params) {
+	 		function(samplesheet_params, ars) {
+
+	 			function get_input_values(ars, running_folder) {
+					var input_values = {};
+					_.each(ars, function(ar) {
+						if (_.indexOf(ar.runs, running_folder) == -1) {
+
+							ar.runs.push(running_folder)
+							input_values[ar.path] = {Sampler: ar.runs}
+						}
+					});
+					return JSON.stringify(input_values);
+	 			}
+
 				this.params = {
 					root_path: samplesheet_params.run_folder.path,
 					illumina_run_directory: samplesheet_params.run_folder.running_folder,
@@ -171,7 +184,11 @@ samplesheet_module.controller('Link2RunCtrl',
 				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
 
 					if (data.result.success === 'True') {
-						Utility.alert({title:'Success', content: 'Samplesheet has been successfully imported', alertType:'success'});
+						this.params = {input_values: get_input_values(ars, samplesheet_params.run_folder.running_folder)};
+
+						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
+							Utility.alert({title:'Success', content: 'Samplesheet has been successfully imported', alertType:'success'});
+						});
 					}
 					else {
 						Utility.alert({title:'There\'s been an error<br/>',
@@ -250,7 +267,7 @@ samplesheet_module.controller('Link2RunCtrl',
 						return;
 	 				}
 	 				else {
-	 					$scope.link_samplesheet(samplesheet_params);
+	 					$scope.link_samplesheet(samplesheet_params, data.result.objects);
 	 				}
 	 			});
 

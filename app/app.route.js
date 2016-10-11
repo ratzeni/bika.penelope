@@ -140,6 +140,22 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             }
 
         })
+        .state('runs', {
+            url: '/runs',
+            templateUrl: 'app/components/admin/runs/runs.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+
+        })
+         .state('run', {
+            url: '/run/:rd_label',
+            templateUrl: 'app/components/admin/runs/run.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+
+        })
         .state('blackboard', {
             url: '/blackboard',
             templateUrl: 'app/components/blackboard/blackboard.home.view.html',

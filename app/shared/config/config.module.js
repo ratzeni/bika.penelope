@@ -79,6 +79,7 @@ angular
 					{label: '76', value: '76'},
 					{label: '101', value: '101'},
 					{label: '151', value: '151'},
+					{label: '210', value: '210'},
 					{label: '251', value: '251'},
 					{label: '301', value: '301'},
 				],
@@ -99,7 +100,10 @@ angular
         irodsApiRest: {
         	methods: {
         		get_running_folders: '/irods/get/running',
-        		put_samplesheet: '/irods/put/samplesheet'
+        		get_runs: '/irods/get/runs',
+        		check_runs: '/irods/check/runs',
+        		put_samplesheet: '/irods/put/samplesheet',
+        		get_samplesheet: '/irods/get/samplesheet',
         	}
         },
         legend: {

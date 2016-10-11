@@ -28,6 +28,7 @@ var main_module = angular.module('MainApp',[
     'BlackBoardModule',
     'CostCentersModule',
     'LabProductsModule',
+    'RunsModule',
 ]);
 
 // :: MAIN CONTROLLER

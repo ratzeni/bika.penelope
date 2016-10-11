@@ -56,6 +56,7 @@
     <script src="./app/components/blackboard/blackboard.module.js"></script>
     <script src="./app/components/admin/cost_centers/cost_centers.module.js"></script>
     <script src="./app/components/admin/lab_products/lab_products.module.js"></script>
+    <script src="./app/components/admin/runs/runs.module.js"></script>
     <script src="./app/app.module.js"></script>
     <script src="./app/app.route.js"></script>
 
@@ -102,6 +103,7 @@
                         <li data-ng-if="currentUser.role!='LabClerk'" ng-class="getClass('worksheets')">
                             <a ui-sref="worksheets">Worksheets</a>
                         </li>
+
                         <li data-ng-if="currentUser.is_clerk=='True'" ng-class="getClass('lab_products')">
                             <a ui-sref="lab_products">Lab Products</a>
                         </li>
@@ -115,6 +117,9 @@
                                     <a role="menuitem" tabindex="-1" ui-sref="samplesheet_upload">Upload</a>
                                 </li>
                             </ul>
+                        </li>
+                        <li data-ng-if="currentUser.role!='LabClerk'" ng-class="getClass('runs')">
+                            <a ui-sref="runs">Runs</a>
                         </li>
                         <li data-ng-if="currentUser.role=='Site Administrator'">
                             <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
@@ -132,7 +137,6 @@
                                 <li role="presentation"  ng-class="getClass('lab_products')">
                                     <a role="menuitem" tabindex="-1" ui-sref="lab_products">Lab Products</a>
                                 </li>
-
                             </ul>
                         </li>
 
@@ -156,34 +160,6 @@
      role="navigation" ng-show="$state.current.name!=='login'">
     <div class="container-fluid">
         <div class="collapse navbar-collapse">
-            <!--<ul class="nav navbar-nav navbar-left">
-                <li>
-                    <a ui-sref="worksheets">
-                                <span>
-                                    Assigned
-                                    <span class="btn-success badge pull-right" style="margin-left:10px"
-                                          data-ng-if="counter.assigned >= 0">
-                                        {{counter.assigned}}
-                                    </span>
-                                    <span class="pull-right" style="margin-left:10px"
-                                          data-ng-if="counter.assigned < 0">
-                                    <div style="margin-top:10px;margin-left:10px;margin-right:10px;"
-                                         spinner-on="counter.assigned < 0"
-                                         us-spinner="{radius:10,
-                                                  lines:7,
-                                                  length:10,
-                                                  width: 15,
-                                                  scale:0.2,
-                                                  speed: 1.5,
-                                                  opacity:0.1,
-                                                  corners: 1,
-                                                  color:'white',
-                                                  top: '90%',
-                                                  position: 'relative'}"></div></span>
-                                </span>
-                    </a>
-                </li>
-            </ul>-->
             <ul class="nav navbar-nav navbar-right">
                 <li class="active">
                     <a href="#">
