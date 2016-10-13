@@ -9,14 +9,14 @@ cost_centers_module.controller('CostCentersCtrl',
 
 		$scope.loading_search = Utility.loading({
             busyText: 'Wait while loading...',
-            delayHide: 700,
+            delayHide: 1500,
         });
 
         $scope.loading_change_review_state =
         	function(text) {
         		this.params = {
 	        		busyText: text===undefined?'Wait...':'Wait while ' + text + '...',
-            		delayHide: 700,
+            		delayHide: 1500,
             		theme: 'warning',
         		}
         		return Utility.loading(this.params);
@@ -239,7 +239,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
 
 		$scope.loading_create = Utility.loading({
             busyText: 'Wait while creating...',
-            delayHide: 500,
+            delayHide: 1500,
         });
 
         $scope.pagination= {
@@ -708,5 +708,121 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						.render();
 			});
 
+
+});
+
+cost_centers_module.controller('StatsCostCenterCtrl',
+	function(BikaService, Utility, $state, $scope, $rootScope) {
+
+		$scope.clients = [];
+		$scope.supply_orders = [];
+		$scope.checked_list = [];
+		$scope.review_state = 'all';
+
+		$scope.loading_search = Utility.loading({
+            busyText: 'Wait while searching...',
+            delayHide: 1500,
+        });
+
+        this.reset = function() {
+			$scope.costcenter_params = {
+				selectedClient: null,
+				selectedOrderDateFrom: null,
+				selectedOrderDateTo: null,
+				selectedExpirationDateFrom: null,
+				selectedExpirationDateTo: null,
+			};
+		}
+
+		this.reset();
+
+        $scope.summary = {
+        	amount: 0,
+        	reagents_cost: 0,
+        }
+
+        $scope.sort = function(keyname){
+			$scope.sortKey = keyname;   //set the sortKey to the param passed
+			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+		}
+
+
+		// :: function :: getClients()
+        $scope.getClients =
+            function() {
+                $scope.clients = [];
+                this.params = {};
+                BikaService.getClients(this.params).success(function (data, status, header, config){
+                    $scope.clients = data.result.objects;
+                });
+            };
+
+        $scope.getClients();
+
+		$scope.getSupplyOrders =
+            function(review_state, costcenter_params) {
+
+            	$scope.review_state = review_state;
+                $scope.supply_orders = [];
+                this.params = {	sort_on: 'Date', sort_order: 'descending'};
+				if (costcenter_params.selectedClient != undefined) {
+					this.params['client_id'] = costcenter_params.selectedClient.id
+				}
+				if (costcenter_params.selectedOrderDateFrom != null) {
+					this.params['order_date_from'] = Utility.format_date(costcenter_params.selectedOrderDateFrom);
+				}
+				if (costcenter_params.selectedOrderDateTo != null) {
+					this.params['order_date_to'] = Utility.format_date(costcenter_params.selectedOrderDateTo);
+				}
+				if (costcenter_params.selectedExpirationDateFrom != null) {
+					this.params['expiration_date_from'] = Utility.format_date(costcenter_params.selectedExpirationDateFrom);
+				}
+				if (costcenter_params.selectedExpirationDateTo != null) {
+					this.params['expiration_date_to'] = Utility.format_date(costcenter_params.selectedExpirationDateTo);
+				}
+                if (review_state === 'all') {
+					this.params['Subjects'] = 'pending|dispatch';
+				}
+				else {
+					this.params['Subject'] = review_state;
+				}
+
+				$scope.loading_search.show();
+                BikaService.getSupplyOrders(this.params).success(function (data, status, header, config){
+                	$scope.supply_orders = data.result.objects;
+                	$scope.summary = {
+						amount: 0,
+						reagents_cost: 0,
+					}
+                	_.each($scope.supply_orders, function(supply_order){
+                		$scope.summary.amount+= supply_order.rights.length>0?parseInt(supply_order.rights):0;
+                		$scope.summary.reagents_cost+= supply_order.location.length>0?parseInt(supply_order.location):0;
+                	});
+                	console.log($scope.supply_orders);
+					$scope.loading_search.hide();
+                });
+		}
+
+		this.search = function(costcenter_params) {
+			$scope.getSupplyOrders($scope.review_state, costcenter_params);
+		};
+
+
+		this.get_client =
+			function(client_id) {
+				this.client = _.findWhere($scope.clients, {id: client_id});
+
+				return this.client.title;
+			}
+
+		this.format_date =
+			function(date) {
+				return Utility.format_date(date);
+			};
+
+		this.format_review_state =
+			function(review_state) {
+				return Utility.format_review_state(review_state);
+			};
 
 });

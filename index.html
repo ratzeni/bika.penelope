@@ -80,14 +80,14 @@
                         <span class="icon-bar"></span>
                     </button>
                 </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#" ng-click="logout()"
-                       style="padding:15px 15px;">
-                        <span class="glyphicon glyphicon-log-out"
-                              data-qo-theme="info" data-qo-placement="bottom"
-                              data-nq-tooltip="" data-qs-title="Logout"></span>
-                    </a>
-                </div>
+                <!--<div class="navbar-header">-->
+                    <!--<a class="navbar-brand" href="#" ng-click="logout()"-->
+                       <!--style="padding:15px 15px;">-->
+                        <!--<span class="glyphicon glyphicon-log-out"-->
+                              <!--data-qo-theme="info" data-qo-placement="bottom"-->
+                              <!--data-nq-tooltip="" data-qs-title="Logout"></span>-->
+                    <!--</a>-->
+                <!--</div>-->
                 <div class="collapse navbar-collapse" id="navbar-main">
                     <ul class="nav navbar-nav">
                         <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
@@ -156,10 +156,19 @@
     <div ui-view></div>
 </div>
 <ng-include src="'app/shared/footer/footer.view.html'"></ng-include>
+
 <div class="navbar navbar-inverse navbar-fixed-bottom" style="margin:0;"
      role="navigation" ng-show="$state.current.name!=='login'">
     <div class="container-fluid">
         <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <a href="#" ng-click="logout()">
+                        <span class="fic glyphicon glyphicon-log-out" style="margin-left:0px;"></span>
+                        <span style="margin-left:10px;">Logout</span>
+                    </a>
+                </li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="active">
                     <a href="#">
