@@ -29,7 +29,7 @@ angular
         	run_folders: DUMMY_RUN_FOLDERS,
         	run_info_file: 'DUMMY_RUN_INFO_FILE',
         	run_parameters_file:  'DUMMY_RUN_PARAMETERS_FILE',
-        	report_folder: DUMMY_REPORT_FOLDERS,
-        	report_host: DUMMY_REPORT_HOST,
+        	report_folder: 'DUMMY_REPORT_FOLDER',
+        	report_host: 'DUMMY_REPORT_HOST',
         }
 	});
