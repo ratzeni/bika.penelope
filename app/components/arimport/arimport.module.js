@@ -377,7 +377,7 @@ arimport_module.controller('ARImportCtrl',
         	attachment: null,
         	attachment_content: null,
         	client_samples: [],
-        	single_sample: null,
+        	single_sample: 'FCID',
         };
 
         $scope.$watch('arimport_params.selectedClient',

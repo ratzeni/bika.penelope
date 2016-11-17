@@ -21,16 +21,6 @@
                                    placeholder="datepicker" data-ng-required="true" name="sampling_date" required>
                 </div>
             </div>
-            <div class="col-sm-12" style="margin-top:10px;" data-ng-if="arimport_params.selectedSampleType.title=='FLOWCELL'">
-                <div class="input-inline col-sm-4" >
-                    <input type="text" data-ng-required="true"
-                           title="single_sample"
-                           class="form-control"
-                           ng-model="arimport_params.single_sample"
-                           ng-model-options="{ updateOn: 'blur' }"
-                           placeholder="Flowcell ID..."/>
-                </div>
-            </div>
             <div class="col-sm-12" style="margin-top:10px;"
                   ng-if="arimport_params.selectedSampleType.title==='FLOWCELL' || arimport_params.selectedSampleType.title==='POOL'">
                 <div class="input-inline col-sm-2">
@@ -101,19 +91,6 @@
                                    placeholder="Description...">
                         </div>
             </div>
-
-            <!--<div class="col-sm-12" style="margin-top:10px;">
-                <div class="input-inline col-sm-12">
-                            <select data-nq-select=""
-                                    data-qo-max-length="0" data-name="profiles"
-                                    data-qo-display-type="input"
-                                    data-qo-multiple="true"
-                                    data-qo-placeholder="Analysis Profiles.."
-                                    data-ng-model="arimport_params.selectedAnalysisProfiles"
-                                    data-ng-options="ap.title for ap in analysis_profiles">
-                            </select>
-                        </div>
-            </div>-->
             <div class="col-sm-12" style="margin-top:10px;" ng-if="arimport_params.client_samples.length >0 && arimport_params.selectedBatch.length > 0">
                 <div class="input-inline col-sm-6">
                             <select data-nq-select=""
