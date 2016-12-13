@@ -72,44 +72,40 @@
                      data-ng-if="samplesheet_params.run_folder != null && !samplesheet_params.switchRun">
                     <div class="col-sm-4">
                         <input type="checkbox" ng-model="samplesheet_params.switchReads" data-nq-switch-button="" class="col-sm-3"
-                               data-theme="primary,stripped,rounded"
+                               data-theme="primary,stripped,rounded" ng-readonly="1" data-ng-disabled="1"
                                data-label-text="Reads" data-false-label="Single End"  data-true-label="Paired End">
 
                         <div style="margin-top:10px;">
-                            <select data-nq-select="" data-qo-placeholder="Read 1 Cycles..."
-                                    data-ng-options="r.label for r in reads"
-                                    data-ng-model="samplesheet_params.r1">
-                            </select>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.r1" class="form-control"
+                                   placeholder="Read 1 Cycles.."  ng-readonly="1">
                         </div>
                         <div  style="margin-top:10px;"
                               data-ng-if="samplesheet_params.switchReads" data-ng-hide="!samplesheet_params.switchReads">
-                             <select data-nq-select="" data-qo-placeholder="Read 2 Cycles..."
-                                     data-ng-options="r.label for r in reads"
-                                     data-ng-model="samplesheet_params.r2">
-                            </select>
+                             <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.r2" class="form-control"
+                                   placeholder="Read 2 Cycles.."  ng-readonly="1">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <input type="checkbox" ng-model="samplesheet_params.switchIndexes" data-nq-switch-button="" class="col-sm-3"
-                               data-theme="primary,stripped,rounded"
+                               data-theme="primary,stripped,rounded" data-ng-disabled="1"
                                data-label-text="Indexes" data-false-label="Single Index" data-true-label="Dual Index">
                         <div style="margin-top:10px;">
-                            <select data-nq-select="" data-qo-placeholder="Index 1 Cycles..."
-                                    data-ng-options="i.label for i in indexes"
-                                    data-ng-model="samplesheet_params.i1">
-                            </select>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.i1" class="form-control"
+                                   placeholder="Index 1 Cycles.."  ng-readonly="1">
                         </div>
                         <div style="margin-top:10px;"
                              data-ng-if="samplesheet_params.switchIndexes" data-ng-hide="!samplesheet_params.switchIndexes">
-                            <select data-nq-select="" data-qo-placeholder="Index 2 Cycles..."
-                                data-ng-options="i.label for i in indexes"
-                                data-ng-model="samplesheet_params.i2">
-                            </select>
+                            <input type="text" data-qo-display-type="input"
+                                   ng-model="samplesheet_params.i2" class="form-control"
+                                   placeholder="Index 2 Cycles.."  ng-readonly="1">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <input type="checkbox" ng-model="samplesheet_params.switchMode" data-nq-switch-button="" class="col-sm-3"
-                               data-theme="primary,stripped,rounded"
+                               data-theme="primary,stripped,rounded" data-ng-disabled="1"
                                data-label-text="Run Mode" data-true-label="Rapid" data-false-label="Normal">
                 </div>
 
