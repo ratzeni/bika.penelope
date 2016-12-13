@@ -165,10 +165,10 @@ samplesheet_module.controller('Link2RunCtrl',
 				 	samplesheet: JSON.stringify(samplesheet_params.samplesheet),
 				 	run: samplesheet_params.run_folder.running_folder,
 				 	fcid: samplesheet_params.fcid,
-				 	read1_cycles: samplesheet_params.r1!=null?samplesheet_params.r1.value:'',
-				 	read2_cycles: samplesheet_params.r2!=null?samplesheet_params.r2.value:'',
-				 	index1_cycles: samplesheet_params.i1!=null?samplesheet_params.i1.value:'',
-				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2.value:'',
+				 	read1_cycles: samplesheet_params.r1!=null?samplesheet_params.r1:'',
+				 	read2_cycles: samplesheet_params.r2!=null?samplesheet_params.r2:'',
+				 	index1_cycles: samplesheet_params.i1!=null?samplesheet_params.i1:'',
+				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2:'',
 				 	is_rapid: samplesheet_params.switchMode.toString(),
 					date: samplesheet_params.run_folder.run_parameters.run_info.date,
 					scanner_id: samplesheet_params.run_folder.run_parameters.run_info.scanner_id,
@@ -310,30 +310,30 @@ samplesheet_module.controller('Link2RunCtrl',
                 if (_.size(newValue.run_info) > 0) {
                 	r1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'});
                 	if (r1 !== undefined) {
-                		$scope.samplesheet_params.r1 = _.findWhere($scope.reads, {'value': r1.NumCycles});
+                		$scope.samplesheet_params.r1 = r1.NumCycles;
                 		newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'}));
 
                 		r2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'});
                 		if (r2 !== undefined) {
                 			$scope.samplesheet_params.switchReads = true;
-                			$scope.samplesheet_params.r2 = _.findWhere($scope.reads, {'value': r2.NumCycles});
+                			$scope.samplesheet_params.r2 = r2.NumCycles;
                 			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'}));
                 		}
                 	}
 
                 	i1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'});
 					if (i1 !== undefined) {
-                		$scope.samplesheet_params.i1 = _.findWhere($scope.indexes, {'value': i1.NumCycles});
+                		$scope.samplesheet_params.i1 = i1.NumCycles;
                 		newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'}));
                 		i2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'});
                 		if (i2 !== undefined) {
                 			$scope.samplesheet_params.switchIndexes = true;
-                			$scope.samplesheet_params.i2 = _.findWhere($scope.indexes, {'value': i2.NumCycles});
+                			$scope.samplesheet_params.i2 = i2.NumCycles;
                 			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'}));
                 		}
 					}
 					else {
-						$scope.samplesheet_params.i1 =  _.findWhere($scope.indexes, {'value': '0'});
+						$scope.samplesheet_params.i1 =  '0';
 					}
 					if (newValue.run_info.fc_layout.length > 0) {
 						fc_layout = newValue.run_info.fc_layout[0];
