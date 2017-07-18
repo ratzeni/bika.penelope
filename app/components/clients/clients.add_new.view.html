@@ -1,0 +1,71 @@
+<div data-ng-app="ClientsModule" ng-controller="AddClientCtrl as ctrl">
+    <form name="addCostCenterForm" class="form">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <div class="col-sm-12 controls" style="margin-top:10px;" >
+                    <div data-nq-tabset="" data-tabset-model="demoTabset" data-placement="left">
+                        <div data-nq-tab="" data-heading="Default">
+                            <div class="col-sm-12" style="margin-top:10px;">
+                                <div class="input-inline col-sm-6">
+                                    <input type="text" ng-model="client_params.client_name" class="form-control"
+                                           placeholder="Client Name..." data-ng-required="true" name="client_name" required>
+                                </div>
+                                <div class="input-inline col-sm-6">
+                                     <input type="text" ng-model="client_params.client_id" class="form-control"
+                                           placeholder="Client ID..." data-ng-required="true" name="client_id" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="margin-top:10px;">
+                                <div class="input-inline col-sm-6">
+                                    <input type="text" ng-model="client_params.client_phone" class="form-control"
+                                           placeholder="Phone..." data-ng-required="true" name="client_phone">
+                                </div>
+                                <div class="input-inline col-sm-6">
+                                    <input type="text" ng-model="client_params.client_email" class="form-control"
+                                           placeholder="Email..." data-ng-required="true" name="client_email">
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="margin-top:10px;">&nbsp;</div>
+                            <div ng-bind-html="tabParagraph" style="margin-top:10px;">
+                            </div>
+                        </div>
+                        <div data-nq-tab="" data-heading="Address">
+                            <div class="col-sm-12" style="margin-top:10px;">
+                                <div class="input-inline col-sm-6">
+                                    <input type="text" ng-model="client_params.address.country" class="form-control"
+                                           placeholder="Country..." data-ng-required="true" name="country">
+                                </div>
+                                <div class="input-inline col-sm-6">
+                                     <input type="text" ng-model="client_params.address.state" class="form-control"
+                                           placeholder="State..." data-ng-required="true" name="client_id" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="margin-top:10px;">
+                                <div class="input-inline col-sm-6">
+                                    <input type="text" ng-model="client_params.address.city" class="form-control"
+                                           placeholder="Phone..." data-ng-required="true" name="client_phone">
+                                </div>
+                                <div class="input-inline col-sm-6">
+                                    <input type="text" ng-model="client_params.client_email" class="form-control"
+                                           placeholder="Email..." data-ng-required="true" name="client_email">
+                                </div>
+                            </div>
+                            <div class="col-sm-12" style="margin-top:10px;">&nbsp;</div>
+                            <div ng-bind-html="tabParagraph"  style="margin-top:10px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 controls" style="margin-top:10px;" >
+                    <div class="input-inline col-sm-6 pull-right">
+                            <button type="button" class="btn btn-success pull-right"
+                                    data-ng-click="ctrl.create_client(client_params)"
+                                    data-ng-disabled="client_params.client_params.client_name.length  == 0 || client_params.client_params.client_id.length  == 0">
+                                <span class="glyphicon glyphicon-copy"></span>&nbsp&nbsp;Create
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

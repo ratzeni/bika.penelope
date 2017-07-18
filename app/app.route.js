@@ -10,6 +10,25 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
         })
+        .state('clients', {
+            url: '/clients',
+            templateUrl: 'app/components/clients/clients.home.view.html',
+
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+
+        })
+        .state('client', {
+            url: '/client/:client_id',
+            templateUrl: 'app/components/clients/client.home.view.html',
+           	controller: function($stateParams) {
+				$stateParams.client_id
+			},
+           	data: {
+                  authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+        })
         .state('batches', {
             url: '/batches',
             templateUrl: 'app/components/batches/batches.home.view.html',
@@ -17,7 +36,6 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             data: {
                  authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
-
         })
         .state('batch', {
             url: '/batches/:batch_id',

@@ -175,23 +175,33 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call('write', method, params);
     }
 
-    this.updateSupplyOrder= function(params) {
+    this.updateSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.update_supply_order;
         return BikaApiRestService.call('write', method, params);
     }
 
-	this.updateSupplyOrders= function(params) {
+	this.updateSupplyOrders = function(params) {
     	method = config.bikaApiRest.methods.update_supply_orders;
         return BikaApiRestService.call('write', method, params);
     }
 
-    this.updateLabProduct= function(params) {
+    this.updateLabProduct = function(params) {
     	method = config.bikaApiRest.methods.update_lab_product;
         return BikaApiRestService.call('write', method, params);
     }
 
-	this.updateLabProducts= function(params) {
+	this.updateLabProducts = function(params) {
     	method = config.bikaApiRest.methods.update_lab_products;
+        return BikaApiRestService.call('write', method, params);
+    }
+
+    this.updateClient = function(params) {
+    	method = config.bikaApiRest.methods.update_client;
+        return BikaApiRestService.call('write', method, params);
+    }
+
+	this.updateClients = function(params) {
+    	method = config.bikaApiRest.methods.update_clients;
         return BikaApiRestService.call('write', method, params);
     }
 
@@ -328,5 +338,15 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
     this.setAnalysesResults = function(params) {
     	method = config.bikaApiRest.methods.set_analyses_results;
         return BikaApiRestService.call('write', method, params);
+    }
+
+    this.activateClient = function(params) {
+    	method = config.bikaApiRest.methods.activate_client;
+        return BikaApiRestService.call('read', method, params);
+    }
+
+    this.deactivateClient = function(params) {
+    	method = config.bikaApiRest.methods.deactivate_client;
+        return BikaApiRestService.call('read', method, params);
     }
 });

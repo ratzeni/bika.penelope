@@ -49,6 +49,7 @@
     <script src="./app/shared/dashboard/dashboard.module.js"></script>
     <script src="./app/components/home/home.module.js"></script>
     <script src="./app/components/arimport/arimport.module.js"></script>
+    <script src="./app/components/clients/clients.module.js"></script>
     <script src="./app/components/batches/batches.module.js"></script>
     <script src="./app/components/analysis_requests/analysis_requests.module.js"></script>
     <script src="./app/shared/attachment/samplesheet.module.js"></script>
@@ -130,6 +131,10 @@
                                 <li  data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
                                      ng-class="getClass('arimport')">
                                     <a ui-sref="arimport">AR Import</a>
+                                </li>
+                                <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                                    role="presentation"  ng-class="getClass('clients')">
+                                    <a ui-sref="clients">Clients</a>
                                 </li>
                                 <li role="presentation"  ng-class="getClass('cost_centers')">
                                     <a role="menuitem" tabindex="-1" ui-sref="cost_centers">Cost Centers</a>

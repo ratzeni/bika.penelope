@@ -47,6 +47,8 @@ angular
                 deactivate_supply_order: '/bika/action/deactivate_supply_order',
                 activate_lab_product: '/bika/action/activate_lab_product',
                 deactivate_lab_product: '/bika/action/deactivate_lab_product',
+                activate_client: '/bika/action/activate_client',
+                deactivate_client: '/bika/action/deactivate_client',
                 dispatch_supply_order: '/bika/action/dispatch_supply_order',
 				set_analysis_result : '/bika/set/analysis_result',
 				set_analyses_results : '/bika/set/analyses_results',
@@ -62,6 +64,8 @@ angular
 				update_supply_orders: '/bika/update/supply_orders',
 				update_lab_product: '/bika/update/lab_product',
 				update_lab_products: '/bika/update/lab_products',
+				update_client: '/bika/update/client',
+				update_clients: '/bika/update/clients',
             },
             data_source: {
 				container_types: [

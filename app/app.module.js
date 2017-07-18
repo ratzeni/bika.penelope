@@ -29,6 +29,7 @@ var main_module = angular.module('MainApp',[
     'CostCentersModule',
     'LabProductsModule',
     'RunsModule',
+    'ClientsModule',
 ]);
 
 // :: MAIN CONTROLLER
