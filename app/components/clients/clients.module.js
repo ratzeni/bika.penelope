@@ -220,7 +220,7 @@ clients_module.controller('ClientDetailsCtrl',
 
 		$scope.review_states = {
 		    batches: 'open',
-		    cost_centers: 'active',
+		    cost_centers: 'pending',
 		}
 
 		$scope.checked_list = {
@@ -257,7 +257,7 @@ clients_module.controller('ClientDetailsCtrl',
                 BikaService.getClients(this.params).success(function (data, status, header, config){
                     $scope.client = data.result.objects[0];
                     $scope.getBatches($scope.review_states.batches);
-                    $scope.cost_centers = $scope.client.supply_orders;
+                    $scope.getCostCenters($scope.review_states.cost_centers);
                     $scope.loading_client.hide();
 
 
@@ -294,6 +294,23 @@ clients_module.controller('ClientDetailsCtrl',
             $scope.transitions.batches = transitions;
 		}
 
+		$scope.getCostCenters = function(review_state) {
+
+		    if (review_state != 'all') {
+		        $scope.cost_centers =  _.where($scope.client.cost_centers, {'review_state':review_state});
+		    }
+		    else {
+		        $scope.cost_centers = $scope.client.cost_centers;
+		    }
+            //console.log($scope.cost_centers);
+		    $scope.review_states.cost_centers =  review_state;
+		    transitions = Array();
+			_.each($scope.cost_centers,function(obj) {
+						Utility.merge(transitions,obj.transitions,'id');
+			});
+            $scope.transitions.cost_centers = transitions;
+		}
+
         $scope.getClient($scope.state.client_id);
 
         this.format_date =
@@ -318,6 +335,18 @@ clients_module.controller('ClientDetailsCtrl',
 				//console.log($scope.checked_list);
 			}
 
+		this.toggle_cost_centers =
+			function(id) {
+				var idx = $scope.checked_list.cost_centers.indexOf(id);
+				if (idx > -1) {
+					$scope.checked_list.cost_centers.splice(idx, 1);
+				}
+				else {
+					$scope.checked_list.cost_centers.push(id);
+				}
+				//console.log($scope.checked_list);
+			}
+
 		this.toggle_all_batches = function() {
 				if ($scope.checked_list.batches.length < $scope.batches.length) {
 					_.each($scope.batches,function(b) {
@@ -329,10 +358,29 @@ clients_module.controller('ClientDetailsCtrl',
 				}
 		}
 
+		this.toggle_all_cost_centers = function() {
+				if ($scope.checked_list.cost_centers.length < $scope.cost_centers.length) {
+					_.each($scope.cost_centers,function(b) {
+						$scope.checked_list.cost_centers.push(b.id);
+					})
+				}
+				else {
+					$scope.checked_list.cost_centers = [];
+				}
+		}
+
 		this.check_transitions_batches =
 			function(id_transition, transitions) {
 				if (transitions === undefined) {
 					var transitions = $scope.transitions.batches;
+				}
+				return Utility.check_transitions(id_transition, transitions);
+		}
+
+		this.check_transitions_cost_centers =
+			function(id_transition, transitions) {
+				if (transitions === undefined) {
+					var transitions = $scope.transitions.cost_centers;
 				}
 				return Utility.check_transitions(id_transition, transitions);
 		}
@@ -355,6 +403,27 @@ clients_module.controller('ClientDetailsCtrl',
 				}
 				else if (action === 'reinstate') {
 					 $scope.reinstateBatch(batch_id);
+				}
+			}
+
+
+		this.change_review_state_cost_centers =
+			function (action, cost_center_id) {
+				if (cost_center_id === undefined) {
+					var cost_center_id = $scope.checked_list.cost_centers;
+				}
+				else {
+					var cost_center_id = [cost_center_id]
+				}
+
+				if (action === 'activate') {
+					 $scope.activateCostCenter(cost_center_id);
+				}
+				else if (action === 'deactivate') {
+					 $scope.deactivateCostCenter(cost_center_id);
+				}
+				else if (action === 'dispatch') {
+					 $scope.dispatchCostCenter(cost_center_id);
 				}
 			}
 
@@ -422,6 +491,42 @@ clients_module.controller('ClientDetailsCtrl',
 
 			}
 
+		$scope.activateCostCenter =
+			function(cost_center_id) {
+				$scope.loading_change_review_state('activating').show();
+				this.params = {f: $scope._get_review_params_cost_centers(cost_center_id)};
+				BikaService.activateSupplyOrder(this.params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('activating').hide();
+					$scope.checked_list.cost_centers = [];
+			 		$scope.getClient($scope.state.client_id);
+				});
+			}
+
+		$scope.deactivateCostCenter =
+			function(cost_center_id) {
+				$scope.loading_change_review_state('deactivating').show();
+				this.params = {f: $scope._get_review_params_cost_centers(cost_center_id)};
+				BikaService.deactivateSupplyOrder(this.params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('deactivating').hide();
+					$scope.checked_list.cost_centers = [];
+			 		$scope.getClient($scope.state.client_id);
+				});
+			}
+
+		$scope.dispatchCostCenter =
+			function(cost_center_id) {
+				$scope.loading_change_review_state('dispatching').show();
+				this.params = {f: $scope._get_review_params_cost_centers(cost_center_id)};
+				BikaService.dispatchSupplyOrder(this.params).success(function (data, status, header, config){
+					this.params = {input_values: $scope._get_input_values_review_state_cost_centers(cost_center_id,'dispatched')};
+					BikaService.updateSupplyOrders(params).success(function (data, status, header, config){
+						$scope.loading_change_review_state('dispatching').hide();
+						$scope.checked_list.cost_centers = [];
+			 		    $scope.getClient($scope.state.client_id);
+					});
+				});
+			}
+
 		$scope._get_input_values_review_state_batches =
 			function (batch_id, review_state) {
 				var input_values = {};
@@ -451,6 +556,37 @@ clients_module.controller('ClientDetailsCtrl',
 				}
 
 			}
+
+		$scope._get_input_values_review_state_cost_centers =
+			function (cost_center_id, review_state) {
+				var input_values = {};
+				_.each(cost_center_id,function(id) {
+					this.cost_center = _.findWhere($scope.cost_centers, {'id': id});
+					input_values[this.cost_center.path] = {subject: review_state!==undefined?review_state:this.cost_center.review_state};
+				});
+				return JSON.stringify(input_values);
+			}
+
+		$scope._get_review_params_cost_centers =
+			function(cost_center_id) {
+
+				if (!Array.isArray(cost_center_id)) {
+					var f = [];
+					this.cost_center = _.findWhere($scope.cost_centers, {'id':cost_center_id});
+					f.push(this.cost_center.path);
+					return JSON.stringify(f);
+				}
+				else if (Array.isArray(cost_center_id)) {
+					var f = [];
+					_.each(cost_center_id,function(id) {
+						this.cost_center = _.findWhere($scope.cost_centers, {'id':id});
+						f.push(this.cost_center.path);
+					});
+					return JSON.stringify(f);
+				}
+
+			}
+
 
 
 

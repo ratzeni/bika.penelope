@@ -166,6 +166,7 @@ cost_centers_module.controller('CostCentersCtrl',
 				$scope.loading_change_review_state('activating').show();
 				this.params = {f: $scope._get_review_params(supply_order_id)};
 				BikaService.activateSupplyOrder(this.params).success(function (data, status, header, config){
+					$scope.loading_change_review_state('activating').hide();
 					$scope.checked_list = [];
 			 		$scope.getSupplyOrders($scope.review_state);
 				});
