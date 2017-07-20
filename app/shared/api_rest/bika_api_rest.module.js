@@ -205,6 +205,16 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call('write', method, params);
     }
 
+    this.createClient = function(params) {
+    	method = config.bikaApiRest.methods.create_client;
+        return BikaApiRestService.call('write', method, params);
+    }
+
+    this.createContact = function(params) {
+    	method = config.bikaApiRest.methods.create_contact;
+        return BikaApiRestService.call('write', method, params);
+    }
+
     this.createBatch = function(params) {
     	method = config.bikaApiRest.methods.create_batch;
         return BikaApiRestService.call('write', method, params);

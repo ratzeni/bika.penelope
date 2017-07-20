@@ -32,17 +32,17 @@
                         <td>{{client.phone}}</td>
                     </tr>
                     <tr>
-                        <td>Address:</td>
-                        <td>&nbsp;</td>
+                        <td colspan="2">Address:</td>
                     </tr>
-                    <tr>
+                    <tr data-ng-show="client.physical_address.address.length > 0">
                         <td colspan="2"><span class="pull-right">{{client.physical_address.address}}</span></td>
                     </tr>
-                    <tr>
-                        <td colspan="2"><span class="pull-right">{{client.physical_address.zip}}</span></td>
+                    <tr data-ng-show="client.physical_address.zip.length > 0 || client.physical_address.city.length > 0">
+                        <td><span class="pull-right">{{client.physical_address.zip}}</span></td>
+                        <td><span class="pull-right">{{client.physical_address.city}}</span></td>
                     </tr>
-                    <tr>
-                        <td colspan="2"><span class="pull-right">{{client.physical_address.city}}</span></td>
+                    <tr data-ng-show="client.physical_address.country.length > 0 && client.physical_address.country != 'Afghanistan'">
+                        <td colspan="2"><span class="pull-right">{{client.physical_address.country}}</span></td>
                     </tr>
 
                 </table>

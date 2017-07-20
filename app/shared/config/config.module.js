@@ -22,6 +22,8 @@ angular
                 get_supply_orders:'/bika/get/supply_orders',
                 get_lab_products:'/bika/get/lab_products',
                 get_storage_locations:'/bika/get/storage_locations',
+                create_client: '/bika/create/client',
+                create_contact: '/bika/create/contact',
                 create_batch: '/bika/create/batch',
                 create_worksheet: '/bika/create/worksheet',
                 create_analysis_request:'/bika/create/analysis_request',
@@ -66,6 +68,8 @@ angular
 				update_lab_products: '/bika/update/lab_products',
 				update_client: '/bika/update/client',
 				update_clients: '/bika/update/clients',
+				update_contact: '/bika/update/contact',
+				update_contacts: '/bika/update/contacts',
             },
             data_source: {
 				container_types: [

@@ -50,8 +50,7 @@
                     </tr>
                     </thead>
                     <tbody ng-if="clients.length > 0">
-                    <tr dir-paginate="row in clients | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
-                        total-items="pagination.total" current-page="pagination.current">
+                    <tr data-ng-repeat="row in clients">
                         <td>
                             <div style="padding-left:10px;">
                                 <input type="checkbox"  value="{{row.id}}"
@@ -91,19 +90,9 @@
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <td><ng-include src="'app/shared/review_state/clients.btns.mini.html'"></ng-include></td>
-                    </p>
-                    </div>
+                    </tr>
+                    </tbody>
                 </table>
-
-                <dir-pagination-controls
-                        max-size="10"
-                        direction-links="true"
-                        boundary-links="true"
-                        class="pull-right"
-                        on-page-change="ctrl.changePage(newPageNumber, oldPageNumber)"
-                        style="margin-top: -25px">
-                </dir-pagination-controls>
-
             </div>
             <div class="col-sm-12 controls" style="margin-top:10px;" ng-if="clients.length > 0">
                 <ng-include src="'app/shared/review_state/clients.btns.html'"></ng-include>

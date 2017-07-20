@@ -197,16 +197,106 @@ clients_module.controller('ClientsCtrl',
 });
 
 clients_module.controller('AddClientCtrl',
-	function(BikaService, Utility, config, $scope, $rootScope) {
+	function(BikaService, Utility, config, $scope, $rootScope, $state) {
 
+        $scope.loading_create = Utility.loading({
+            busyText: 'Wait while creating...',
+            delayHide: 1500,
+        });
 
-        client_params = {
-            client_name: null,
-            client_id: null,
-            client_phone: null,
-            client_email: null,
-
+        $scope.client_params = {
+            name: null,
+            id: null,
+            phone: null,
+            email: null,
+            address: {
+                address: null,
+                zip: null,
+                city: null,
+                country: null,
+                state: null,
+                district: null,
+            },
+            contacts: [],
         }
+
+        $scope.contact_params = {
+            first_name: null,
+            surname: null,
+            phone: null,
+            email: null,
+        }
+
+        this.confirm_contact =
+            function(contact) {
+                $scope.client_params.contacts.push(contact);
+                $scope.contact_params = {
+                    first_name: null,
+                    surname: null,
+                    phone: null,
+                    email: null,
+                }
+
+            }
+
+        this.create_client =
+            function(client) {
+
+                this.params = {
+                    title: $scope.client_params.name,
+                    ClientID: $scope.client_params.name,
+                    Phone:  $scope.client_params.phone!==null?$scope.client_params.phone:'',
+                    EmailAddress:  $scope.client_params.email!==null?$scope.client_params.email:'',
+                    description: 'active',
+                    PhysicalAddress: {
+                        address: $scope.client_params.address.address!==null?$scope.client_params.address.address:'',
+                        zip:  $scope.client_params.address.zip!==null?$scope.client_params.address.zip:'',
+                        city:  $scope.client_params.address.city!==null?$scope.client_params.address.city:'',
+                        country:  $scope.client_params.address.country!==null?$scope.client_params.address.country:'',
+                        state: '',
+                        district: '',
+                    },
+                }
+
+                $scope.loading_create.show();
+                BikaService.createClient(this.params).success(function (data, status, header, config){
+                    this.result = data.result;
+                    if (this.result['success'] === 'True') {
+                        client_id = this.result['obj_id'];
+                        Utility.alert({title:'Success', content: 'Client has been successfully created with ID: '+client_id, alertType:'success'});
+                        if (Array.isArray($scope.client_params.contacts) &&  $scope.client_params.contacts.length > 0) {
+                            _.each($scope.client_params.contacts, function(contact){
+                                this.params = {
+                                    ClientID: client_id,
+                                    Firstname: contact.first_name,
+                                    Surname: contact.surname,
+                                    HomePhone:  contact.phone!==null?contact.phone:'',
+                                    EmailAddress: contact.email!==null?contact.email:'',
+                                }
+                                BikaService.createContact(this.params).success(function (data, status, header, config){
+									this.result = data.result;
+									if (this.result['success'] === 'True') {
+										Utility.alert({title:'Success', content: 'Contact '+contact.surname+' has been added to client '+client_id, alertType:'success'});
+									}
+									else {
+										Utility.alert({title:'Error while creating...', content: result['message'], alertType:'danger'});
+										return;
+									}
+								});
+                            });
+                        }
+                        $scope.loading_create.hide();
+                        $state.go('clients',{},{reload: true});
+                    }
+                    else {
+                        $scope.loading_create.hide();
+						Utility.alert({title:'Error while creating...', content: result['message'], alertType:'danger'});
+						return;
+                    }
+                })
+
+
+            }
 });
 
 clients_module.controller('ClientDetailsCtrl',
