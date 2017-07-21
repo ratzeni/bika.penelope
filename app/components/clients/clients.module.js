@@ -244,7 +244,7 @@ clients_module.controller('AddClientCtrl',
 
                 this.params = {
                     title: $scope.client_params.name,
-                    ClientID: $scope.client_params.name,
+                    ClientID: $scope.client_params.id,
                     Phone:  $scope.client_params.phone!==null?$scope.client_params.phone:'',
                     EmailAddress:  $scope.client_params.email!==null?$scope.client_params.email:'',
                     description: 'active',
@@ -308,7 +308,7 @@ clients_module.controller('ClientDetailsCtrl',
 		$scope.cost_centers = [];
 		$scope.samples = {};
 
-		$scope.review_states = {
+	    $scope.review_states = {
 		    batches: 'open',
 		    cost_centers: 'pending',
 		}
@@ -339,6 +339,11 @@ clients_module.controller('ClientDetailsCtrl',
             delayHide: 1500,
         });
 
+        $scope.loading_edit = Utility.loading({
+            busyText: 'Wait while saving...',
+            delayHide: 1500,
+        });
+
         $scope.getClient =
             function(client_id) {
             	$scope.loading_client.show();
@@ -346,11 +351,10 @@ clients_module.controller('ClientDetailsCtrl',
                 this.params = {sort_on: 'Date', sort_order: 'descending', id: client_id};
                 BikaService.getClients(this.params).success(function (data, status, header, config){
                     $scope.client = data.result.objects[0];
+                    $scope.init_form($scope.client);
                     $scope.getBatches($scope.review_states.batches);
                     $scope.getCostCenters($scope.review_states.cost_centers);
                     $scope.loading_client.hide();
-
-
                 });
             };
 
@@ -676,6 +680,103 @@ clients_module.controller('ClientDetailsCtrl',
 				}
 
 			}
+
+
+		$scope.init_form =
+		    function(client) {
+		        $scope.client_params = {
+                    name: client.name,
+                    id: client.client_id,
+                    phone: client.phone,
+                    email: client.email_address,
+                    address: client.physical_address,
+                    contacts: client.contacts,
+                }
+
+                $scope.contact_params = {
+                    first_name: null,
+                    surname: null,
+                    phone: null,
+                    email_address: null,
+                }
+		    }
+
+		 this.confirm_contact =
+            function(contact) {
+                $scope.client_params.contacts.push(contact);
+                $scope.contact_params = {
+                    first_name: null,
+                    surname: null,
+                    phone: null,
+                    email_address: null,
+                }
+
+            }
+
+
+
+         this.edit_client =
+            function(client) {
+
+                this.params = {
+                    'obj_path': $scope.client.path,
+                    title: $scope.client_params.name,
+                    ClientID: $scope.client_params.id,
+                    Phone:  $scope.client_params.phone!==null?$scope.client_params.phone:'',
+                    EmailAddress:  $scope.client_params.email!==null?$scope.client_params.email:'',
+                    PhysicalAddress: {
+                        address: $scope.client_params.address.address!==null?$scope.client_params.address.address:'',
+                        zip:  $scope.client_params.address.zip!==null?$scope.client_params.address.zip:'',
+                        city:  $scope.client_params.address.city!==null?$scope.client_params.address.city:'',
+                        country:  $scope.client_params.address.country!==null?$scope.client_params.address.country:'',
+                    },
+                }
+
+                $scope.loading_edit.show();
+                BikaService.updateClient(this.params).success(function (data, status, header, config){
+                    this.result = data.result;
+                    if (this.result['success'] === 'True') {
+                        client_id = $scope.client.id;
+                        Utility.alert({title:'Success', content: 'Client '+client_id+' has been successfully edited ', alertType:'success'});
+                        if (Array.isArray($scope.client_params.contacts) &&  $scope.client_params.contacts.length > 0) {
+                            _.each($scope.client_params.contacts, function(contact){
+                                if (contact.path == undefined) {
+                                    this.params = {
+                                        ClientID: client_id,
+                                        Firstname: contact.first_name,
+                                        Surname: contact.surname,
+                                        HomePhone:  contact.phone!==null?contact.phone:'',
+                                        EmailAddress: contact.email_address!==null?contact.email_address:'',
+                                    }
+                                    BikaService.createContact(this.params).success(function (data, status, header, config){
+                                        this.result = data.result;
+                                        if (this.result['success'] === 'True') {
+                                            Utility.alert({title:'Success', content: 'Contact '+contact.surname+' has been added to client '+client_id, alertType:'success'});
+                                        }
+                                        else {
+                                            Utility.alert({title:'Error while creating...', content: result['message'], alertType:'danger'});
+                                            return;
+                                        }
+								    });
+                                }
+
+
+                            });
+                        }
+                        $scope.loading_edit.hide();
+                        $state.go('client',{client_id: client_id},{reload: true});
+                    }
+                    else {
+                        $scope.loading_create.hide();
+						Utility.alert({title:'Error while editing...', content: result['message'], alertType:'danger'});
+						return;
+                    }
+                });
+
+
+
+            }
+
 
 
 

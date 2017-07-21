@@ -1,5 +1,4 @@
-<div data-ng-app="ClientsModule" ng-controller="AddClientCtrl as ctrl">
-    <form name="addClientForm" class="form">
+    <form name="addCostCenterForm" class="form">
         <div class="panel panel-primary">
             <div class="panel-body">
                 <div class="col-sm-12 controls" style="margin-top:10px;">
@@ -89,7 +88,7 @@
                                            placeholder="Phone..." name="contact_phone">
                                 </div>
                                 <div class="input-inline col-sm-6">
-                                    <input type="text" ng-model="contact_params.email" class="form-control"
+                                    <input type="text" ng-model="contact_params.email_address" class="form-control"
                                            data-ng-disabled="contact_params.first_name.length==0 || contact_params.surname.length==0 ||
                                             contact_params.first_name==null || contact_params.surname==null"
                                            placeholder="Email..." name="contact_email">
@@ -118,9 +117,10 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr data-ng-repeat="row in client_params.contacts">
+                                                <tr data-ng-repeat="row in client_params.contacts"
+                                                    ng-class="{'warning': row.path == undefined, 'active': row.path != undefined}">
                                                     <td>{{row.first_name}}&nbsp;{{row.surname}}</td>
-                                                    <td>{{row.email}}</td>
+                                                    <td>{{row.email_address}}</td>
                                                     <td>{{row.phone}}</td>
                                                 </tr>
                                                 </tbody>
@@ -137,15 +137,14 @@
                 <div class="col-sm-12 controls" style="margin-top:10px;">
                     <div class="input-inline col-sm-6 pull-right">
                         <button type="button" class="btn btn-success pull-right"
-                                data-ng-click="ctrl.create_client(client_params)"
+                                data-ng-click="ctrl.edit_client(client_params)"
                                 data-ng-disabled="client_params.name.length==0 || client_params.id.length==0 ||
                                             client_params.name==null || client_params.id==null ||
                                             client_params.contacts.length==0 || client_params.contacts==null">
-                            <span class="glyphicon glyphicon-copy"></span>&nbsp;Create
+                            <span class="glyphicon glyphicon-save"></span>&nbsp;Save
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
-</div>
