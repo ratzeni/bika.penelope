@@ -100,18 +100,10 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             url: '/samplesheet/replace',
             templateUrl: 'app/shared/attachment/samplesheet_replace.home.view.html',
             data: {
-                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager, USER_ROLES.analyst]
             }
 
         })
-//        .state('samplesheet_delete', {
-//            url: '/samplesheet/delete',
-//            templateUrl: 'app/shared/attachment/samplesheet_delete.home.view.html',
-//            data: {
-//                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
-//            }
-//
-//        })
         .state('analysis_requests', {
             url: '/analysis_requests/:review_state',
             templateUrl: 'app/components/analysis_requests/analysis_requests.home.view.html',
