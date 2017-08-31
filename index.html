@@ -55,6 +55,7 @@
     <script src="./app/shared/attachment/samplesheet.module.js"></script>
     <script src="./app/components/worksheets/worksheets.module.js"></script>
     <script src="./app/components/blackboard/blackboard.module.js"></script>
+    <script src="./app/components/request_form/request_form.module.js"></script>
     <script src="./app/components/admin/cost_centers/cost_centers.module.js"></script>
     <script src="./app/components/admin/lab_products/lab_products.module.js"></script>
     <script src="./app/components/admin/runs/runs.module.js"></script>
@@ -117,6 +118,14 @@
                                 <li role="presentation"  ng-class="getClass('samplesheet_upload')">
                                     <a role="menuitem" tabindex="-1" ui-sref="samplesheet_upload">Upload</a>
                                 </li>
+                                <li role="presentation"  ng-class="getClass('samplesheet_replace')"
+                                    data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'">
+                                    <a role="menuitem" tabindex="-1" ui-sref="samplesheet_replace">Replace</a>
+                                </li>
+                                <!--<li role="presentation"  ng-class="getClass('samplesheet_delete')"-->
+                                    <!--data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'">-->
+                                    <!--<a role="menuitem" tabindex="-1" ui-sref="samplesheet_delete">Delete</a>-->
+                                <!--</li>-->
                             </ul>
                         </li>
                         <li data-ng-if="currentUser.role!='LabClerk'" ng-class="getClass('runs')">
@@ -141,6 +150,12 @@
                                 </li>
                                 <li role="presentation"  ng-class="getClass('lab_products')">
                                     <a role="menuitem" tabindex="-1" ui-sref="lab_products">Lab Products</a>
+                                </li>
+                                <li role="presentation"  ng-class="getClass('delivery')">
+                                    <a role="menuitem" tabindex="-1" ui-sref="delivery">Delivery</a>
+                                </li>
+                                <li role="presentation"  ng-class="getClass('request_form')">
+                                    <a role="menuitem" tabindex="-1" ui-sref="request_form">Request Form</a>
                                 </li>
                             </ul>
                         </li>

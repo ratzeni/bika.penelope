@@ -96,7 +96,11 @@ samplesheet_module.controller('Link2RunCtrl',
 	function(BikaService, IrodsService, Utility, $stateParams, $state, config, $scope, $rootScope) {
 		//$scope.run_folders = ['160210_SN526_0254_BHGC35BCXX','160226_SN526_0255_BC8490ACXX','160308_SN526_0256_BC7WNWACXX'];
 
-		$scope.loading = Utility.loading({
+        $scope.is_replace = $state.current.name.indexOf('replace') !== -1 ? true : false;
+        $scope.is_delete = $state.current.name.indexOf('delete') !== -1 ? true : false;
+        $scope.is_upload = !$scope.is_replace && !$scope.is_delete;
+
+        $scope.loading = Utility.loading({
             busyText: 'Wait while loading runs list...',
             delayHide: 5000,
         });
@@ -105,6 +109,7 @@ samplesheet_module.controller('Link2RunCtrl',
             delayHide: 10000,
         });
 
+
 		$scope.get_running_folders =
 			function() {
 				this.params = {};
@@ -112,10 +117,40 @@ samplesheet_module.controller('Link2RunCtrl',
 				IrodsService.getRunningFolders(this.params).success(function (data, status, header, config){
 					$scope.loading.hide();
 					$scope.run_folders = data.result.objects;
+					//console.log($scope.run_folders)
 				});
 			}
 
-		$scope.get_running_folders();
+		// :: function :: getRuns()
+        $scope.getRuns =
+            function() {
+            	$scope.loading.show();
+                $scope.runs = [];
+                this.params = {sort_on: 'runs', sort_order: 'descending',
+                               page_nr: 0, page_size: 0};
+				IrodsService.getRuns(this.params).success(function (data, status, header, config){
+                    this.runs = data.result.objects;
+                    $scope.run_folders = []
+                    _.each(this.runs, function(r){
+                        this.run = {path: r.path,
+                                    running_folder: r.run,
+                                    metadata: r.metadata,
+                                    }
+                        $scope.run_folders.push(this.run)
+                    });
+
+					$scope.loading.hide();
+//					console.log($scope.run_folders);
+                });
+            };
+
+        if ($scope.is_replace || $scope.is_delete) {
+            $scope.getRuns();
+        }
+		else {
+		    $scope.get_running_folders();
+		}
+
 
 		$scope.attachment = {content:[], sample_list:[], samplesheet: []};
 		if ($stateParams.content !== undefined) {
@@ -170,8 +205,8 @@ samplesheet_module.controller('Link2RunCtrl',
 				 	index1_cycles: samplesheet_params.i1!=null?samplesheet_params.i1:'',
 				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2:'',
 				 	is_rapid: samplesheet_params.switchMode.toString(),
-					date: samplesheet_params.run_folder.run_parameters.run_info.date,
-					scanner_id: samplesheet_params.run_folder.run_parameters.run_info.scanner_id,
+					date: samplesheet_params.run_folder.run_parameters!=undefined?samplesheet_params.run_folder.run_parameters.run_info.date:samplesheet_params.date,
+					scanner_id: samplesheet_params.run_folder.run_parameters!=undefined?samplesheet_params.run_folder.run_parameters.run_info.scanner_id:samplesheet_params.scanner_id,
 					scanner_nickname: samplesheet_params.instrument,
 					pe_kit: samplesheet_params.reagents.pe.kit!=null?samplesheet_params.reagents.pe.kit:'',
 					sbs_kit: samplesheet_params.reagents.sbs.kit!=null?samplesheet_params.reagents.sbs.kit:'',
@@ -179,6 +214,7 @@ samplesheet_module.controller('Link2RunCtrl',
 					pe_id: samplesheet_params.reagents.pe.id!=null?samplesheet_params.reagents.pe.id:'',
 					sbs_id: samplesheet_params.reagents.sbs.id!=null?samplesheet_params.reagents.sbs.id:'',
 					index_id: samplesheet_params.reagents.index.id!=null?samplesheet_params.reagents.index.id:'',
+					overwrite_if_exists: $scope.is_replace.toString().substr(0,1).toUpperCase( )+$scope.is_replace.toString().substr(1),
 				}
 
 				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
@@ -301,55 +337,77 @@ samplesheet_module.controller('Link2RunCtrl',
                 	return;
                 }
 				$scope.samplesheet_params.switchRun = false;
-                pieces = newValue.running_folder.split('_');
-                //console.log(newValue.run_parameters); return;
-                $scope.samplesheet_params.fcid = pieces[3].substring(1);
-                $scope.samplesheet_params.date = "20"+pieces[0].substring(0,2)+"/"+pieces[0].substring(2,4)+"/"+pieces[0].substring(4,6);
-                $scope.samplesheet_params.instrument = config.instruments[pieces[1]];
+				if ($scope.is_upload) {
+				    pieces = newValue.running_folder.split('_');
+                    //console.log(newValue.run_parameters); return;
+                    $scope.samplesheet_params.fcid = pieces[3].substring(1);
+                    $scope.samplesheet_params.date = "20"+pieces[0].substring(0,2)+"/"+pieces[0].substring(2,4)+"/"+pieces[0].substring(4,6);
+                    $scope.samplesheet_params.instrument = config.instruments[pieces[1]];
 
-                if (_.size(newValue.run_info) > 0) {
-                	r1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'});
-                	if (r1 !== undefined) {
-                		$scope.samplesheet_params.r1 = r1.NumCycles;
-                		newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'}));
+                    if (_.size(newValue.run_info) > 0) {
+                        r1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'});
+                        if (r1 !== undefined) {
+                            $scope.samplesheet_params.r1 = r1.NumCycles;
+                            newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N', 'Number': '1'}));
 
-                		r2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'});
-                		if (r2 !== undefined) {
-                			$scope.samplesheet_params.switchReads = true;
-                			$scope.samplesheet_params.r2 = r2.NumCycles;
-                			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'}));
-                		}
-                	}
+                            r2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'});
+                            if (r2 !== undefined) {
+                                $scope.samplesheet_params.switchReads = true;
+                                $scope.samplesheet_params.r2 = r2.NumCycles;
+                                newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'N'}));
+                            }
+                        }
 
-                	i1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'});
-					if (i1 !== undefined) {
-                		$scope.samplesheet_params.i1 = i1.NumCycles;
-                		newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'}));
-                		i2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'});
-                		if (i2 !== undefined) {
-                			$scope.samplesheet_params.switchIndexes = true;
-                			$scope.samplesheet_params.i2 = i2.NumCycles;
-                			newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'}));
-                		}
-					}
-					else {
-						$scope.samplesheet_params.i1 =  '0';
-					}
-					if (newValue.run_info.fc_layout.length > 0) {
-						fc_layout = newValue.run_info.fc_layout[0];
-						if (fc_layout.LaneCount === '8') {
-							$scope.samplesheet_params.switchMode = false;
-						}
-						else if (fc_layout.LaneCount === '2') {
-							$scope.samplesheet_params.switchMode = true;
-						}
+                        i1 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'});
+                        if (i1 !== undefined) {
+                            $scope.samplesheet_params.i1 = i1.NumCycles;
+                            newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y', 'Number': '2'}));
+                            i2 = _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'});
+                            if (i2 !== undefined) {
+                                $scope.samplesheet_params.switchIndexes = true;
+                                $scope.samplesheet_params.i2 = i2.NumCycles;
+                                newValue.run_info.reads = _.without(newValue.run_info.reads, _.findWhere(newValue.run_info.reads, {'IsIndexedRead': 'Y'}));
+                            }
+                        }
+                        else {
+                            $scope.samplesheet_params.i1 =  '0';
+                        }
+                        if (newValue.run_info.fc_layout.length > 0) {
+                            fc_layout = newValue.run_info.fc_layout[0];
+                            if (fc_layout.LaneCount === '8') {
+                                $scope.samplesheet_params.switchMode = false;
+                            }
+                            else if (fc_layout.LaneCount === '2') {
+                                $scope.samplesheet_params.switchMode = true;
+                            }
 
-					}
-                }
+                        }
+                    }
 
-                if (_.size(newValue.run_parameters) > 0) {
-                	$scope.samplesheet_params.reagents = newValue.run_parameters.reagents
-                }
+                    if (_.size(newValue.run_parameters) > 0) {
+                        $scope.samplesheet_params.reagents = newValue.run_parameters.reagents
+                    }
+				}
+				else {
+				    $scope.samplesheet_params.fcid = _.findWhere(newValue.metadata, {'name': 'fcid'}).value;
+					$scope.samplesheet_params.date = _.findWhere(newValue.metadata, {'name': 'date'}).value;
+					$scope.samplesheet_params.instrument = _.findWhere(newValue.metadata, {'name': 'scanner_nickname'}).value;
+					$scope.samplesheet_params.scanner_id = _.findWhere(newValue.metadata, {'name': 'scanner_id'}).value;
+					$scope.samplesheet_params.switchReads = _.findWhere(newValue.metadata, {'name': 'read2_cycles'}).value != 'None'?true:false;
+					$scope.samplesheet_params.r1 = _.findWhere(newValue.metadata, {'name': 'read1_cycles'}).value;
+					$scope.samplesheet_params.r2 = _.findWhere(newValue.metadata, {'name': 'read2_cycles'}).value;
+					$scope.samplesheet_params.switchIndexes =  _.findWhere(newValue.metadata, {'name': 'index2_cycles'}).value != 'None'?true:false;
+					$scope.samplesheet_params.i1 = _.findWhere(newValue.metadata, {'name': 'index1_cycles'}).value;
+					$scope.samplesheet_params.i2 = _.findWhere(newValue.metadata, {'name': 'index2_cycles'}).value;
+					$scope.samplesheet_params.switchMode = _.findWhere(newValue.metadata, {'name': 'is_rapid'}).value == 'false'?true:false;
+					$scope.samplesheet_params.reagents = {index:{id: _.findWhere(newValue.metadata, {'name': 'index_id'}).value,
+					                                             kit: _.findWhere(newValue.metadata, {'name': 'index_kit'}).value   },
+					                                      pe:{id: _.findWhere(newValue.metadata, {'name': 'pe_id'}).value,
+					                                          kit: _.findWhere(newValue.metadata, {'name': 'pe_kit'}).value   },
+					                                      sbs:{id: _.findWhere(newValue.metadata, {'name': 'sbs_id'}).value,
+					                                           kit: _.findWhere(newValue.metadata, {'name': 'sbs_kit'}).value   }};
+				}
+
 
                 $scope.restart();
             });
@@ -412,7 +470,7 @@ samplesheet_module.controller('Link2RunCtrl',
                 }
                 $scope.run_folders.push({'running_folder': custom_run_folder, run_info: {}});
                 $scope.samplesheet_params.run_folder = _.findWhere($scope.run_folders, {running_folder: custom_run_folder});
-                console.log($scope.samplesheet_params.run_folder);
+                //console.log($scope.samplesheet_params.run_folder);
 				$scope.restart();
 
 			}

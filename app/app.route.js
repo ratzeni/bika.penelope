@@ -29,6 +29,22 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
                   authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
         })
+        .state('delivery', {
+            url: '/delivery',
+            templateUrl: 'app/components/delivery/delivery.home.view.html',
+
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+        })
+        .state('request_form', {
+            url: '/request_form',
+            templateUrl: 'app/components/request_form/request_form.home.view.html',
+
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+        })
         .state('batches', {
             url: '/batches',
             templateUrl: 'app/components/batches/batches.home.view.html',
@@ -72,7 +88,7 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             }
 
         })
-         .state('samplesheet_upload', {
+        .state('samplesheet_upload', {
             url: '/samplesheet/link_to_run',
             templateUrl: 'app/shared/attachment/samplesheet_link2run.home.view.html',
             data: {
@@ -80,6 +96,22 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
             }
 
         })
+        .state('samplesheet_replace', {
+            url: '/samplesheet/replace',
+            templateUrl: 'app/shared/attachment/samplesheet_replace.home.view.html',
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+
+        })
+//        .state('samplesheet_delete', {
+//            url: '/samplesheet/delete',
+//            templateUrl: 'app/shared/attachment/samplesheet_delete.home.view.html',
+//            data: {
+//                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+//            }
+//
+//        })
         .state('analysis_requests', {
             url: '/analysis_requests/:review_state',
             templateUrl: 'app/components/analysis_requests/analysis_requests.home.view.html',
