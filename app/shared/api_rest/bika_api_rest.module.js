@@ -143,22 +143,37 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 	this.createWorksheet = function(params) {
     	method = config.bikaApiRest.methods.create_worksheet;
         return BikaApiRestService.call('write', method, params);
-    }
+    };
+
+    this.createDelivery = function(params) {
+    	method = config.bikaApiRest.methods.create_delivery;
+        return BikaApiRestService.call('write', method, params);
+    };
 
     this.updateWorksheet = function(params) {
     	method = config.bikaApiRest.methods.update_worksheet;
         return BikaApiRestService.call('write', method, params);
-    }
+    };
 
     this.updateWorksheets = function(params) {
     	method = config.bikaApiRest.methods.update_worksheets;
         return BikaApiRestService.call('write', method, params);
-    }
+    };
+
+    this.updateDelivery = function(params) {
+    	method = config.bikaApiRest.methods.update_delivery;
+        return BikaApiRestService.call('write', method, params);
+    };
+
+    this.updateDeliveries = function(params) {
+    	method = config.bikaApiRest.methods.update_deliveries;
+        return BikaApiRestService.call('write', method, params);
+    };
 
     this.updateBatch = function(params) {
     	method = config.bikaApiRest.methods.update_batch;
         return BikaApiRestService.call('write', method, params);
-    }
+    };
 
    this.updateBatches = function(params) {
     	method = config.bikaApiRest.methods.update_batches;

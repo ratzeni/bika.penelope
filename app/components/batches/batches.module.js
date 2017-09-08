@@ -87,9 +87,9 @@ batches_module.controller('BatchesCtrl',
 				this.params = {f: $scope._get_review_params(batch_id)};
 
 				BikaService.closeBatch(this.params).success(function (data, status, header, config){
-					console.log(data);
+//					console.log(data);
 					this.params = {input_values: $scope._get_input_values_review_state(batch_id,'closed')};
-					console.log(this.params);
+//					console.log(this.params);
 					BikaService.updateBatches(this.params).success(function (data, status, header, config){
 						$scope.loading_change_review_state('closing batches').hide();
 						$scope.checked_list = [];
@@ -623,7 +623,7 @@ batches_module.controller('BatchDetailsCtrl',
 				var input_values = {};
 				_.each(ar_id,function(id) {
 					ar = _.findWhere($scope.analysis_requests, {'id': id});
-					console.log(ar);
+//					console.log(ar);
 					input_values[ar.path] = {subject: review_state!==undefined?review_state:ar.review_state};
 				});
 				return JSON.stringify(input_values);
@@ -797,6 +797,19 @@ batches_module.controller('BatchBookCtrl',
 			switchWorksheet: false,
 		};
 
+        $scope.delivery_params = {
+			delivery: null,
+			export_mode: null,
+			title: null,
+			description: null,
+			switchDelivery: false,
+			switchMerge: true,
+			runs: [],
+            path: null,
+            recipients: null,
+		};
+        $scope.export_mode = config.bikaApiRest.data_source.export_mode;
+
 		$scope.stickers={id:null};
 		$scope.worksheets = [];
 		$scope.analysts = [];
@@ -830,6 +843,21 @@ batches_module.controller('BatchBookCtrl',
         	};
 
 
+        $scope.getBatch =
+            function(batch_id) {
+                this.params = {sort_on: 'Date', sort_order: 'descending', id: batch_id};
+                BikaService.getBatches(this.params).success(function (data, status, header, config){
+                    $scope.batch = data.result.objects[0];
+                    this.params = {Title: $scope.batch.client};
+                    BikaService.getClients(this.params).success(function (data, status, header, config){
+                        client = _.findWhere(data.result.objects,{name: $scope.batch.client});
+                        $scope.contacts = client.contacts;
+                    });
+                });
+            };
+
+
+
 		$scope.getAnalysisRequests =
             function(batch_id, print_stickers) {
                 $scope.analysis_requests = [];
@@ -837,13 +865,16 @@ batches_module.controller('BatchBookCtrl',
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
+
                     $scope.analysis_requests = data.result.objects;
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
 					$scope.analysis_results = {};
                     transitions = Array();
+                    runs = Array();
                     workflow_transitions = Array();
 					_.each($scope.analysis_requests,function(obj) {
+
 						Utility.merge(transitions,obj.transitions,'id');
 						if (obj.analyses.length > 0 && $scope.analyses.length == 0 && $scope.review_state == 'active' ) {
 							$scope.analyses = obj.analyses;
@@ -856,7 +887,10 @@ batches_module.controller('BatchBookCtrl',
 							$scope.analysis_results[$scope.obj_id][o.id] = (o.review_state === 'sample_received')?1:o.result;
 						});
 
+					    runs = _.union(runs, obj.runs)
+
 					});
+					$scope.runs = runs;
                     $scope.transitions = transitions;
                     $scope.workflow_transitions = workflow_transitions;
                     //console.log($scope.transitions);
@@ -865,6 +899,7 @@ batches_module.controller('BatchBookCtrl',
                     	Utility.print_stickers($scope.stickers.id, $scope.batch.path);
                     }
                     //$rootScope.counter = DashboardService.update_dashboard();
+                    $scope.getBatch($stateParams.batch_id);
                 });
             };
 
@@ -883,9 +918,25 @@ batches_module.controller('BatchBookCtrl',
 				});
 			}
 
+		$scope.getDeliveries =
+            function() {
+                this.params = {
+                    sort_on: 'Date', sort_order: 'descending', Subject: 'draft',
+                	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size
+                };
+
+                BikaService.getWorksheets(this.params).success(function (data, status, header, config){
+					$scope.deliveries = data.result.objects;
+                });
+            };
+
+
+
         $scope.getAnalysisRequests($stateParams.batch_id);
+
         $scope.getWorksheets();
         $scope.getAnalysists();
+        $scope.getDeliveries();
 
 
 		$scope.ultimate_workflow_transitions =
@@ -1326,5 +1377,143 @@ batches_module.controller('BatchBookCtrl',
                 if ( newValue === null ) { return; }
                 $scope.workflow_params.analyst = _.findWhere($scope.analysts, {'userid': $scope.workflow_params.worksheet.analyst});
          });
+
+         $scope.$watch('delivery_params.delivery',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+                if ( newValue === null ) { return; }
+
+                this.params = JSON.parse(newValue.location);
+                $scope.delivery_params.description = newValue.description;
+                $scope.delivery_params.runs = this.params['runs'];
+                $scope.delivery_params.export_mode =  _.findWhere($scope.export_mode, {value: this.params['mode']});
+                $scope.delivery_params.switchMerge =  this.params['merge'];
+                $scope.delivery_params.path =  this.params['path'];
+         });
+
+         this.create_delivery = function(request_id, delivery_params){
+            if (Array.isArray(request_id) && request_id.length == 0) {
+					Utility.alert({title:'Nothing to assign<br/>', content:'Please select at least a Sample', alertType:'warning'});
+					return;
+				}
+
+				if (delivery_params.switchDelivery && delivery_params.delivery == null ||
+				 	!delivery_params.switchDelivery &&
+				 	(delivery_params.title == null || delivery_params.title == '' )) {
+				 	Utility.alert({title:'Nothing to assign<br/>', content:'Please select at least a Delivery Worksheet', alertType:'warning'});
+					return;
+				}
+				$scope.loading_change_review_state('creating delivery').show();
+				if (!delivery_params.switchDelivery) {
+
+				    var delivery_samples = [];
+					_.each(request_id,function(request_obj) {
+							var item = {
+								request_id: request_obj,
+								analysis_id: '',
+								obj_path: '',
+								analyst: '',
+							};
+							delivery_samples.push(item);
+					});
+
+					this.params = {
+						title: delivery_params.title,
+						description: delivery_params.description,
+						Remarks: JSON.stringify(delivery_samples),
+						subject: 'draft',
+						location: JSON.stringify({  mode: delivery_params.export_mode['value'],
+						                            path: delivery_params.path,
+						                            user: '',
+						                            password:'',
+						                            merge: delivery_params.switchMerge,
+						                            runs: delivery_params.runs,
+						                            recipients: delivery_params.recipients,
+						                            client: $scope.batch.client})
+					};
+
+
+					BikaService.createDelivery(this.params).success(function (data, status, header, config){
+						result = data.result;
+						$scope.delivery_params = {
+                            delivery: null,
+                            export_mode: null,
+                            title: null,
+                            description: null,
+                            switchDelivery: false,
+                            switchMerge: true,
+                            runs: [],
+                            path: null,
+                        };
+                        $scope.checked_list = [];
+						$scope.loading_change_review_state('creating delivery').hide();
+						if (result['success'] === 'True') {
+						    Utility.alert({title:'Success', content: 'Your Delivery Worksheet has been successfully created.', alertType:'success'});
+						    $state.go('delivery',{delivery_id: result['obj_id']});
+						}
+						else {
+						    $scope.getDeliveries();
+							Utility.alert({title:'Error while creating...', content: result['message'], alertType:'danger'});
+							return;
+						}
+
+
+					});
+                }
+                else {
+                    var delivery_samples = [];
+                    _.each(request_id,function(request_obj) {
+							var item = {
+								request_id: request_obj,
+								analysis_id: '',
+								obj_path: '',
+								analyst: '',
+							};
+
+							delivery_samples.push(item);
+					});
+					Utility.merge(delivery_samples,JSON.parse(delivery_params.delivery.remarks),'request_id');
+
+					this.params = {
+						obj_path: delivery_params.delivery.path,
+						Remarks: JSON.stringify(delivery_samples),
+					}
+                    $scope.loading_change_review_state('updating delivery').show();
+					BikaService.updateWorksheet(this.params).success(function (data, status, header, config){
+					    $scope.loading_change_review_state('updating delivery').hide();
+						result = data.result;
+
+
+
+                        if (result['success'] === 'True') {
+						    Utility.alert({title:'Success', content: 'Your Delivery Worksheet has been successfully updated.', alertType:'success'});
+						    $scope.checked_list = [];
+
+						    $state.go('delivery',{delivery_id: $scope.delivery_params.delivery.id});
+						}
+						else {
+						    $scope.delivery_params = {
+                                delivery: null,
+                                export_mode: null,
+                                title: null,
+                                description: null,
+                                switchDelivery: false,
+                                switchMerge: true,
+                                runs: [],
+                                path: null,
+                            };
+						    $scope.getDeliveries();
+							Utility.alert({title:'Error while updating...', content: result['message'], alertType:'danger'});
+							return;
+						}
+						$scope.getDeliveries();
+
+
+					});
+
+				}
+
+         }
 
 	});

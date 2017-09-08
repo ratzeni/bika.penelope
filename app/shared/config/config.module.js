@@ -19,6 +19,7 @@ angular
                 get_clerk_users:'/bika/get/clerk_users',
                 get_client_users:'/bika/get/client_users',
                 get_worksheets:'/bika/get/worksheets',
+                get_deliveries:'/bika/get/deliveries',
                 get_supply_orders:'/bika/get/supply_orders',
                 get_lab_products:'/bika/get/lab_products',
                 get_storage_locations:'/bika/get/storage_locations',
@@ -26,6 +27,7 @@ angular
                 create_contact: '/bika/create/contact',
                 create_batch: '/bika/create/batch',
                 create_worksheet: '/bika/create/worksheet',
+                create_delivery: '/bika/create/delivery',
                 create_analysis_request:'/bika/create/analysis_request',
                 create_supply_order:'/bika/create/supply_order',
                 create_lab_product:'/bika/create/lab_product',
@@ -70,6 +72,8 @@ angular
 				update_clients: '/bika/update/clients',
 				update_contact: '/bika/update/contact',
 				update_contacts: '/bika/update/contacts',
+				update_delivery: '/bika/update/delivery',
+				update_deliveries: '/bika/update/deliveries'
             },
             data_source: {
 				container_types: [
@@ -129,6 +133,7 @@ angular
         	SN526: 'Diabolik',
         	J00143: 'Zagor',
         	SN200R: 'Fisietto',
+        	SN194: 'Tex'
         }
 
 

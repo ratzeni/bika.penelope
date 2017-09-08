@@ -25,6 +25,7 @@ var main_module = angular.module('MainApp',[
     'AnalysisRequestsModule',
     'SamplesheetModule',
     'WorksheetsModule',
+    'DeliveriesModule',
     'BlackBoardModule',
     'CostCentersModule',
     'LabProductsModule',
