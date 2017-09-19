@@ -32,7 +32,7 @@ batches_module.controller('BatchesCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 10,
+			page_size: 25,
 			total: 0,
 			current: 1,
 			last: 0,
@@ -305,7 +305,7 @@ batches_module.controller('BatchDetailsCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 50,
+			page_size: 250,
 			total: 0,
 			current: 1,
 			last: 0,
@@ -817,7 +817,7 @@ batches_module.controller('BatchBookCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 50,
+			page_size: 250,
 			total: 0,
 			current: 1,
 			last: 0,
