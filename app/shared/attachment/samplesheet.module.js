@@ -407,8 +407,8 @@ samplesheet_module.controller('Link2RunCtrl',
 					                                      sbs:{id: _.findWhere(newValue.metadata, {'name': 'sbs_id'}).value,
 					                                           kit: _.findWhere(newValue.metadata, {'name': 'sbs_kit'}).value   }};
 
-					console.log($scope.samplesheet_params);
-					console.log(newValue.metadata);
+//					console.log($scope.samplesheet_params);
+//					console.log(newValue.metadata);
 				}
 
 
