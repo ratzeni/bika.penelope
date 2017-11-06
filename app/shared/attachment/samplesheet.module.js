@@ -399,13 +399,16 @@ samplesheet_module.controller('Link2RunCtrl',
 					$scope.samplesheet_params.switchIndexes =  _.findWhere(newValue.metadata, {'name': 'index2_cycles'}).value != 'None'?true:false;
 					$scope.samplesheet_params.i1 = _.findWhere(newValue.metadata, {'name': 'index1_cycles'}).value;
 					$scope.samplesheet_params.i2 = _.findWhere(newValue.metadata, {'name': 'index2_cycles'}).value;
-					$scope.samplesheet_params.switchMode = _.findWhere(newValue.metadata, {'name': 'is_rapid'}).value == 'false'?true:false;
+					$scope.samplesheet_params.switchMode = _.findWhere(newValue.metadata, {'name': 'is_rapid'}).value == 'false'?false:true;
 					$scope.samplesheet_params.reagents = {index:{id: _.findWhere(newValue.metadata, {'name': 'index_id'}).value,
 					                                             kit: _.findWhere(newValue.metadata, {'name': 'index_kit'}).value   },
 					                                      pe:{id: _.findWhere(newValue.metadata, {'name': 'pe_id'}).value,
 					                                          kit: _.findWhere(newValue.metadata, {'name': 'pe_kit'}).value   },
 					                                      sbs:{id: _.findWhere(newValue.metadata, {'name': 'sbs_id'}).value,
 					                                           kit: _.findWhere(newValue.metadata, {'name': 'sbs_kit'}).value   }};
+
+					console.log($scope.samplesheet_params);
+					console.log(newValue.metadata);
 				}
 
 
