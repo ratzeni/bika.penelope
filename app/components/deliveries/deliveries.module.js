@@ -166,6 +166,7 @@ deliveries_module.controller('DeliveriesCtrl',
 		    remarks = JSON.parse(remarks);
 		    return remarks.length;
 		}
+		$scope.params = {delivery_status: 'draft'};
 });
 
 deliveries_module.controller('DeliveryDetailsCtrl',
