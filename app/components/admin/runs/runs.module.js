@@ -16,7 +16,7 @@ runs_module.controller('RunsCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 15,
+			page_size: 25,
 			total: 0,
 			current: 1,
 			last: 0,
