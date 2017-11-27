@@ -11,6 +11,7 @@ var main_module = angular.module('MainApp',[
     'ngQuantum',
     'ngCart',
     'dangle',
+    'chart.js',
     'InitModule',
     'ConfigModule',
     'BikaApiRestModule',
@@ -18,7 +19,6 @@ var main_module = angular.module('MainApp',[
     'UtilityModule',
     'angularSpinner',
     'LoginModule',
-    'DashboardModule',
     'HomeModule',
     'ARImportModule',
     'BatchesModule',
@@ -32,6 +32,7 @@ var main_module = angular.module('MainApp',[
     'RunsModule',
     'ClientsModule',
     'RequestFormModule',
+    'DashboardModule',
 ]);
 
 // :: MAIN CONTROLLER

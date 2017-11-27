@@ -10,6 +10,14 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
         })
+        .state('dashboard', {
+            url: '/dashboard',
+            templateUrl: 'app/components/dashboard/dashboard.home.view.html',
+
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+        })
         .state('clients', {
             url: '/clients',
             templateUrl: 'app/components/clients/clients.home.view.html',
