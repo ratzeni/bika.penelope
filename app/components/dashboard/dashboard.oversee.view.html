@@ -2,6 +2,11 @@
 
 <div ng-controller="OverseeCtrl as ctrl" style="margin-top:10px">
         <div data-nq-tabset="" data-tabset-model="demoTabset" data-effect="slide-bottom">
+            <div data-nq-tab="" data-heading="Status">
+                <div ng-include="'app/components/dashboard/oversee/status.view.html'"></div>
+                <div ng-bind-html="tabParagraph">
+                </div>
+            </div>
             <div data-nq-tab="" data-heading="Samples">
                 <div ng-include="'app/components/dashboard/oversee/samples.view.html'"></div>
                 <div ng-bind-html="tabParagraph">

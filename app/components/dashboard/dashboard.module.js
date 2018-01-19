@@ -12,14 +12,16 @@ dashboard_module.run(function($rootScope){
 			published: -1,
 			worksheets: -1,
 			assigned: -1,
-			runs: 1,
-
+			runs: -1,
+			samples: -1,
 	}
+
 	$rootScope.dashboard_summary = {
 	    batches: [],
 	    cost_centers: [],
 	    clients: [],
 	    runs: [],
+	    samples: [],
 	}
 
 	$rootScope.timeline_history = {
@@ -46,6 +48,13 @@ dashboard_module.run(function($rootScope){
             monthly: {},
             date_from: null,
             date_to: null,
+        },
+        samples: {
+            yearly: {},
+            monthly: {},
+            date_from: null,
+            date_to: null,
+
         },
 
     }
@@ -116,6 +125,13 @@ dashboard_module.service('TimelineService', function($rootScope) {
                     $rootScope.timeline_history.runs.date_to = last;
                     break;
 
+                case 'samples':
+                    $rootScope.timeline_history.samples.yearly = yearly;
+                    $rootScope.timeline_history.samples.monthly = monthly;
+                    $rootScope.timeline_history.samples.date_from = first;
+                    $rootScope.timeline_history.samples.date_to = last;
+                    break;
+
                 default:
                     break;
             }
@@ -184,6 +200,23 @@ dashboard_module.service('DashboardService', function(BikaService, IrodsService,
                 BikaService.countAnalysisRequests(params).success(function (data, status, header, config){
 					var count = data.result;
 					update_counter(review_state, count, counter);
+
+					if (review_state === 'active') {
+
+                        this.params = {sort_on: 'id', sort_order: 'ascending', page_nr: 0,
+                                       Subjects: "sample_due|sample_received|to_be_verified|verified|published"};
+                        BikaService.getAnalysisRequests(this.params).success(function (data, status, header, config){
+                            this.count = data.result.total;
+                            samples = [];
+                            update_counter('samples', this.count, counter);
+                            _.each(data.result.objects, function(sample) {
+                                this.dict = {id: sample['id'], path: sample['path'], date: sample['date_created']};
+                                samples.push(this.dict);
+                            });
+                            $rootScope.dashboard_summary.samples = samples;
+
+                        });
+					}
                 });
 		}
 
@@ -227,7 +260,7 @@ dashboard_module.service('DashboardService', function(BikaService, IrodsService,
                 params = {sort_on: 'id', sort_order: 'ascending', Subject: 'open', page_nr: 0, Subjects: "open|closed"};
                 BikaService.getBatches(params).success(function (data, status, header, config){
 					this.count = data.result.total;
-					batches = []
+					batches = [];
 					update_counter('batches', this.count, counter);
 					_.each(data.result.objects, function(batch) {
 					    this.dict = {id: batch['id'], path: batch['path'], date: batch['creation_date']};
@@ -286,6 +319,7 @@ dashboard_module.service('DashboardService', function(BikaService, IrodsService,
 
 		this.update_dashboard =
 			function () {
+			    update_counter('samples', -1, $rootScope.counter);
 				_.each(this.ars_review_state,function(review_state) {
 					update_counter(review_state, -1, $rootScope.counter);
 					countAnalysisRequests(review_state);
@@ -394,8 +428,8 @@ dashboard_module.controller('OverseeCtrl',
                 period: 'yearly',
                 date_from: null,
                 date_to: null,
-
             },
+
             clients: {
                 type: 'Bar',
                 labels: [],
@@ -405,6 +439,7 @@ dashboard_module.controller('OverseeCtrl',
                 date_from: null,
                 date_to: null,
             },
+
             cost_centers: {
                 type: 'Bar',
                 labels: [],
@@ -414,7 +449,18 @@ dashboard_module.controller('OverseeCtrl',
                 date_from: null,
                 date_to: null,
             },
+
             runs: {
+                type: 'Bar',
+                labels: [],
+                options: {},
+                data: [],
+                period: 'yearly',
+                date_from: null,
+                date_to: null,
+            },
+
+            samples: {
                 type: 'Bar',
                 labels: [],
                 options: {},
@@ -425,7 +471,7 @@ dashboard_module.controller('OverseeCtrl',
             },
         };
 
-        $scope.chart_types = ['Bar', 'Line', 'Horizontal Bar', 'Pie', 'Doughnut', 'Polar Area']
+        $scope.chart_types = ['Bar', 'Line', 'Horizontal Bar', 'Pie', 'Doughnut', 'Polar Area'];
 
 		$scope.$watch('counter.sample_due',
             function (newValue, oldValue) {
@@ -587,6 +633,33 @@ dashboard_module.controller('OverseeCtrl',
                 if ( _.isEqual(newValues, oldValues) ) { return;}
                 TimelineService.buildTimeline($scope.dashboard_summary.runs, 'runs', newValues[0], newValues[1])
                 $scope.getTimeline('runs');
+
+            });
+
+        $scope.$watch('dashboard_summary.samples',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.samples, 'samples')
+                $scope.getTimeline('samples');
+            });
+
+        $scope.$watch('chart.samples.period',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('samples');
+            });
+
+        $scope.$watch('chart.samples.type',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('samples');
+            });
+
+        $scope.$watchGroup(['chart.samples.date_from','chart.samples.date_to'],
+            function (newValues, oldValues) {
+                if ( _.isEqual(newValues, oldValues) ) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.samples, 'samples', newValues[0], newValues[1])
+                $scope.getTimeline('samples');
 
             });
 

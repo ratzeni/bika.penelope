@@ -29,6 +29,12 @@
                             <span ng-hide="$aside.$collapsed" class="menu-text">Oversee</span>
                         </a>
                     </li>
+                    <li id='runs_details' ng-style="params.choose === 'runs' && {'background-color':'#eee'}">
+                        <a href="" target="_self"   ng-click="ctrl.goto('runs')" >
+                            <i class="glyphicon glyphicon-road" class="titip-right" data-title="Runs"></i>
+                            <span ng-hide="$aside.$collapsed" class="menu-text">Runs</span>
+                        </a>
+                    </li>
                     <!--<li id='batches'  ng-style="params.choose === 'batches' && {'background-color':'#eee'}">-->
                         <!--<a href="" target="_self"  ng-click="ctrl.goto('batches')">-->
                             <!--<i class="glyphicon glyphicon-book" class="titip-right" data-title="Batches"></i>-->
