@@ -37,7 +37,7 @@ var main_module = angular.module('MainApp',[
 
 // :: MAIN CONTROLLER
 main_module.controller('MainCtrl',
-	function(Utility, BikaService, $scope, $rootScope, $state, Auth, AUTH_EVENTS, USER_ROLES, $window){
+	function(Utility, BikaService, $scope, $rootScope, $state, Auth, AUTH_EVENTS, USER_ROLES, $window, init){
 		// this is the parent controller for all controllers.
 		// Manages auth login functions and each controller
 		// inherits from this controller
@@ -72,7 +72,7 @@ main_module.controller('MainCtrl',
 
 // :: RUN MAIN MODULE
 main_module.run(
-	function($rootScope, $state, Auth, AUTH_EVENTS) {
+	function($rootScope, $state, Auth, AUTH_EVENTS, init) {
 
 		//before each state change, check if the user is logged in
 		//and authorized to move onto the next state
@@ -89,6 +89,8 @@ main_module.run(
 					assigned: -1,
 
 			}
+
+			$rootScope.qc_report = init.sshApiRest.report_host;
 
 		$rootScope.$on('$stateChangeStart', function (event, next) {
 
@@ -121,6 +123,9 @@ main_module.run(
 		$rootScope.logout = function(){
 			Auth.logout();
 		};
+
+
+
 
 	}
 );

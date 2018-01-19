@@ -136,6 +136,9 @@
                         <li data-ng-if="currentUser.role!='LabClerk'" ng-class="getClass('runs')">
                             <a ui-sref="runs">Runs</a>
                         </li>
+                        <li data-ng-if="currentUser.role!='LabClerk'" >
+                            <a href="{{qc_report}}" onclick="window.open(this.href);return false">Quality Check</a>
+                        </li>
                         <li data-ng-if="currentUser.role=='Site Administrator'">
                             <a role="button" tabindex="1" data-nq-dropdown="" data-qo-placement="bottom-right">
                                 Admin
