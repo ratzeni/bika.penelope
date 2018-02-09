@@ -22,6 +22,8 @@ dashboard_module.run(function($rootScope){
 	    clients: [],
 	    runs: [],
 	    samples: [],
+	    sequencers: [],
+	    modes: [],
 	}
 
 	$rootScope.timeline_history = {
@@ -49,13 +51,27 @@ dashboard_module.run(function($rootScope){
             date_from: null,
             date_to: null,
         },
+        sequencers: {
+            yearly: {},
+            monthly: {},
+            series: [],
+            date_from: null,
+            date_to: null,
+        },
+        modes: {
+            yearly: {},
+            monthly: {},
+            series: [],
+            date_from: null,
+            date_to: null,
+        },
         samples: {
             yearly: {},
             monthly: {},
             date_from: null,
             date_to: null,
-
         },
+
 
     }
 
@@ -66,10 +82,10 @@ dashboard_module.service('TimelineService', function($rootScope) {
 
     this.buildTimeline =
         function (objects, type, date_from, date_to) {
-
             var first = date_from === undefined ? _.first(objects)['date'].split(" ")[0] : date_from;
             var last =  date_to === undefined ? _.last(objects)['date'].split(" ")[0] : date_to;
             this.years = _.range(parseInt(first.split("/")[0]), parseInt(last.split("/")[0])+1);
+
 
             var yearly = {};
             var monthly = {};
@@ -86,7 +102,6 @@ dashboard_module.service('TimelineService', function($rootScope) {
                     this.year_month = year + '/' + this.month;
 
                     this.result = _.filter(objects, function(obj) {
-
                         return obj.date.search(this.year_month) !== -1 && obj.date.substring(0,7) >= first.substring(0,7) && obj.date.substring(0,7) <= last.substring(0,7);
                     });
 
@@ -125,6 +140,80 @@ dashboard_module.service('TimelineService', function($rootScope) {
                     $rootScope.timeline_history.runs.date_to = last;
                     break;
 
+                case 'sequencers':
+                    $rootScope.timeline_history.sequencers.yearly = {};
+                    $rootScope.timeline_history.sequencers.monthly = {};
+                    $rootScope.timeline_history.sequencers.date_from = first;
+                    $rootScope.timeline_history.sequencers.date_to = last;
+                    $rootScope.timeline_history.sequencers.series = [];
+                    _.each(objects, function(obj) {
+                        if (_.indexOf($rootScope.timeline_history.sequencers.series, obj.sequencer) == -1) {
+                            $rootScope.timeline_history.sequencers.series.push(obj.sequencer)
+                        }
+                    });
+
+                    _.each(Object.entries(yearly), function(y) {
+                        values = [];
+
+                        _.each($rootScope.timeline_history.sequencers.series, function(s) {
+                            this.value = _.filter(y[1], function(obj) {
+                                return obj.sequencer.search(s) !== -1;
+                            });
+                            values.push(this.value);
+                        });
+                        $rootScope.timeline_history.sequencers.yearly[y[0]] = values;
+                    });
+
+                    _.each(Object.entries(monthly), function(m) {
+                        values = [];
+                        _.each($rootScope.timeline_history.sequencers.series, function(s) {
+                            this.value = _.filter(m[1], function(obj) {
+                                return obj.sequencer.search(s) !== -1;
+                            });
+                            values.push(this.value);
+                        });
+                        $rootScope.timeline_history.sequencers.monthly[m[0]] = values;
+                    });
+
+                    break;
+
+                case 'modes':
+                    $rootScope.timeline_history.modes.yearly = {};
+                    $rootScope.timeline_history.modes.monthly = {};
+                    $rootScope.timeline_history.modes.date_from = first;
+                    $rootScope.timeline_history.modes.date_to = last;
+                    $rootScope.timeline_history.modes.series = [];
+                    _.each(objects, function(obj) {
+                        if (_.indexOf($rootScope.timeline_history.modes.series, obj.is_rapid) == -1) {
+                            $rootScope.timeline_history.modes.series.push(obj.is_rapid)
+                        }
+                    });
+
+                    _.each(Object.entries(yearly), function(y) {
+                        values = [];
+
+                        _.each($rootScope.timeline_history.modes.series, function(s) {
+                            this.value = _.filter(y[1], function(obj) {
+                                return obj.is_rapid.search(s) !== -1;
+                            });
+                            values.push(this.value);
+                        });
+                        $rootScope.timeline_history.modes.yearly[y[0]] = values;
+                    });
+
+                    _.each(Object.entries(monthly), function(m) {
+                        values = [];
+                        _.each($rootScope.timeline_history.modes.series, function(s) {
+                            this.value = _.filter(m[1], function(obj) {
+                                return obj.is_rapid.search(s) !== -1;
+                            });
+                            values.push(this.value);
+                        });
+                        $rootScope.timeline_history.modes.monthly[m[0]] = values;
+                    });
+
+                    break;
+
                 case 'samples':
                     $rootScope.timeline_history.samples.yearly = yearly;
                     $rootScope.timeline_history.samples.monthly = monthly;
@@ -139,9 +228,9 @@ dashboard_module.service('TimelineService', function($rootScope) {
     };
 
     this.getTimeline =
-        function(period, set) {
+        function(period, set, series) {
 
-        this.item = $rootScope.timeline_history[set][period];
+        var item = $rootScope.timeline_history[set][period];
 
         var chart_timeline = {
             data: [],
@@ -151,19 +240,52 @@ dashboard_module.service('TimelineService', function($rootScope) {
             date_from: $rootScope.timeline_history[set].date_from,
             date_to: $rootScope.timeline_history[set].date_to,
         };
-
         var csv_chart = {};
 
-        _.each(this.item, function(v,k) {
-            chart_timeline.labels.push(k);
-            chart_timeline.data.push(v.length);
-            csv_chart[k] = v.length;
-            _.each(v, function(o) {
-                o['x-label'] = k;
-                chart_timeline.csv_query.push(o);
+        if (series !== undefined && series) {
+
+            chart_timeline['series'] = $rootScope.timeline_history[set].series;
+            var index = 0;
+
+            _.each(chart_timeline['series'], function(s){
+                 var data = [];
+                 csv_chart['Serie'] = s;
+                _.each(item, function(v,k) {
+                    if (_.indexOf(chart_timeline.labels, k) === -1) {
+                        chart_timeline.labels.push(k);
+                    }
+                    data.push(v[index].length);
+                    csv_chart[k] = v[index].length;
+                     _.each(v, function(obj) {
+                        _.each(obj, function(o) {
+                            o['x-label'] = k;
+                            chart_timeline.csv_query.push(_.omit(o, 'metadata'));
+                        });
+                    });
+                });
+
+                chart_timeline.csv_chart.push(csv_chart);
+                chart_timeline.data.push(data);
+                index++;
+                csv_chart = {};
+
             });
-        });
-        chart_timeline.csv_chart.push(csv_chart);
+
+        }
+        else {
+             _.each(item, function(v,k) {
+                chart_timeline.labels.push(k);
+                chart_timeline.data.push(v.length);
+                csv_chart[k] = v.length;
+                _.each(v, function(o) {
+                    o['x-label'] = k;
+                    chart_timeline.csv_query.push(_.omit(o, 'metadata'));
+
+                });
+            });
+            chart_timeline.csv_chart.push(csv_chart);
+        }
+
         return chart_timeline;
     };
 
@@ -309,49 +431,66 @@ dashboard_module.service('DashboardService', function(BikaService, IrodsService,
                     update_counter('runs', this.count, counter);
                     _.each(data.result.objects.reverse(), function(run) {
                         date = '20'+ run['run'].substring(0, 2)+'/'+run['run'].substring(2, 4)+'/'+run['run'].substring(4, 6);
-					    this.dict = {run: run['run'], path: run['path'], date: date};
+                        this.sequencer = _.findWhere(run['metadata'], {'name': 'scanner_id'})['value'];
+                        this.is_rapid = _.findWhere(run['metadata'], {'name': 'is_rapid'})['value'];
+
+					    this.dict = {run: run['run'], path: run['path'], date: date,
+					                 metadata: run['metadata'], sequencer: this.sequencer, is_rapid: this.is_rapid};
+
 					    runs.push(this.dict);
 					});
 					$rootScope.dashboard_summary.runs = runs;
+					$rootScope.dashboard_summary.sequencers = runs;
+					$rootScope.dashboard_summary.modes = runs;
                 });
 
 			}
 
 		this.update_dashboard =
-			function () {
-			    update_counter('samples', -1, $rootScope.counter);
-				_.each(this.ars_review_state,function(review_state) {
-					update_counter(review_state, -1, $rootScope.counter);
-					countAnalysisRequests(review_state);
-				});
-				_.each(this.samples_review_state,function(review_state) {
-					update_counter(review_state, -1, $rootScope.counter);
-					countSamples(review_state);
-				});
-				_.each(this.services_review_state,function(review_state) {
-					update_counter(review_state, -1, $rootScope.counter);
-					countAnalysisRequests(review_state);
-				});
-				_.each(this.worksheets_review_state,function(review_state) {
-					update_counter(review_state, -1, $rootScope.counter);
-					countWorksheets(review_state);
-				});
+			function (target) {
+			    if (target === undefined || target === 'samples') {
+			        update_counter('samples', -1, $rootScope.counter);
+                    _.each(this.ars_review_state,function(review_state) {
+                        update_counter(review_state, -1, $rootScope.counter);
+                        countAnalysisRequests(review_state);
+                    });
+                    _.each(this.samples_review_state,function(review_state) {
+                        update_counter(review_state, -1, $rootScope.counter);
+                        countSamples(review_state);
+                    });
+                    _.each(this.services_review_state,function(review_state) {
+                        update_counter(review_state, -1, $rootScope.counter);
+                        countAnalysisRequests(review_state);
+                    });
+                    _.each(this.worksheets_review_state,function(review_state) {
+                        update_counter(review_state, -1, $rootScope.counter);
+                        countWorksheets(review_state);
+                    });
+			    }
 
-				// Batches
-				update_counter('batches', -1, $rootScope.counter);
-				countBatches();
+			    // Batches
+                if (target === undefined || target === 'batches') {
+                    update_counter('batches', -1, $rootScope.counter);
+				    countBatches();
+                }
 
 				// Clients
-				update_counter('clients', -1, $rootScope.counter);
-				countClients();
+				if (target === undefined || target === 'clients') {
+				    update_counter('clients', -1, $rootScope.counter);
+				    countClients();
+				}
 
 				// Cost Centers
-				update_counter('cost_centers', -1, $rootScope.counter);
-				countCostCenters();
+				if (target === undefined || target === 'cost_centers') {
+				    update_counter('cost_centers', -1, $rootScope.counter);
+				    countCostCenters();
+				}
 
 				// Runs
-				update_counter('runs', -1, $rootScope.counter);
-				countRuns();
+				if (target === undefined || target === 'runs') {
+				    update_counter('runs', -1, $rootScope.counter);
+				    countRuns();
+				}
 
 				return counter;
 			}
@@ -613,7 +752,7 @@ dashboard_module.controller('OverseeCtrl',
             function (newValue, oldValue) {
                 if ( newValue === oldValue) { return;}
                 TimelineService.buildTimeline($scope.dashboard_summary.runs, 'runs')
-               $scope.getTimeline('runs');
+                $scope.getTimeline('runs');
             });
 
         $scope.$watch('chart.runs.period',
@@ -673,12 +812,205 @@ dashboard_module.controller('OverseeCtrl',
                 }
                 else {$scope.chart[set].options['legend'] = {display: false};}
 
+                $scope.chart[set].options['scales'] = {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+
                 $scope.chart[set].labels = this.result.labels;
                 $scope.chart[set].data = this.result.data;
                 $scope.chart[set].csv_chart = this.result.csv_chart;
                 $scope.chart[set].csv_query = this.result.csv_query;
                 $scope.chart[set].date_from = this.result.date_from;
                 $scope.chart[set].date_to = this.result.date_to;
+
+        };
+
+
+
+});
+
+dashboard_module.controller('DashRunsCtrl',
+	function(DashboardService, TimelineService, Utility, $state, $scope, $rootScope) {
+
+		$scope.loading = Utility.loading({busyText: 'Wait while Loading...', theme: 'info', showBar: true, delayHide: 1500});
+		$scope.loading.show();
+
+		DashboardService.update_dashboard('runs');
+//		DashboardService.update_dashboard('sequencers');
+
+        $scope.dashboard_summary = $rootScope.dashboard_summary;
+
+        $scope.chart = {
+            runs: {
+                type: 'Bar',
+                labels: [],
+                options: {},
+                data: [],
+                period: 'yearly',
+                date_from: null,
+                date_to: null,
+            },
+            sequencers: {
+                type: 'Bar',
+                labels: [],
+                options: {},
+                data: [],
+                period: 'yearly',
+                date_from: null,
+                date_to: null,
+                series: [],
+            },
+            modes: {
+                type: 'Bar',
+                labels: [],
+                options: {},
+                data: [],
+                period: 'yearly',
+                date_from: null,
+                date_to: null,
+                series: [],
+            },
+        }
+
+        $scope.chart_types = ['Bar', 'Horizontal Bar'];
+
+
+
+        $scope.$watch('dashboard_summary.runs',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.runs, 'runs')
+                $scope.getTimeline('runs');
+            });
+
+        $scope.$watch('chart.runs.period',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('runs');
+            });
+
+        $scope.$watch('chart.runs.type',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('runs');
+            });
+
+        $scope.$watchGroup(['chart.runs.date_from','chart.runs.date_to'],
+            function (newValues, oldValues) {
+                if ( _.isEqual(newValues, oldValues) ) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.runs, 'runs', newValues[0], newValues[1])
+                $scope.getTimeline('runs');
+
+            });
+
+        $scope.$watch('dashboard_summary.sequencers',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.sequencers, 'sequencers')
+                $scope.getTimeline('sequencers', true);
+            });
+
+        $scope.$watch('chart.sequencers.period',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('sequencers', true);
+            });
+
+        $scope.$watch('chart.sequencers.type',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('sequencers', true);
+            });
+
+        $scope.$watchGroup(['chart.sequencers.date_from','chart.sequencers.date_to'],
+            function (newValues, oldValues) {
+                if ( _.isEqual(newValues, oldValues) ) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.sequencers, 'sequencers', newValues[0], newValues[1])
+                $scope.getTimeline('sequencers', true);
+
+            });
+
+        $scope.$watch('dashboard_summary.modes',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.modes, 'modes')
+                $scope.getTimeline('modes', true);
+            });
+
+        $scope.$watch('chartmodes.period',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('modes', true);
+            });
+
+        $scope.$watch('chart.modesype',
+            function (newValue, oldValue) {
+                if ( newValue === oldValue) { return;}
+                $scope.getTimeline('modes', true);
+            });
+
+        $scope.$watchGroup(['chart.modes.date_from','chart.modes.date_to'],
+            function (newValues, oldValues) {
+                if ( _.isEqual(newValues, oldValues) ) { return;}
+                TimelineService.buildTimeline($scope.dashboard_summary.modes, 'modes', newValues[0], newValues[1])
+                $scope.getTimeline('modes', true);
+
+            });
+
+        $scope.getTimeline =
+            function(set, series) {
+                this.result = TimelineService.getTimeline($scope.chart[set].period, set, series);
+
+                $scope.chart[set].labels = this.result.labels;
+                $scope.chart[set].data = this.result.data;
+                $scope.chart[set].csv_chart = this.result.csv_chart;
+                $scope.chart[set].csv_query = this.result.csv_query;
+                $scope.chart[set].date_from = this.result.date_from;
+                $scope.chart[set].date_to = this.result.date_to;
+
+                if ( set === 'sequencers' || set === 'modes') {
+                    $scope.chart[set].options['legend'] = {display: true, position: 'top'};
+                    $scope.chart[set].series = this.result.series;
+                    $scope.chart[set].options['scales'] = {
+                        xAxes: [{
+                          stacked: true,
+                          ticks: {
+                            beginAtZero:true,
+                          },
+                        }],
+                        yAxes: [{
+                          stacked: true,
+                          ticks: {
+                            beginAtZero:true,
+                          },
+                        }]
+                      }
+                }
+                else {
+                    $scope.chart[set].options['legend'] = {display: false};
+                    $scope.chart[set].options['scales'] = {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+
+                }
 
         };
 
