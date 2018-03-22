@@ -156,7 +156,15 @@
                                     data-ng-options="c.description for c in cost_centers" required>
                             </select>
                         </div>
-                        <div class="input-inline col-sm-6 pull-right">
+                        <div class="input-inline col-sm-4" ng-if="arimport_params.client_samples.length >0
+                            && (arimport_params.selectedAnalysisServices.bioinfo.length > 0 || arimport_params.selectedAnalysisServices.illumina.length > 0
+                            || arimport_params.selectedAnalysisServices.libray_prep.length > 0 || arimport_params.selectedAnalysisServices.extraction.length > 0)">
+                            <input type="checkbox" ng-model="arimport_params.createWorksheets" data-nq-switch-button=""
+                                   data-theme="success,stripped,rounded"
+                                   data-label-text="Worksheets" data-true-label="CREATE"
+                                   data-false-label="NONE">
+                        </div>
+                        <div class="input-inline col-sm-2 pull-right">
                             <button type="button" class="btn btn-success pull-right"
                                     data-ng-click="submit(arimport_params)"
                                     data-ng-disabled="!(arimport_params.client_samples.length >0

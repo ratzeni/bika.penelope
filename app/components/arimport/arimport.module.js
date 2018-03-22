@@ -4,6 +4,13 @@ arimport_module.run(function($rootScope){
   $rootScope._ = _;
 });
 
+//arimport_module.service('WorksheetService', function(BikaService, Utility, $scope) {
+//   this.create_worksheet =
+//        function(arimport_params, outcome) {
+//            this.params =
+//   }
+//});
+
 arimport_module.controller('ARImportCtrl',
 			   function(BikaService, Utility, config, $state, $scope, $timeout) {
 
@@ -11,6 +18,11 @@ arimport_module.controller('ARImportCtrl',
 		$scope.pools = [];
 		$scope.loading_import = Utility.loading({
             busyText: 'Wait while importing...',
+            delayHide: 3000,
+        });
+
+        $scope.loading_worksheet = Utility.loading({
+            busyText: 'Wait while creating worksheet...',
             delayHide: 3000,
         });
 
@@ -95,6 +107,7 @@ arimport_module.controller('ARImportCtrl',
 					attachment: arimport_params.attachment,
 					attachment_content: arimport_params.attachment_content,
 					client_samples: _.where(arimport_params.client_samples, {'pool': pool}),
+					createWorksheets: arimport_params.createWorksheets,
 				};
 				this.params.client_samples.unshift({index: 1, sample: pool, pool: pool});
 				$scope.import(this.params);
@@ -102,6 +115,7 @@ arimport_module.controller('ARImportCtrl',
 		// :: function :: ARImport()
 		$scope.import =
 			function(arimport_params) {
+
 				$scope.loading_import.show()
 				var outcome = {
 					batch_id: null,
@@ -206,11 +220,32 @@ arimport_module.controller('ARImportCtrl',
 								result = data.result;
 								if (result['success'] === 'True') {
 									Utility.alert({title:'Success', content: 'Sample '+ result['sample_id'] + ' has been successfully imported', alertType:'success', duration:3000});
+
 									outcome.arequest_ids.push({ar_id:result['ar_id'], sample_id:result['sample_id']});
 									if (outcome.arequest_ids.length === arimport_params.client_samples.length) {
 										Utility.alert({title:'Success', content: 'Your Batch has been successfully created.', alertType:'success'});
-										if (arimport_params.selectedSampleType.prefix !== 'POOL') {
+										if (arimport_params.selectedSampleType.prefix !== 'POOL' && !arimport_params.createWorksheets) {
 											$state.go('batch',{batch_id: outcome.batch_id});
+										}
+										else {
+										    this.worksheets_params = {
+										       title: arimport_params.selectedBatch,
+					                           description: arimport_params.textDescription,
+					                           analysis: {
+					                                extraction: arimport_params.selectedAnalysisServices.extraction,
+					                                library_prep: arimport_params.selectedAnalysisServices.library_prep,
+					                                illumina: arimport_params.selectedAnalysisServices.illumina,
+					                                bioinfo: arimport_params.selectedAnalysisServices.bioinfo,
+					                           },
+					                           request_ids: _.map(outcome.arequest_ids, function(currentObject) {
+                                                                return _.values(_.pick(currentObject, "ar_id"));
+                                               }),
+					                           client_id: arimport_params.selectedClient.id,
+					                           client_keyword: arimport_params.selectedClient.client_id,
+										    };
+//										    console.log(this.worksheets_params);
+
+										    $scope.createWorksheets(this.worksheets_params);
 										}
 									}
 								}
@@ -236,6 +271,102 @@ arimport_module.controller('ARImportCtrl',
                     }
                 });
 			}
+
+
+        // :: function :: create_worksheet()
+        $scope.create_worksheet =
+            function(ws_params, analysis, analyst) {
+                console.log(ws_params);
+                function _get_analysis_path(request_id, analysis_id, client_id) {
+                    this.path = "/" + Utility.get_root_url() + "/" + 'clients' + "/" + client_id + '/' + request_id + '/' + analysis_id;
+                    return this.path
+
+                }
+
+                function _get_input_values_analyst(request_ids, analysis_id, analyst, client_id) {
+
+                        var input_values = {};
+                        _.each(request_ids,function(request_id) {
+                                input_values[_get_analysis_path(request_id, analysis_id, client_id)] = {Analyst: analyst};
+                        });
+
+                        return JSON.stringify(input_values);
+
+                }
+
+                function _get_worksheet_analyses(request_ids, analysis_id, analyst, client_id) {
+
+                        var worksheet_analyses = [];
+                        _.each(request_ids,function(request_id) {
+
+                                var item = {
+                                    request_id: request_id[0],
+                                    analysis_id: analysis_id,
+                                    obj_path: _get_analysis_path(request_id, analysis_id, client_id),
+                                    analyst: analyst,
+                                };
+                                worksheet_analyses.push(item);
+                        });
+                        console.log(worksheet_analyses);
+                        return JSON.stringify(worksheet_analyses);
+                }
+
+
+                this.params = {
+                    title: analysis.title + '-' + ws_params.title,
+                    description: analysis.title + '-' + ws_params.description,
+                    Analyst: analyst,
+                    Remarks: _get_worksheet_analyses(ws_params.request_ids, analysis.keyword,  analyst, ws_params.client_id),
+                    subject: 'open',
+                };
+
+                Utility.alert({title:'', content: 'Wait while creating ' + this.params.title + ' worksheet', alertType:'info'});
+                BikaService.createWorksheet(this.params).success(function (data, status, header, config){
+                    result = data.result;
+
+                    if (result['success'] === 'True') {
+                        Utility.alert({title:'Success', content: 'Your Worksheet ' + result['obj_id'] + ' has been successfully created.', alertType:'success'});
+
+                        this.params = {input_values: _get_input_values_analyst(ws_params.request_ids, analysis.keyword, analyst, ws_params.client_id )};
+
+                        BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
+                            console.log(data.result);
+                            if ( analysis.keyword === 'full-analysis' || analysis.keyword === 'FASTQ-File') {
+                                $state.go('worksheets');
+                            }
+
+                        });
+                    }
+                    else {
+                        console.log(result['message']);
+                        Utility.alert({title:'There\'s been an error<br/>', content: result['message'], alertType:'danger'});
+                    }
+
+                });
+        }
+
+	    // :: function :: createWorksheets()
+        $scope.createWorksheets =
+            function(worksheets_params) {
+                labanalyst = (worksheets_params.client_keyword === 'IRGB-CNR-Angius' ||  worksheets_params.client_keyword === 'IRGB-CNR-Cucca') ? 'maschio' : 'robycuso';
+
+                _.each(worksheets_params.analysis.extraction, function(as) {
+                    $scope.create_worksheet(worksheets_params, as, labanalyst);
+                });
+				_.each(worksheets_params.analysis.library_prep, function(as) {
+				     $scope.create_worksheet(worksheets_params, as, labanalyst);
+				});
+				_.each(worksheets_params.analysis.illumina, function(as) {
+				     $scope.create_worksheet(worksheets_params, as, labanalyst);
+				});
+				_.each(worksheets_params.analysis.bioinfo, function(as) {
+				    bioanalyst = as.keyword === 'full-analysis'  ? 'puva' : 'ratzeni';
+				    $scope.create_worksheet(worksheets_params, as, bioanalyst);
+				});
+
+
+
+        }
 
 		// :: function :: getBatches()
         $scope.getBatches =
@@ -321,6 +452,14 @@ arimport_module.controller('ARImportCtrl',
                 });
             };
 
+         // :: function :: getAnalysts()
+        $scope.getAnalysts =
+			function() {
+				BikaService.getAnalystUsers().success(function (data, status, header, config){
+					$scope.analysts = data.result.objects;
+				});
+			}
+
         // :: function :: getExportMode()
         $scope.getExportMode =
             function() {
@@ -355,6 +494,7 @@ arimport_module.controller('ARImportCtrl',
    					$scope.getAnalysisServices();
    					$scope.getBatches();
    					$scope.getExportMode();
+   					$scope.getAnalysts();
                 }
             };
 
@@ -378,6 +518,7 @@ arimport_module.controller('ARImportCtrl',
         	attachment_content: null,
         	client_samples: [],
         	single_sample: 'FCID',
+        	createWorksheets: true,
         };
 
         $scope.$watch('arimport_params.selectedClient',

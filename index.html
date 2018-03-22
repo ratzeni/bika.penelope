@@ -51,6 +51,8 @@
     <script src="./assets/bower_components/chart.js/dist/Chart.min.js"></script>
     <script src="./assets/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
 
+    <script src="https://cdn.rawgit.com/johnymontana/neovis.js/master/dist/neovis.js"></script>
+
     <script src="./app/init.module.js"></script>
     <script src="./app/shared/config/config.module.js"></script>
     <script src="./app/shared/api_rest/bika_api_rest.module.js"></script>
@@ -71,6 +73,7 @@
     <script src="./app/components/admin/lab_products/lab_products.module.js"></script>
     <script src="./app/components/admin/runs/runs.module.js"></script>
     <script src="./app/components/dashboard/dashboard.module.js"></script>
+    <script src="./app/components/browser/browser.module.js"></script>
     <script src="./app/app.module.js"></script>
     <script src="./app/app.route.js"></script>
 
@@ -162,12 +165,15 @@
                                 <li role="presentation"  ng-class="getClass('deliveries')">
                                     <a role="menuitem" tabindex="-1" ui-sref="deliveries">Deliveries</a>
                                 </li>
-                                <li role="presentation"  ng-class="getClass('request_form')">
-                                    <a role="menuitem" tabindex="-1" ui-sref="request_form">Request Form</a>
-                                </li>
+                                <!--<li role="presentation"  ng-class="getClass('request_form')">-->
+                                    <!--<a role="menuitem" tabindex="-1" ui-sref="request_form">Request Form</a>-->
+                                <!--</li>-->
                                 <li role="presentation"  ng-class="getClass('dashboard')">
                                     <a role="menuitem" tabindex="-1" ui-sref="dashboard">Dashboard</a>
                                 </li>
+                                <!--<li role="presentation"  ng-class="getClass('browser')">-->
+                                    <!--<a role="menuitem" tabindex="-1" ui-sref="browser">Browser</a>-->
+                                <!--</li>-->
                             </ul>
                         </li>
 

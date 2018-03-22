@@ -171,6 +171,10 @@ utility_module.service('Utility',
 			return text.replace(/%2F/g,'/');
 		}
 
+		this.get_root_url = function() {
+            return _.last(init.bikaApiRest.host.split('/'));
+		}
+
 
 	}
 );

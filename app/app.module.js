@@ -33,6 +33,7 @@ var main_module = angular.module('MainApp',[
     'ClientsModule',
     'RequestFormModule',
     'DashboardModule',
+    'BrowserModule',
 ]);
 
 // :: MAIN CONTROLLER
