@@ -276,7 +276,7 @@ arimport_module.controller('ARImportCtrl',
         // :: function :: create_worksheet()
         $scope.create_worksheet =
             function(ws_params, analysis, analyst) {
-                console.log(ws_params);
+//                console.log(ws_params);
                 function _get_analysis_path(request_id, analysis_id, client_id) {
                     this.path = "/" + Utility.get_root_url() + "/" + 'clients' + "/" + client_id + '/' + request_id + '/' + analysis_id;
                     return this.path
@@ -307,7 +307,7 @@ arimport_module.controller('ARImportCtrl',
                                 };
                                 worksheet_analyses.push(item);
                         });
-                        console.log(worksheet_analyses);
+//                        console.log(worksheet_analyses);
                         return JSON.stringify(worksheet_analyses);
                 }
 
