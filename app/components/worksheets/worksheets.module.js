@@ -376,7 +376,7 @@ worksheets_module.controller('WorksheetDetailsCtrl',
 								}
 								if (_.indexOf($scope.attachment.batches,ar.batch_title) == -1) {$scope.attachment.batches.push(ar.batch_title);}
 								$scope.analysis_results.push({'request_id': ar.id, 'analysis_id': a.analysis_id, 'result': (ar.analyses.review_state === 'sample_received' || ar.analyses.review_state === 'sample_due')?1:ar.analyses.result});
-								if (is_there_samplesheet === false && (ar.sample_type == 'SAMPLE-IN-POOL' || ar.sample_type == 'SAMPLE-IN-FLOWCELL')) {
+								if (is_there_samplesheet === false && (ar.sample_type == 'SAMPLE-IN-MISEQ' || ar.sample_type == 'SAMPLE-IN-POOL' || ar.sample_type == 'SAMPLE-IN-FLOWCELL')) {
 									this.ar_params = {'title': ar.batch_id};
 									is_there_samplesheet = true;
 									BikaService.getAnalysisRequests(this.ar_params).success(function (data, status, header, config){

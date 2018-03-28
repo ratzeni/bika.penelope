@@ -412,7 +412,7 @@ batches_module.controller('BatchDetailsCtrl',
 							$scope.analyses = obj.analyses;
 						}
 					});
-
+//                    console.log($scope.attachment);
                     $scope.transitions = transitions;
                     $scope.loading_ars.hide();
                     if (print_stickers !==undefined && print_stickers === true) {
@@ -706,6 +706,9 @@ batches_module.controller('BatchDetailsCtrl',
 				if ($scope.analysis_requests[0].sample_type === 'FLOWCELL') {
 					return 'samplesheet_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.csv';
 				}
+				else if ($scope.analysis_requests[0].sample_type === 'MISEQ') {
+					return 'samplelist_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.csv';
+				}
 				else if ($scope.analysis_requests[0].sample_type === 'POOL') {
 					return 'samplelist_' + $scope.analysis_requests[0].sample_id + '_' + $scope.analysis_requests[0].client_sample_id + '.csv';
 				}
@@ -717,7 +720,7 @@ batches_module.controller('BatchDetailsCtrl',
 			function (attachment_type) {
 				if ($scope.analysis_requests[0] === undefined) {return false;}
 				if (attachment_type === 'samplesheet') {
-					return $scope.analysis_requests[0].sample_type === 'FLOWCELL' || $scope.analysis_requests[0].sample_type === 'POOL';
+					return $scope.analysis_requests[0].sample_type === 'MISEQ' || $scope.analysis_requests[0].sample_type === 'FLOWCELL' || $scope.analysis_requests[0].sample_type === 'POOL';
 				}
 			}
 

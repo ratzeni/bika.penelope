@@ -35,6 +35,8 @@ arimport_module.controller('ARImportCtrl',
 					else { return true; }
 				}
 
+
+
 				$scope.submitted = true;
 				if (batch_exists($scope.arimport_params.selectedBatch, $scope.batches)) {
 					Utility.alert({title:'There\'s been an error<br/>', content:'Batch ' + $scope.arimport_params.selectedBatch + ' already exists', alertType:'danger'});
@@ -137,7 +139,7 @@ arimport_module.controller('ARImportCtrl',
 
 					function get_environmental_conditions(sample_data, selectedSampleType) {
 						values = [];
-						if ((selectedSampleType.prefix !== 'FC' && selectedSampleType.prefix !== 'POOL') || sample_data.index === 1) {
+						if ((selectedSampleType.prefix !== 'MS' && selectedSampleType.prefix !== 'FC' && selectedSampleType.prefix !== 'POOL') || sample_data.index === 1) {
 							var sample_header = $scope.header;
 						}
 						else {var sample_header = $scope.attachment_header;}
@@ -161,10 +163,10 @@ arimport_module.controller('ARImportCtrl',
 					}
 
 					function get_sample_type(sample_data, selectedSampleType) {
-						if ((selectedSampleType.prefix !== 'FC' && selectedSampleType.prefix !== 'POOL') || sample_data.index === 1) {
+						if ((selectedSampleType.prefix !== 'MS' && selectedSampleType.prefix !== 'FC' && selectedSampleType.prefix !== 'POOL') || sample_data.index === 1) {
 							return selectedSampleType.id;
 						}
-						else if ((selectedSampleType.prefix === 'FC' || selectedSampleType.prefix === 'POOL') && sample_data.index !== 1) {
+						else if ((selectedSampleType.prefix === 'MS' || selectedSampleType.prefix === 'FC' || selectedSampleType.prefix === 'POOL') && sample_data.index !== 1) {
 							sample_type = _.findWhere($scope.sample_types, {'prefix': 'SAMPLE-IN-'+selectedSampleType.prefix});
 							if (sample_type !== undefined) {
 								return sample_type.id;
@@ -195,7 +197,7 @@ arimport_module.controller('ARImportCtrl',
 							contacts.push(c.id);
 						});
 
-						if (arimport_params.selectedSampleType.prefix === 'FC') {
+						if (arimport_params.selectedSampleType.prefix === 'MS' || arimport_params.selectedSampleType.prefix === 'FC') {
 							arimport_params.client_samples.unshift({index: 1, sample:  $scope.format_csv_field($scope.arimport_params.single_sample)});
 						}
                     	// creating analysis request
@@ -330,7 +332,6 @@ arimport_module.controller('ARImportCtrl',
                         this.params = {input_values: _get_input_values_analyst(ws_params.request_ids, analysis.keyword, analyst, ws_params.client_id )};
 
                         BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
-                            console.log(data.result);
                             if ( analysis.keyword === 'full-analysis' || analysis.keyword === 'FASTQ-File') {
                                 $state.go('worksheets');
                             }
@@ -569,11 +570,13 @@ arimport_module.controller('ARImportCtrl',
 					var data = event.target.result;
 					ret_data = $scope.retrieveCSV(data);
 					$scope.arimport_params.client_samples = ret_data.data;
+					console.log($scope.arimport_params.client_samples);
 					$scope.header = ret_data.header;
 					$scope.getAnalysisProfiles();
 				};
 
 				reader.readAsText($scope.arimport_params.uploadFile);
+
             });
 
         $scope.$watch('arimport_params.attachment',
@@ -586,13 +589,21 @@ arimport_module.controller('ARImportCtrl',
 					var idx = -1;
 					_.each(content, function (row) {
 						if (start_sample_list) {
+
 							sample_data = row.split(',');
-							if (sample_data.length > 1 && _.findWhere(samples, {sample: sample_data[1]}) === undefined) {
+
+				            this.sample_data =  sample_type === 'MS' ? sample_data[0] : sample_data[1];
+							if (sample_data !== undefined && sample_data.length > 1 && _.findWhere(samples, {sample: this.sample_data}) === undefined) {
+
 								if (sample_type === 'FC') {
-									samples.push({index: index, sample: $scope.format_csv_field(sample_data[1])});
+									samples.push({index: index, sample: $scope.format_csv_field(this.sample_data)});
+
+								}
+								else if (sample_type === 'MS') {
+								    samples.push({index: index, sample: $scope.format_csv_field(this.sample_data)});
 								}
 								else if (sample_type === 'POOL'){
-									samples.push({index: index, sample: $scope.format_csv_field(sample_data[1]), pool: sample_data[idx]});
+									samples.push({index: index, sample: $scope.format_csv_field(this.sample_data), pool: sample_data[idx]});
 									if ($scope.pools.indexOf(sample_data[idx]) == -1) {
 										$scope.pools.push(sample_data[idx]);
 									}
@@ -600,12 +611,13 @@ arimport_module.controller('ARImportCtrl',
 								}
 								index++;
 							}
+
 						}
-						if (row.search('Lane,Sample_ID,Sample_Name') != -1) {
+
+						if (row.search('Sample_ID,Sample_Name') != -1) {
 								start_sample_list = true;
 								sample_data = row.split(',');
-						                idx = sample_data.length-1;
-
+						        idx = sample_data.length-1;
 						}
 					});
 

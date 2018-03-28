@@ -59,9 +59,17 @@ samplesheet_module.controller('SamplesheetCtrl',
 								this.row = row.slice(0);
 								this.client_sample_id = row[1];
 								this.ar = _.findWhere(analysis_requests, {'client_sample_id': this.client_sample_id});
+
 								if (this.ar !== undefined) {
-									this.row[1] = this.ar.id;
-									this.row[2] = this.client_sample_id;
+
+								    if (this.ar.sample_type === 'SAMPLE-IN-MISEQ') {
+								        this.row[0] = this.ar.id;
+									    this.row[1] = this.client_sample_id;
+								    }
+								    else {
+								        this.row[1] = this.ar.id;
+									    this.row[2] = this.client_sample_id;
+								    }
 									samplesheet.push(this.row);
 								}
 							}
@@ -73,6 +81,7 @@ samplesheet_module.controller('SamplesheetCtrl',
 
 						$scope.attachment.samplesheet = samplesheet;
 						$scope.attachment.content = samplesheet;
+
                 	});
 
 				});

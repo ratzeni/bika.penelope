@@ -22,7 +22,9 @@
                 </div>
             </div>
             <div class="col-sm-12" style="margin-top:10px;"
-                  ng-if="arimport_params.selectedSampleType.title==='FLOWCELL' || arimport_params.selectedSampleType.title==='POOL'">
+                  ng-if="arimport_params.selectedSampleType.title==='FLOWCELL'
+                    || arimport_params.selectedSampleType.title==='POOL'
+                    || arimport_params.selectedSampleType.title==='MISEQ'">
                 <div class="input-inline col-sm-2">
                     <file-field class="btn"
                                 ng-class="{'btn-success': (arimport_params.attachment_content !== null) }"
