@@ -214,15 +214,15 @@ samplesheet_module.controller('Link2RunCtrl',
 				 	index1_cycles: samplesheet_params.i1!=null?samplesheet_params.i1:'',
 				 	index2_cycles: samplesheet_params.i2!=null?samplesheet_params.i2:'',
 				 	is_rapid: samplesheet_params.switchMode.toString(),
-					date: samplesheet_params.run_folder.run_parameters!=undefined?samplesheet_params.run_folder.run_parameters.run_info.date:samplesheet_params.date,
-					scanner_id: samplesheet_params.run_folder.run_parameters!=undefined?samplesheet_params.run_folder.run_parameters.run_info.scanner_id:samplesheet_params.scanner_id,
+					date: (samplesheet_params.run_folder.run_parameters!=undefined && !_.isEmpty(samplesheet_params.run_folder.run_parameters))?samplesheet_params.run_folder.run_parameters.run_info.date:samplesheet_params.date,
+					scanner_id: (samplesheet_params.run_folder.run_parameters!=undefined && !_.isEmpty(samplesheet_params.run_folder.run_parameters))?samplesheet_params.run_folder.run_parameters.run_info.scanner_id:samplesheet_params.scanner_id,
 					scanner_nickname: samplesheet_params.instrument,
-					pe_kit: samplesheet_params.reagents.pe.kit!=null?samplesheet_params.reagents.pe.kit:'',
-					sbs_kit: samplesheet_params.reagents.sbs.kit!=null?samplesheet_params.reagents.sbs.kit:'',
-					index_kit: samplesheet_params.reagents.index.kit!=null?samplesheet_params.reagents.index.kit:'',
-					pe_id: samplesheet_params.reagents.pe.id!=null?samplesheet_params.reagents.pe.id:'',
-					sbs_id: samplesheet_params.reagents.sbs.id!=null?samplesheet_params.reagents.sbs.id:'',
-					index_id: samplesheet_params.reagents.index.id!=null?samplesheet_params.reagents.index.id:'',
+					pe_kit: (samplesheet_params.reagents!= null && samplesheet_params.reagents.pe.kit!=null)?samplesheet_params.reagents.pe.kit:'',
+					sbs_kit: (samplesheet_params.reagents!= null && samplesheet_params.reagents.sbs.kit!=null)?samplesheet_params.reagents.sbs.kit:'',
+					index_kit: (samplesheet_params.reagents!= null && samplesheet_params.reagents.index.kit!=null)?samplesheet_params.reagents.index.kit:'',
+					pe_id: (samplesheet_params.reagents!= null && samplesheet_params.reagents.pe.id!=null)?samplesheet_params.reagents.pe.id:'',
+					sbs_id: (samplesheet_params.reagents!= null && samplesheet_params.reagents.sbs.id!=null)?samplesheet_params.reagents.sbs.id:'',
+					index_id: (samplesheet_params.reagents!= null && samplesheet_params.reagents.index.id!=null)?samplesheet_params.reagents.index.id:'',
 					overwrite_if_exists: $scope.is_replace.toString().substr(0,1).toUpperCase( )+$scope.is_replace.toString().substr(1),
 				}
 
@@ -273,6 +273,7 @@ samplesheet_module.controller('Link2RunCtrl',
 	 			});
 
 				nlanes = samplesheet_params.switchMode?2:8;
+				nlanes = samplesheet_params.instrument === "MiSeq" ? 0: nlanes;
 	 			if (_.keys(lanes).length != nlanes) {
 	 				Utility.alert({title:'There\'s been an error<br/>',
 	 					content: "Expecting "+nlanes + " lanes, found " + _.keys(lanes).length +": "+ _.keys(lanes).join(','),
@@ -290,6 +291,13 @@ samplesheet_module.controller('Link2RunCtrl',
 	 			if (nlanes==8 && !_.isEqual(_.keys(lanes),['1','2','3','4','5','6','7','8'])) {
 	 				Utility.alert({title:'There\'s been an error<br/>',
 	 					content: "Expecting 1,2,3,4,5,6,7,8 lanes, found "+ _.keys(lanes).join(','),
+	 					alertType:'danger'});
+	 				return;
+	 			}
+
+	 			if (nlanes==0 && !_.isEqual(_.keys(lanes),[])) {
+	 				Utility.alert({title:'There\'s been an error<br/>',
+	 					content: "Expecting no lanes, found " + _.keys(lanes).join(','),
 	 					alertType:'danger'});
 	 				return;
 	 			}

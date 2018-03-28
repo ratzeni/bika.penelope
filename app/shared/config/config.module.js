@@ -133,7 +133,8 @@ angular
         	SN526: 'Diabolik',
         	J00143: 'Zagor',
         	SN200R: 'Fisietto',
-        	SN194: 'Tex'
+        	SN194: 'Tex',
+        	M04253: 'MiSeq'
         }
 
 
