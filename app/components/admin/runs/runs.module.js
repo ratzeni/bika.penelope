@@ -42,6 +42,7 @@ runs_module.controller('RunsCtrl',
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 				IrodsService.getRuns(this.params).success(function (data, status, header, config){
                     $scope.runs = data.result.objects;
+                    console.log($scope.runs);
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;
 					$scope.loading_search.hide();
