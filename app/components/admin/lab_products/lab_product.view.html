@@ -1,22 +1,22 @@
 <div class="panel panel-primary">
   <div class="panel-body">
       <div class="col-sm-12 controls" >
-            <div class="col-sm-4 controls" >
+            <div class="col-sm-8 controls" >
                 <table class="table table-striped">
                     <tr>
-                        <td>Lab Product:</td>
+                        <td>Lab&nbsp;Product:</td>
                         <td>{{lab_product.title}}</td>
                     </tr>
                     <tr>
-                        <td>Ref ID:</td>
-                        <td>{{lab_product.id.replace("labproduct-","")}}</td>
+                        <td>Catalog&nbsp;ID:</td>
+                        <td>{{lab_product.rights}}</td>
                     </tr>
                     <tr>
                         <td>Description:</td>
-                        <td>{{lab_product.description}}</td>
+                        <td class="small">{{lab_product.description}}</td>
                     </tr>
                     <tr>
-                        <td>Creation Date:</td>
+                        <td>Creation&nbsp;Date:</td>
                         <td>{{ctrl.format_date(lab_product.creation_date)}}</td>
                     </tr>
                 </table>
@@ -66,22 +66,16 @@
                                    data-ng-click="ctrl.toggle_all()">
                         </div>
                     </th>
-                    <th ng-click="sort('id')">RGT Barcode
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='title'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-                    </th>
-                    <th ng-click="sort('description')">LOT Barcode
+                    <th ng-click="sort('rights')">Order Number
                         <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th ng-click="sort('location')">Storage Location
                         <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('rights')">Order Number
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-                    </th>
-                    <th ng-click="sort('creation_date')">Created
+                    <th ng-click="sort('expiration_date')">Expiration
                         <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('expiration_date')">Expiration
+                    <th ng-click="sort('creation_date')">Created
                         <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th ng-click="sort('date')">Updated
@@ -104,16 +98,10 @@
                                        data-ng-click="ctrl.toggle(row.id)">
                             </div>
                         </td>
-                        <td>
-                            {{row.id.replace("labproduct-","")}}
-                        </td>
-                        <td>
-                          {{row.description.replace("labproduct-","")}}
-                        </td>
-                        <td>{{ctrl.get_storage_location(row.location)}}</td>
                         <td>{{row.rights}}</td>
-                        <td>{{ctrl.format_date(row.creation_date)}}</td>
+                        <td>{{ctrl.get_storage_location(row.location)}}</td>
                         <td>{{ctrl.format_date(row.expiration_date)}}</td>
+                        <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{ctrl.format_date(row.date)}}</td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <td><ng-include src="'app/shared/review_state/lab_products.btns.mini.html'"></ng-include></td>

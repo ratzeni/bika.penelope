@@ -9,22 +9,21 @@
                             <i class="glyphicon glyphicon-barcode"></i>
                         </div>
                         <input type="text" ng-model="labproducts_params.barcode" class="form-control"
-                               placeholder="REF Barcode..."
-                               ng-model-options="{ updateOn: 'blur' }"
+                               placeholder="Catalog ID..."
                                data-ng-required="true" required>
                     </div>
                 </div>
                 <div class="input-inline col-sm-4">
-                    <div class="input-group" data-ng-if="labproducts_params.barcode.length > 0">
+                    <div class="input-group">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-pencil"></i>
                         </div>
                         <input type="text" ng-model="labproducts_params.title" class="form-control"
-                               placeholder="Label..." data-ng-required="true" required>
+                               placeholder="Title..." data-ng-required="true" required>
                     </div>
                 </div>
                 <div class="input-inline col-sm-5">
-                    <div class="input-group" data-ng-if="labproducts_params.barcode.length > 0">
+                    <div class="input-group">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-pencil"></i>
                         </div>
@@ -34,8 +33,8 @@
                 </div>
             </div>
             <div class="col-sm-12" style="margin-top:10px;">
-                <div class="input-inline col-sm-2 pull-right">
-                    <div class="input-group" data-ng-if="labproducts_params.title.length > 0">
+                <div class="input-inline col-sm-3">
+                    <div class="input-group">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-tint"></i>
                         </div>
@@ -43,9 +42,7 @@
                                placeholder="Volume..." data-ng-required="true" required>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12" style="margin-top:10px;">
-                <div class="input-inline col-sm-2 pull-right" data-ng-if="labproducts_params.volume.length > 0">
+                <div class="input-inline col-sm-4">
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-euro"></i>
@@ -61,7 +58,8 @@
                             data-ng-click="ctrl.submit(labproducts_params)"
                             data-ng-disabled="labproducts_params.barcode.length==0 || labproducts_params.barcode == null
                             || labproducts_params.title.length==0 || labproducts_params.title == null
-                            || labproducts_params.volume.length==0 || labproducts_params.volume == null">
+                            || labproducts_params.volume.length==0 || labproducts_params.volume == null
+                            || labproducts_params.price.length==0 || labproducts_params.price == null">
                         <span class="glyphicon glyphicon-copy"></span>&nbsp;Create
                     </button>
                 </div>

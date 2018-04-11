@@ -218,40 +218,42 @@ lab_products_module.controller('AddLabProductCtrl',
 		}
 		$scope.lab_products = [];
 
-		$scope.$watch('labproducts_params.barcode',
-            function (newValue, oldValue) {
-                // Ignore initial setup.
-                if ( newValue === oldValue) { return;}
-                if ( newValue === null || newValue === undefined || newValue == "") {return; }
-                $scope.loading_search.show();
-				this.params = {id: 'labproduct-'+newValue};
-                BikaService.getLabProducts(this.params).success(function (data, status, header, config){
-                	$scope.loading_search.hide();
-                	if (data.result.objects.length > 0) {
-                		Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already in Inventory.', alertType:'danger'});
-                		$scope.labproducts_params = {
-							title: null,
-							description: null,
-							barcode: null,
-							volume: null,
-							price: null,
-						}
-                	}
-                });
-            }
-        );
+//		$scope.$watch('labproducts_params.barcode',
+//            function (newValue, oldValue) {
+//                // Ignore initial setup.
+//                if ( newValue === oldValue) { return;}
+//                if ( newValue === null || newValue === undefined || newValue == "") {return; }
+//                $scope.loading_search.show();
+//				this.params = {id: 'labproduct-'+newValue};
+//                BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+//                	$scope.loading_search.hide();
+//                	if (data.result.objects.length > 0) {
+//                		Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already in Inventory.', alertType:'danger'});
+//                		$scope.labproducts_params = {
+//							title: null,
+//							description: null,
+//							barcode: null,
+//							volume: null,
+//							price: null,
+//						}
+//                	}
+//                });
+//            }
+//        );
 
         this.submit =
         function(labproducts_params) {
         	this.params = {
-        		obj_id: 'labproduct-'+labproducts_params.barcode,
+//        		obj_id: 'labproduct-'+labproducts_params.barcode,
         		title: labproducts_params.title,
-        		description: labproducts_params.description!==null && labproducts_params.description.length > 0 ? labproducts_params.description : '',
+        		description: labproducts_params.description!==null && labproducts_params.description.length > 0 ? labproducts_params.description.replace('=','') : '',
         		Volume: labproducts_params.volume!==null && labproducts_params.volume.length > 0 ? labproducts_params.volume : '',
         		Price: labproducts_params.price!==null && labproducts_params.price.length > 0 ? labproducts_params.price : '',
         		Unit: 0,
         		subject: 'active',
+        		rights: labproducts_params.barcode,
         	}
+        	console.log(this.params); //return;
         	$scope.loading_import.show();
         	BikaService.createLabProduct(this.params).success(function (data, status, header, config){
         		$scope.loading_import.hide();
@@ -367,21 +369,21 @@ lab_products_module.controller('LoadingLabProductCtrl',
             }
         );
 
-        $scope.$watch('loading_params.rgt_barcode',
-            function (newValue, oldValue) {
-                // Ignore initial setup.
-                if ( newValue === oldValue) { return;}
-                if ( newValue === null || newValue === undefined || newValue == "") {return; }
-
-				this.params = {id: 'labproduct-'+newValue};
-				this.result = _.findWhere($scope.inventory, this.params)!== undefined ? _.findWhere($scope.inventory, this.params) : _.findWhere($scope.lab_products_toload, {rgt_barcode: newValue} );
-				if (this.result !== undefined) {
-					Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already loaded.', alertType:'danger'});
-                	$scope.loading_params.lot_barcode = null;
-					$scope.loading_params.rgt_barcode = null;
-				}
-            }
-        );
+//        $scope.$watch('loading_params.rgt_barcode',
+//            function (newValue, oldValue) {
+//                // Ignore initial setup.
+//                if ( newValue === oldValue) { return;}
+//                if ( newValue === null || newValue === undefined || newValue == "") {return; }
+//
+//				this.params = {id: 'labproduct-'+newValue};
+//				this.result = _.findWhere($scope.inventory, this.params)!== undefined ? _.findWhere($scope.inventory, this.params) : _.findWhere($scope.lab_products_toload, {rgt_barcode: newValue} );
+//				if (this.result !== undefined) {
+//					Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already loaded.', alertType:'danger'});
+//                	$scope.loading_params.lot_barcode = null;
+//					$scope.loading_params.rgt_barcode = null;
+//				}
+//            }
+//        );
 
 		this.toggle =
 			function(id) {
@@ -413,21 +415,21 @@ lab_products_module.controller('LoadingLabProductCtrl',
 
 		this.confirm =
 			function(loading_params) {
-				if (loading_params.barcode === loading_params.lot_barcode ||
-					loading_params.barcode === loading_params.rgt_barcode ||
-					loading_params.rgt_barcode === loading_params.lot_barcode) {
-
-					Utility.alert({title:'Error', content: 'Barcode must be different each other', alertType:'warning', duration:3000});
-					return;
-				}
-
-				if (loading_params.barcode === null  || loading_params.barcode.length === 0 ||
-					loading_params.lot_barcode === null  || loading_params.lot_barcode.length === 0 ||
-					loading_params.rgt_barcode === null  || loading_params.rgt_barcode.length === 0) {
-
-					Utility.alert({title:'Error', content: 'Barcode must be valuate', alertType:'warning', duration:3000});
-					return;
-				}
+//				if (loading_params.barcode === loading_params.lot_barcode ||
+//					loading_params.barcode === loading_params.rgt_barcode ||
+//					loading_params.rgt_barcode === loading_params.lot_barcode) {
+//
+//					Utility.alert({title:'Error', content: 'Barcode must be different each other', alertType:'warning', duration:3000});
+//					return;
+//				}
+//
+//				if (loading_params.barcode === null  || loading_params.barcode.length === 0 ||
+//					loading_params.lot_barcode === null  || loading_params.lot_barcode.length === 0 ||
+//					loading_params.rgt_barcode === null  || loading_params.rgt_barcode.length === 0) {
+//
+//					Utility.alert({title:'Error', content: 'Barcode must be valuate', alertType:'warning', duration:3000});
+//					return;
+//				}
 
 				$scope.lab_products_toload.push(loading_params);
 				$scope.loading_params = {
@@ -460,9 +462,9 @@ lab_products_module.controller('LoadingLabProductCtrl',
 						}
 						units[lab_product.barcode].Unit++;
 						this.params = {
-							obj_id: 'labproduct-'+lab_product.rgt_barcode,
+//							obj_id: 'labproduct-'+lab_product.rgt_barcode,
 							title: 'labproduct-'+lab_product.barcode,
-							description: lab_product.lot_barcode,
+//							description: lab_product.lot_barcode,
 							Volume: lab_product.volume!==null && lab_product.volume.length > 0 ? lab_product.volume : '',
 							Price: lab_product.price!==null && lab_product.price.length > 0 ? lab_product.price : '',
 							Unit: 1,
@@ -806,7 +808,8 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					$scope._loading_params.description =  $scope.lab_product.description;
 					$scope._loading_params.volume =  $scope.lab_product.volume;
 					$scope._loading_params.price =  $scope.lab_product.price;
-					$scope._loading_params.barcode = $scope.lab_product.id.replace("labproduct-","");
+					$scope._loading_params.barcode = $scope.lab_product.rights;
+					$scope._loading_params.id = $scope.lab_product.id;
                 });
 		}
 
@@ -1071,7 +1074,7 @@ lab_products_module.controller('LabProductDetailsCtrl',
 		function() {
 			if ($scope._checked_list.length < $scope._lab_products_toload.length) {
 				_.each($scope._lab_products_toload,function(b) {
-					$scope._checked_list.push(b.rgt_barcode);
+					$scope._checked_list.push(b);
 				})
 			}
 			else {
@@ -1084,21 +1087,21 @@ lab_products_module.controller('LabProductDetailsCtrl',
 	this._confirm =
 		function(_loading_params) {
 			console.log($scope._loading_params);
-			if (_loading_params.barcode === _loading_params.lot_barcode ||
-				_loading_params.barcode === _loading_params.rgt_barcode ||
-				_loading_params.rgt_barcode === _loading_params.lot_barcode) {
-
-				Utility.alert({title:'Error', content: 'Barcode must be different each other', alertType:'warning', duration:3000});
-				return;
-			}
-
-			if (_loading_params.barcode === null  || _loading_params.barcode.length === 0 ||
-				_loading_params.lot_barcode === null  || _loading_params.lot_barcode.length === 0 ||
-				_loading_params.rgt_barcode === null  || _loading_params.rgt_barcode.length === 0) {
-
-				Utility.alert({title:'Error', content: 'Barcode must be valuate', alertType:'warning', duration:3000});
-				return;
-			}
+//			if (_loading_params.barcode === _loading_params.lot_barcode ||
+//				_loading_params.barcode === _loading_params.rgt_barcode ||
+//				_loading_params.rgt_barcode === _loading_params.lot_barcode) {
+//
+//				Utility.alert({title:'Error', content: 'Barcode must be different each other', alertType:'warning', duration:3000});
+//				return;
+//			}
+//
+//			if (_loading_params.barcode === null  || _loading_params.barcode.length === 0 ||
+//				_loading_params.lot_barcode === null  || _loading_params.lot_barcode.length === 0 ||
+//				_loading_params.rgt_barcode === null  || _loading_params.rgt_barcode.length === 0) {
+//
+//				Utility.alert({title:'Error', content: 'Barcode must be valuate', alertType:'warning', duration:3000});
+//				return;
+//			}
 
 
 			$scope._lab_products_toload.push(JSON.parse(JSON.stringify(_loading_params)));
@@ -1118,18 +1121,20 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					return;
 				}
 				units = {};
-				counter = 0;
+				counter = 0
+//				console.log($scope._checked_list); return;
 				_.each($scope._lab_products_toload, function(lab_product) {
-					if ($scope._checked_list.indexOf(lab_product.rgt_barcode) !== -1) {
+
+					if ($scope._checked_list.indexOf(lab_product) !== -1) {
 						if (!_.has(units, lab_product.barcode)) {
 							this.product = $scope.lab_product;
 							units[lab_product.barcode] = {obj_path: this.product.path, Unit: this.product.unit};
 						}
 						units[lab_product.barcode].Unit++;
 						this.params = {
-							obj_id: 'labproduct-'+lab_product.rgt_barcode,
-							title: 'labproduct-'+lab_product.barcode,
-							description: lab_product.lot_barcode,
+//							obj_id: 'labproduct-'+lab_product.rgt_barcode,
+							title: lab_product.id,
+							description: '',
 							Volume: lab_product.volume!==null && lab_product.volume.length > 0 ? lab_product.volume : '',
 							Price: lab_product.price!==null && lab_product.price.length > 0 ? lab_product.price : '',
 							Unit: 1,
@@ -1172,19 +1177,19 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				}
 			}
 
-		 $scope.$watch('_loading_params.rgt_barcode',
-            function (newValue, oldValue) {
-                // Ignore initial setup.
-                if ( newValue === oldValue) { return;}
-                if ( newValue === null || newValue === undefined || newValue == "") {return; }
-
-				this.params = {id: 'labproduct-'+newValue};
-				this.result = _.findWhere($scope.lab_products, this.params)!== undefined ? _.findWhere($scope.lab_products, this.params) : _.findWhere($scope._lab_products_toload, {rgt_barcode: newValue} );
-				if (this.result !== undefined) {
-					Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already loaded.', alertType:'danger'});
-                	$scope._loading_params.lot_barcode = null;
-					$scope._loading_params.rgt_barcode = null;
-				}
-            }
-        );
+//		 $scope.$watch('_loading_params.rgt_barcode',
+//            function (newValue, oldValue) {
+//                // Ignore initial setup.
+//                if ( newValue === oldValue) { return;}
+//                if ( newValue === null || newValue === undefined || newValue == "") {return; }
+//
+//				this.params = {id: 'labproduct-'+newValue};
+//				this.result = _.findWhere($scope.lab_products, this.params)!== undefined ? _.findWhere($scope.lab_products, this.params) : _.findWhere($scope._lab_products_toload, {rgt_barcode: newValue} );
+//				if (this.result !== undefined) {
+//					Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already loaded.', alertType:'danger'});
+//                	$scope._loading_params.lot_barcode = null;
+//					$scope._loading_params.rgt_barcode = null;
+//				}
+//            }
+//        );
 });

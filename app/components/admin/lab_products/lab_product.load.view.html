@@ -9,7 +9,7 @@
                             <i class="glyphicon glyphicon-barcode"></i>
                         </div>
                         <input type="text" ng-model="_loading_params.barcode" class="form-control"
-                               placeholder="REF Barcode..."
+                               placeholder="Catalog ID..."
                                ng-readonly="1"
                                data-ng-required="true" required>
                     </div>
@@ -20,7 +20,7 @@
                             <i class="glyphicon glyphicon-pencil"></i>
                         </div>
                         <input type="text" ng-model="_loading_params.title" class="form-control"
-                               placeholder="Label..." data-ng-required="true" ng-readonly="1" required>
+                               placeholder="Title..." data-ng-required="true" ng-readonly="1" required>
                     </div>
                 </div>
                 <div class="input-inline col-sm-4">
@@ -34,30 +34,8 @@
                 </div>
             </div>
             <div class="col-sm-12" style="margin-top:10px;">
-                 <div class="input-inline col-sm-4">
-                    <div class="input-group" >
-                        <div class="input-group-addon">
-                            <i class="glyphicon glyphicon-barcode"></i>
-                        </div>
-                        <input type="text" data-ng-model="_loading_params.rgt_barcode" class="form-control"
-                               placeholder="RGT Barcode..."
-                               ng-model-options="{ updateOn: 'blur' }"
-                               data-ng-required="true" required>
-                    </div>
-                </div>
-                <div class="input-inline col-sm-4" data-ng-if="_loading_params.rgt_barcode.length > 0">
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <i class="glyphicon glyphicon-barcode"></i>
-                        </div>
-                        <input type="text" data-ng-model="_loading_params.lot_barcode" class="form-control"
-                               placeholder="LOT Barcode..."
-                               ng-model-options="{ updateOn: 'blur' }"
-                               data-ng-required="true" required>
-                    </div>
-                </div>
                 <div class="input-inline col-sm-4">
-                    <div class="input-group" data-ng-if="_loading_params.lot_barcode.length > 0">
+                    <div class="input-group">
                         <div class="input-group-addon">
                             <i class="glyphicon glyphicon-pencil"></i>
                         </div>
@@ -65,9 +43,7 @@
                                placeholder="Order Number...">
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12" style="margin-top:10px;" data-ng-if="_loading_params.lot_barcode.length > 0">
-                <div class="input-inline col-sm-4">
+                 <div class="input-inline col-sm-4">
                     <select data-nq-select="" data-ng-required="true" data-min-required="1"
                             data-qo-placeholder="Storage Locations.."
                             data-ng-model="_loading_params.storage_locations"
@@ -91,9 +67,7 @@
                 <div class="col-sm-12 input-inline pull-right">
                     <button type="button" class="btn btn-primary pull-right"
                             data-ng-click="ctrl._confirm(_loading_params)"
-                            data-ng-disabled="_loading_params.barcode.length==0 || _loading_params.barcode == null
-                            || _loading_params.lot_barcode.length==0 || _loading_params.lot_barcode == null
-                            || _loading_params.rgt_barcode.length==0 || _loading_params.rgt_barcode == null">
+                            data-ng-disabled="_loading_params.barcode.length==0 || _loading_params.barcode == null">
                         <span class="glyphicon glyphicon-check"></span>&nbsp;Confirm
                     </button>
                 </div>
@@ -120,12 +94,6 @@
                                 <th ng-click="sort('description')">Description
                                     <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                                 </th>
-                                <th ng-click="sort('rgt_barcode')">RGT Code
-                                     <span class="glyphicon sort-icon" ng-show="sortKey=='rgt_barcode'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-                                </th>
-                                <th ng-click="sort('lot_barcode')">LOT Code
-                                     <span class="glyphicon sort-icon" ng-show="sortKey=='lot_barcode'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-                                </th>
                                 <th ng-click="sort('storage_locations.title')">Location
                                      <span class="glyphicon sort-icon" ng-show="sortKey=='storage_locations.title'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                                 </th>
@@ -148,15 +116,13 @@
                                 total-items="pagination.total" current-page="pagination.current">
                                 <td>
                                     <div style="padding-left:10px;">
-                                        <input type="checkbox"  value="{{line.id}}"
-                                               data-ng-checked="_checked_list.indexOf(line.rgt_barcode) > -1"
-                                               data-ng-click="ctrl._toggle(line.rgt_barcode)">
+                                        <input type="checkbox"  value="{{line}}"
+                                               data-ng-checked="_checked_list.indexOf(line) > -1"
+                                               data-ng-click="ctrl._toggle(line)">
                                     </div>
                                 </td>
                                 <td>{{line.title}}</td>
-                                <td>{{line.description}}</td>
-                                <td>{{line.rgt_barcode}}</td>
-                                <td>{{line.lot_barcode}}</td>
+                                <td class="small">{{line.description}}</td>
                                 <td>{{line.storage_locations.title}}</td>
                                 <td>{{line.volume}}</td>
                                 <td>{{line.price}}</td>
