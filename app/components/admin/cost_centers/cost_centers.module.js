@@ -499,7 +499,8 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						selectedLabProducts: $scope.cost_center.remarks!==''?JSON.parse($scope.cost_center.remarks):$scope.cost_center.remarks,
 					};
 					var counter = 0;
-					if ($scope.cost_center.remarks !== '') {
+
+					if ($scope.cost_center.remarks !== '{}') {
 						_.each(_.keys(JSON.parse($scope.cost_center.remarks)), function(id) {
 							this.params = {'id': id};
 							$scope.checked_list.push(id);
@@ -519,6 +520,15 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 								}
 							});
 						});
+					}
+					else {
+
+					    this.params = {'sort_on': 'title', Subject: 'active'};
+						BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+					        this.result = data.result.objects;
+							$scope._lab_products = this.result;
+						});
+
 					}
         		});
         	}
