@@ -79,7 +79,6 @@ arimport_module.controller('ARImportCtrl',
 					else {
 						_.each($scope.pools, function(pool) {
 						    $scope.submit_pool(arimport_params, pool);
-
 						});
 					}
 
@@ -226,7 +225,8 @@ arimport_module.controller('ARImportCtrl',
 									outcome.arequest_ids.push({ar_id:result['ar_id'], sample_id:result['sample_id']});
 									if (outcome.arequest_ids.length === arimport_params.client_samples.length) {
 										Utility.alert({title:'Success', content: 'Your Batch has been successfully created.', alertType:'success'});
-										if (arimport_params.selectedSampleType.prefix !== 'POOL' && !arimport_params.createWorksheets) {
+										if (!arimport_params.createWorksheets) {
+//											arimport_params.selectedSampleType.prefix !== 'POOL'
 											$state.go('batch',{batch_id: outcome.batch_id});
 										}
 										else {
@@ -591,21 +591,24 @@ arimport_module.controller('ARImportCtrl',
 						if (start_sample_list) {
 
 							sample_data = row.split(',');
+							pool = sample_data[idx];
 
-				            this.sample_data =  sample_type === 'MS' ? sample_data[0] : sample_data[1];
-							if (sample_data !== undefined && sample_data.length > 1 && _.findWhere(samples, {sample: this.sample_data}) === undefined) {
+
+				            this.sample =  sample_type === 'MS' ? sample_data[0] : sample_data[1];
+							if (sample_data !== undefined && sample_data.length > 1 && _.findWhere(samples, {sample: this.sample}) === undefined) {
 
 								if (sample_type === 'FC') {
-									samples.push({index: index, sample: $scope.format_csv_field(this.sample_data)});
+									samples.push({index: index, sample: $scope.format_csv_field(this.sample)});
 
 								}
-								else if (sample_type === 'MS') {
-								    samples.push({index: index, sample: $scope.format_csv_field(this.sample_data)});
+								if (sample_type === 'MS') {
+								    samples.push({index: index, sample: $scope.format_csv_field(this.sample)});
 								}
-								else if (sample_type === 'POOL'){
-									samples.push({index: index, sample: $scope.format_csv_field(this.sample_data), pool: sample_data[idx]});
-									if ($scope.pools.indexOf(sample_data[idx]) == -1) {
-										$scope.pools.push(sample_data[idx]);
+								if (sample_type === 'POOL'){
+									samples.push({index: index, sample: $scope.format_csv_field(this.sample), pool: pool});
+
+									if ($scope.pools.indexOf(pool) == -1) {
+										$scope.pools.push(pool);
 									}
 									$scope.header = ['pool'];
 								}
@@ -641,7 +644,7 @@ arimport_module.controller('ARImportCtrl',
 					var client_samples = extract_samples($scope.arimport_params.attachment_content, $scope.arimport_params.selectedSampleType.prefix);
 					$scope.arimport_params.client_samples = _.union($scope.arimport_params.client_samples, client_samples);
 					$scope.getAnalysisProfiles();
-					//console.log(client_samples);
+
 				};
 
 				reader.readAsText($scope.arimport_params.attachment);
