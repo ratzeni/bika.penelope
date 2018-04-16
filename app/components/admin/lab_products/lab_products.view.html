@@ -31,7 +31,10 @@
                         <th ng-click="sort('description')">Description
                             <span class="glyphicon sort-icon" ng-show="sortKey=='description'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
-                        <th ng-click="sort('unit')">Unit
+                        <th ng-click="sort('Manufacturer')">Manufacturer
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='manufacturer'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
+                        <th ng-click="sort('unit')">Units
                              <span class="glyphicon sort-icon" ng-show="sortKey=='unit'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
                         <th ng-click="sort('volume')">Volume
@@ -69,6 +72,7 @@
                             </a>
                         </td>
                         <td class="small">{{row.description}}</td>
+                        <td>{{ctrl.get_manufacturer(row.location)}}</td>
                         <td>{{row.unit}}</td>
                         <td>{{row.volume}}</td>
                         <td>{{row.price}}</td>

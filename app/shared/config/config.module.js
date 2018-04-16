@@ -23,6 +23,7 @@ angular
                 get_supply_orders:'/bika/get/supply_orders',
                 get_lab_products:'/bika/get/lab_products',
                 get_storage_locations:'/bika/get/storage_locations',
+                get_manufacturers:'/bika/get/manufacturers',
                 create_client: '/bika/create/client',
                 create_contact: '/bika/create/contact',
                 create_batch: '/bika/create/batch',

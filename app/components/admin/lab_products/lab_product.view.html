@@ -16,25 +16,34 @@
                         <td class="small">{{lab_product.description}}</td>
                     </tr>
                     <tr>
-                        <td>Creation&nbsp;Date:</td>
-                        <td>{{ctrl.format_date(lab_product.creation_date)}}</td>
+                        <td>Manufacturer:</td>
+                        <td>{{ctrl.get_manufacturer(lab_product.location)}}</td>
                     </tr>
                 </table>
             </div>
             <div class="col-sm-4 controls" >
                 <table class="table table-striped">
                     <tr>
+                        <td>Creation&nbsp;Date:</td>
+                        <td>{{ctrl.format_date(lab_product.creation_date)}}</td>
+                    </tr>
+                    <tr>
                         <td>State:</td>
                         <td>{{ctrl.format_review_state(lab_product.review_state)}}</td>
+                    </tr>
+                     <tr>
+                        <td>Volume:</td>
+                        <td>{{lab_product.volume}}</td>
                     </tr>
                     <tr>
                         <td>Price:</td>
                         <td>{{lab_product.price}}</td>
                     </tr>
                     <tr>
-                        <td>Unit:</td>
+                        <td>Units:</td>
                         <td>{{lab_product.unit}}</td>
                     </tr>
+
                 </table>
             </div>
         </div>

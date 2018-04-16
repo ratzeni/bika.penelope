@@ -37,6 +37,11 @@ utility_module.service('Utility',
 			return loading;
 		}
 
+        this.format_price = function(price) {
+            price = price.replace('.','');
+            return parseFloat(price.replace(/[^\d\.]/, ''));
+        }
+
 		this.format_date = function(date) {
 			if (date === undefined) {
 				time = new Date();

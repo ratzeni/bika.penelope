@@ -47,6 +47,14 @@ lab_products_module.controller('LabProductsCtrl',
 			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
 		}
 
+		$scope.getManufacturers =
+			function() {
+				this.params = {review_state: 'active'};
+				BikaService.getManufacturers(this.params).success(function (data, status, header, config){
+					$scope.manufacturers = data.result.objects;
+				});
+		    }
+
 		$scope.getLabProducts =
             function(review_state) {
 				$scope.loading_search.show();
@@ -79,10 +87,17 @@ lab_products_module.controller('LabProductsCtrl',
 
 		$scope.init =
 			function() {
+			    $scope.getManufacturers();
 				$scope.getLabProducts($scope.review_state);
 			}
 
 		$scope.init();
+
+        this.get_manufacturer = function(id) {
+            this.manufacturer = _.findWhere($scope.manufacturers, {id: id});
+            this.title = this.manufacturer !== undefined ? this.manufacturer.title : '';
+            return this.title;
+        }
 
 		this.format_date =
 			function(date) {
@@ -218,33 +233,22 @@ lab_products_module.controller('AddLabProductCtrl',
 		}
 		$scope.lab_products = [];
 
-//		$scope.$watch('labproducts_params.barcode',
-//            function (newValue, oldValue) {
-//                // Ignore initial setup.
-//                if ( newValue === oldValue) { return;}
-//                if ( newValue === null || newValue === undefined || newValue == "") {return; }
-//                $scope.loading_search.show();
-//				this.params = {id: 'labproduct-'+newValue};
-//                BikaService.getLabProducts(this.params).success(function (data, status, header, config){
-//                	$scope.loading_search.hide();
-//                	if (data.result.objects.length > 0) {
-//                		Utility.alert({title:'Error', content: 'Barcode '+newValue+' is already in Inventory.', alertType:'danger'});
-//                		$scope.labproducts_params = {
-//							title: null,
-//							description: null,
-//							barcode: null,
-//							volume: null,
-//							price: null,
-//						}
-//                	}
-//                });
-//            }
-//        );
+
+
+        $scope.getManufacturers =
+			function() {
+				this.params = {review_state: 'active'};
+				BikaService.getManufacturers(this.params).success(function (data, status, header, config){
+					$scope.manufacturers = data.result.objects;
+				});
+		    }
+
+		$scope.getManufacturers();
+
 
         this.submit =
         function(labproducts_params) {
         	this.params = {
-//        		obj_id: 'labproduct-'+labproducts_params.barcode,
         		title: labproducts_params.title,
         		description: labproducts_params.description!==null && labproducts_params.description.length > 0 ? labproducts_params.description.replace('=','') : '',
         		Volume: labproducts_params.volume!==null && labproducts_params.volume.length > 0 ? labproducts_params.volume : '',
@@ -252,8 +256,9 @@ lab_products_module.controller('AddLabProductCtrl',
         		Unit: 0,
         		subject: 'active',
         		rights: labproducts_params.barcode,
+        		location: labproducts_params.manufacturer.id,
         	}
-        	console.log(this.params); //return;
+//        	console.log(this.params); //return;
         	$scope.loading_import.show();
         	BikaService.createLabProduct(this.params).success(function (data, status, header, config){
         		$scope.loading_import.hide();
@@ -270,6 +275,126 @@ lab_products_module.controller('AddLabProductCtrl',
         	});
         }
 });
+
+lab_products_module.controller('ImportLabProductsCtrl',
+	function(BikaService, Utility, $state, $scope, $rootScope) {
+
+        $scope.loading_import = Utility.loading({
+            busyText: 'Wait while importing...',
+            delayHide: 3000,
+        });
+
+        $scope.import_params = {
+        	attachment: null,
+        	inventory: null,
+        	manufacturer: null,
+        };
+
+        $scope.get_inventory =
+            function(data) {
+
+                var inventory = [];
+                data = Papa.parse(data);
+
+                if (data.errors.length > 0) {
+                    Utility.alert({title:'Malformed CSV!!!',
+							content: data.errors[0].message,
+							alertType:'danger'}
+					);
+					return null;
+                }
+
+                data = data.data;
+                header = _.first(data);
+
+                if (_.difference(header, ["ID", "Name", "Description", "Volume", "Price"]).length > 0) {
+                     Utility.alert({title:'Wrong Header',
+							content: "Header must be ID,Name,Description,Volume,Price",
+							alertType:'danger'}
+					);
+					return null;
+                }
+                _.each(_.rest(data), function(entry) {
+                    if (entry.length === 5) {
+                        this.item = {
+                            id: entry[0],
+                            name: entry[1],
+                            description: entry[2],
+                            volume: entry[3],
+                            price: entry[4],
+                        }
+                        inventory.push(this.item);
+                    }
+
+                });
+
+                return inventory;
+
+        };
+
+        $scope.$watch('import_params.attachment',
+            function (newValue, oldValue) {
+                // Ignore initial setup.
+                if ( newValue === oldValue) { return;}
+                if ( newValue === null ) {
+                	return;
+                }
+
+				var reader = new FileReader();
+				reader.onload = function(event) {
+					var data = event.target.result;
+					$scope.import_params.inventory = $scope.get_inventory(data);
+				};
+				reader.readAsText($scope.import_params.attachment);
+         });
+
+        $scope.getManufacturers =
+			function() {
+				this.params = {review_state: 'active'};
+				BikaService.getManufacturers(this.params).success(function (data, status, header, config){
+					$scope.manufacturers = data.result.objects;
+				});
+		    }
+
+		$scope.getManufacturers();
+
+		this.import =
+		    function(import_params) {
+		        var outcome = {
+					ids: [],
+				}
+		        _.each(import_params.inventory, function(row) {
+		            this.params = {
+                        title: row.name,
+                        description: row.description.replace('=',''),
+                        Volume: row.volume,
+                        Price: Utility.format_price(row.price),
+                        Unit: 0,
+                        subject: 'active',
+                        rights: row.id,
+                        location: import_params.manufacturer.id,
+                    }
+//                	console.log(this.params); //return;
+
+                    BikaService.createLabProduct(this.params).success(function (data, status, header, config){
+                        result = data.result;
+                        if (result['success'] === 'True') {
+                            Utility.alert({title:'Success', content: 'LabProduct '+ result['obj_id'] + ' has been successfully imported', alertType:'success', duration:3000});
+                            outcome.ids.push(result['obj_id']);
+                            if (outcome.ids.length === import_params.inventory.length) {
+                                $state.go('lab_products',{},{reload: true});
+                            }
+                        }
+                        else {
+                            Utility.alert({title:'Error while importing...', content: result['message'], alertType:'danger'});
+                            return;
+                        }
+                    });
+		        });
+		};
+
+});
+
 
 lab_products_module.controller('LoadingLabProductCtrl',
 	function(BikaService, Utility, $state, $scope, $rootScope) {
@@ -764,6 +889,11 @@ lab_products_module.controller('LabProductDetailsCtrl',
         		return Utility.loading(this.params);
         	};
 
+         $scope.loading_update = Utility.loading({
+            busyText: 'Wait while updating...',
+            delayHide: 500,
+        });
+
 
 		$scope.review_state = "loaded";
 		$scope.checked_list = [];
@@ -799,6 +929,17 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				});
 			}
 
+	    $scope.getManufacturers =
+			function() {
+				this.params = {review_state: 'active'};
+				BikaService.getManufacturers(this.params).success(function (data, status, header, config){
+					$scope.manufacturers = data.result.objects;
+					$scope.getStorageLocations();
+                    $scope.getLabProduct($scope.state.labproduct_id);
+                    $scope.getLabProducts($scope.state.labproduct_id, $scope.review_state);
+				});
+		    }
+
 		$scope.getLabProduct =
             function(id) {
                 this.params = {id: id};
@@ -810,6 +951,11 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					$scope._loading_params.price =  $scope.lab_product.price;
 					$scope._loading_params.barcode = $scope.lab_product.rights;
 					$scope._loading_params.id = $scope.lab_product.id;
+					$scope.labproducts_params = $scope._loading_params;
+					$scope.labproducts_params.manufacturer = _.findWhere($scope.manufacturers, {id:$scope.lab_product.location});
+//					console.log($scope.labproducts_params.manufacturer);
+//					console.log($scope.labproducts_params);
+
                 });
 		}
 
@@ -846,14 +992,14 @@ lab_products_module.controller('LabProductDetailsCtrl',
 		$scope.init =
 			function() {
 				$scope.loading_search.show();
+
 				$scope.edit_params = {
 					storage_location: null,
 					order_number: null,
 					expiration_date: null,
 				}
-				$scope.getStorageLocations();
-				$scope.getLabProduct($scope.state.labproduct_id);
-				$scope.getLabProducts($scope.state.labproduct_id, $scope.review_state);
+				$scope.getManufacturers();
+
 			}
 
 		$scope._lab_products_toload = [];
@@ -869,6 +1015,12 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				}
 
 		$scope.init();
+
+		this.get_manufacturer = function(id) {
+            this.manufacturer = _.findWhere($scope.manufacturers, {id: id});
+            this.title = this.manufacturer !== undefined ? this.manufacturer.title : '';
+            return this.title;
+        }
 
 
 		this.format_date =
@@ -1058,6 +1210,34 @@ lab_products_module.controller('LabProductDetailsCtrl',
 			}
 
 		}
+
+	this.edit_lab_product =
+        function(labproducts_params) {
+        	this.params = {
+        	    obj_path: $scope.lab_product.path,
+        		title: labproducts_params.title,
+        		description: labproducts_params.description!==null && labproducts_params.description.length > 0 ? labproducts_params.description.replace('=','') : '',
+        		Volume: labproducts_params.volume!==null && labproducts_params.volume.length > 0 ? labproducts_params.volume : '',
+        		Price: labproducts_params.price!==null && labproducts_params.price.length > 0 ? labproducts_params.price : '',
+        		rights: labproducts_params.barcode,
+        		location: labproducts_params.manufacturer.id,
+        	}
+
+        	$scope.loading_update.show();
+        	BikaService.updateLabProduct(this.params).success(function (data, status, header, config){
+        		$scope.loading_update.hide();
+        		result = data.result;
+				if (result['success'] === 'True') {
+					Utility.alert({title:'Success', content: 'LabProduct '+ $scope.lab_product.title + ' has been edited', alertType:'success', duration:3000});
+					$state.go('lab_product',{labproduct_id: $scope.lab_product.id},{reload: true});
+
+				}
+				else {
+					Utility.alert({title:'Error while editing...', content: result['message'], alertType:'danger'});
+					return;
+				}
+        	});
+        }
 
 	this._toggle =
 			function(id) {

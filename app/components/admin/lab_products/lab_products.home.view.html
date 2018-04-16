@@ -11,6 +11,11 @@
                 <div ng-bind-html="tabParagraph">
                 </div>
             </div>
+            <div data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'" data-nq-tab="" data-heading="Import from CSV">
+                <ng-include src="'app/components/admin/lab_products/lab_products.import.view.html'"></ng-include>
+                <div ng-bind-html="tabParagraph">
+                </div>
+            </div>
             <!--<div data-nq-tab="" data-heading="Loading">-->
                 <!--<ng-include src="'app/components/admin/lab_products/lab_products.load.view.html'"></ng-include>-->
                 <!--<div ng-bind-html="tabParagraph">-->

@@ -105,6 +105,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call('read', method, params);
     };
 
+    this.getManufacturers = function(params) {
+        method = config.bikaApiRest.methods.get_manufacturers;
+        return BikaApiRestService.call('read', method, params);
+    };
+
     this.getUsers = function(params) {
         method = config.bikaApiRest.methods.get_users;
         return BikaApiRestService.call('read', method, params);
