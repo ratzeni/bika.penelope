@@ -95,6 +95,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call('read', method, params);
     };
 
+    this.getPurchaseOrders = function(params) {
+        method = config.bikaApiRest.methods.get_purchase_orders;
+        return BikaApiRestService.call('read', method, params);
+    };
+
 	this.getLabProducts = function(params) {
         method = config.bikaApiRest.methods.get_lab_products;
         return BikaApiRestService.call('read', method, params);
@@ -107,6 +112,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
     this.getManufacturers = function(params) {
         method = config.bikaApiRest.methods.get_manufacturers;
+        return BikaApiRestService.call('read', method, params);
+    };
+
+    this.getSuppliers = function(params) {
+        method = config.bikaApiRest.methods.get_suppliers;
         return BikaApiRestService.call('read', method, params);
     };
 
@@ -205,6 +215,16 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
         return BikaApiRestService.call('write', method, params);
     }
 
+    this.updatePurchaseOrder = function(params) {
+    	method = config.bikaApiRest.methods.update_purchase_order;
+        return BikaApiRestService.call('write', method, params);
+    }
+
+	this.updatePurchaseOrders = function(params) {
+    	method = config.bikaApiRest.methods.update_purchase_orders;
+        return BikaApiRestService.call('write', method, params);
+    }
+
     this.updateLabProduct = function(params) {
     	method = config.bikaApiRest.methods.update_lab_product;
         return BikaApiRestService.call('write', method, params);
@@ -247,6 +267,11 @@ bika_api_rest_module.service('BikaService', function(BikaApiRestService, config,
 
 	this.createSupplyOrder = function(params) {
     	method = config.bikaApiRest.methods.create_supply_order;
+        return BikaApiRestService.call('write', method, params);
+    }
+
+    this.createPurchaseOrder = function(params) {
+    	method = config.bikaApiRest.methods.create_purchase_order;
         return BikaApiRestService.call('write', method, params);
     }
 

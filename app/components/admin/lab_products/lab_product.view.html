@@ -57,7 +57,7 @@
                     <div class="btn-group  btn-group-reset" ng-model="buttons.radio" ng-init="buttons.radio = 'loaded'" data-nq-radio-group="">
                         <label title="Middle Button" class="btn btn-primary"><input type="radio" value="loaded" data-ng-click="getLabProducts(state.labproduct_id, 'loaded')">Loaded</label>
                         <label title="Right Button" class="btn btn-primary"><input type="radio" value="unloaded" data-ng-click="getLabProducts(state.labproduct_id, 'unloaded')">Unloaded</label>
-                        <!--<label title="Left Button" class="btn btn-primary"><input type="radio" value="all" data-ng-click="getLabProducts(state.labproduct_id, 'all')">All</label>-->
+                        <label title="Left Button" class="btn btn-warning"><input type="radio" value="due" data-ng-click="getLabProducts(state.labproduct_id, 'due')">Due</label>
                     </div>
                     <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
                     <label title="published" ng-if="pagination.total == 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.total}}</label>
@@ -107,7 +107,7 @@
                                        data-ng-click="ctrl.toggle(row.id)">
                             </div>
                         </td>
-                        <td>{{row.rights}}</td>
+                        <td> <a class="pull-left" ui-sref="purchase_order({purchaseorder_id: row.rights})" style="text-decoration: none;">{{ctrl.get_order_number(row.rights)}}</a></td>
                         <td>{{ctrl.get_storage_location(row.location)}}</td>
                         <td>{{ctrl.format_date(row.expiration_date)}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>

@@ -443,6 +443,8 @@ lab_products_module.controller('LoadingLabProductCtrl',
 				this.params = {Subjects: 'active|loaded'};
 				BikaService.getLabProducts(this.params).success(function (data, status, header, config){
 					$scope.inventory = data.result.objects;
+					$scope.pagination.total = data.result.total;
+                    $scope.pagination.last = data.result.last;
 				});
 			}
 
@@ -929,12 +931,21 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				});
 			}
 
+		$scope.getPurchaseOrders =
+			function() {
+				this.params = {};
+				BikaService.getPurchaseOrders(this.params).success(function (data, status, header, config){
+					$scope.purchase_orders = data.result.objects;
+				});
+			}
+
 	    $scope.getManufacturers =
 			function() {
 				this.params = {review_state: 'active'};
 				BikaService.getManufacturers(this.params).success(function (data, status, header, config){
 					$scope.manufacturers = data.result.objects;
 					$scope.getStorageLocations();
+					$scope.getPurchaseOrders();
                     $scope.getLabProduct($scope.state.labproduct_id);
                     $scope.getLabProducts($scope.state.labproduct_id, $scope.review_state);
 				});
@@ -1047,6 +1058,14 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				return storage_location.title;
 			}
 
+		this.get_order_number =
+			function(id) {
+				purchase_order = _.findWhere($scope.purchase_orders, {id: id});
+				if (purchase_order === undefined) {return "";}
+
+				return purchase_order.order_number;
+			}
+
 		this.toggle =
 			function(id) {
 				var idx = $scope.checked_list.indexOf(id);
@@ -1079,6 +1098,9 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					return Utility.check_transitions('deactivate', transitions)
 				}
 				if (id_transition === 'load') {
+					return Utility.check_transitions('activate', transitions)
+				}
+				if (id_transition === 'due') {
 					return Utility.check_transitions('activate', transitions)
 				}
 				return false;

@@ -41,6 +41,11 @@
                         </div>
                         <input type="text" data-ng-model="_loading_params.order_number" class="form-control"
                                placeholder="Order Number...">
+                        <select data-nq-select="" data-ng-required="true" data-min-required="1"
+                            data-qo-placeholder="Order Number..."
+                            data-ng-model="_loading_params.order_number"
+                            data-ng-options="s.title for s in storage_locations">
+                    </select>
                     </div>
                 </div>
                  <div class="input-inline col-sm-4">

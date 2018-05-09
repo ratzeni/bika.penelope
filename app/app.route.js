@@ -189,6 +189,21 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
                 authorizedRoles: [USER_ROLES.admin]
             }
 
+        }).state('purchase_orders', {
+            url: '/purchase_orders',
+            templateUrl: 'app/components/admin/purchase_orders/purchase_orders.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin]
+            }
+
+        })
+        .state('purchase_order', {
+            url: '/purchase_order/:purchaseorder_id',
+            templateUrl: 'app/components/admin/purchase_orders/purchase_order.home.view.html',
+            data: {
+                authorizedRoles: [USER_ROLES.admin]
+            }
+
         })
         .state('lab_products', {
             url: '/lab_products',
