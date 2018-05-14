@@ -237,6 +237,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
 		$scope.batches = [];
 		$scope.checked_list = [];
 		$scope.lab_products = [];
+		$scope.reagents = [];
 
 		$scope.loading_create = Utility.loading({
             busyText: 'Wait while creating...',
@@ -303,12 +304,35 @@ cost_centers_module.controller('AddCostCenterCtrl',
         // :: function :: getLabProducts)=
         $scope.getLabProducts =
 			function() {
-				this.params = {'Subject': 'active', page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
+				this.params = {};
 				BikaService.getLabProducts(this.params).success(function (data, status, header, config){
 					$scope.lab_products = data.result.objects;
 				});
 			}
 
+        $scope.getReagents =
+		    function() {
+		        this.params = {'Subject': 'loaded'};
+				BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+					$scope.reagents = data.result.objects;
+				});
+		    }
+
+		$scope.getStorageLocations =
+			function() {
+				this.params = {};
+				BikaService.getStorageLocations(this.params).success(function (data, status, header, config){
+					$scope.storage_locations = data.result.objects;
+				});
+			}
+
+		$scope.getPurchaseOrders =
+			function() {
+				this.params = {};
+				BikaService.getPurchaseOrders(this.params).success(function (data, status, header, config){
+					$scope.purchase_orders = data.result.objects;
+				});
+			}
 
 		// :: function :: update()
         $scope.update =
@@ -320,6 +344,10 @@ cost_centers_module.controller('AddCostCenterCtrl',
 
         $scope.update([]);
         $scope.getLabProducts();
+        $scope.getReagents();
+        $scope.getPurchaseOrders();
+        $scope.getStorageLocations();
+
 
 		$scope.costcenter_params = {
             selectedClient: null,
@@ -330,7 +358,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
         	selectedDescription: null,
         	selectedAmount: null,
         	selectedBatches: null,
-			selectedLabProducts: {},
+			selectedReagents: {},
 			selectedEstimatedCost: null,
         };
 
@@ -352,6 +380,15 @@ cost_centers_module.controller('AddCostCenterCtrl',
 
         this.submit =
         	function(costcenter_params) {
+        	    var error = false;
+			    _.each(costcenter_params.selectedReagents, function(value){
+
+			        if (parseInt(value) < 0 || parseInt(value) > 1) {
+			            Utility.alert({title:'Error', content: 'Reagents use must be in range [0..1]', alertType:'danger'});
+			            error = true;
+			        }
+			    });
+			    if (error) {return;}
         		this.cc_params = {
         			'ClientID': costcenter_params.selectedClient.id,
 					'Contact': costcenter_params.selectedContact.id,
@@ -363,8 +400,9 @@ cost_centers_module.controller('AddCostCenterCtrl',
 					'subject': 'pending',
 					'location': costcenter_params.selectedEstimatedCost != undefined?costcenter_params.selectedEstimatedCost:'',
 					'rights': costcenter_params.selectedAmount != undefined?costcenter_params.selectedAmount:'',
-					'Remarks': JSON.stringify(costcenter_params.selectedLabProducts),
+					'Remarks': JSON.stringify(costcenter_params.selectedReagents),
         		}
+
 				$scope.loading_create.show();
         		BikaService.createSupplyOrder(this.cc_params).success(function (data, status, header, config){
 					result = data.result;
@@ -407,6 +445,27 @@ cost_centers_module.controller('AddCostCenterCtrl',
 
         	}
 
+        this.get_order_number =
+			function(id) {
+				purchase_order = _.findWhere($scope.purchase_orders, {id: id});
+				if (purchase_order === undefined) {return "";}
+
+				return purchase_order.order_number;
+			}
+
+		this.get_storage_location =
+			function(id) {
+				storage_location = _.findWhere($scope.storage_locations, {id: id});
+				if (storage_location === undefined) {return "";}
+
+				return storage_location.title;
+			}
+
+		this.get_labproduct_title = function(id) {
+            this.lab_product = _.findWhere($scope.lab_products, {'id': id});
+            return this.lab_product.title;
+        }
+
         this.format_date =
 			function(date) {
 				if (date == null) {return "";}
@@ -423,7 +482,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
 				var idx = $scope.checked_list.indexOf(id);
 				if (idx > -1) {
 					$scope.checked_list.splice(idx, 1);
-					delete $scope.costcenter_params.selectedLabProducts[id];
+					delete $scope.costcenter_params.selectedReagents[id];
 				}
 				else {
 					$scope.checked_list.push(id);
@@ -438,7 +497,7 @@ cost_centers_module.controller('AddCostCenterCtrl',
 				}
 				else {
 					$scope.checked_list = [];
-					$scope.costcenter_params.selectedLabProducts = {};
+					$scope.costcenter_params.selectedReagents = {};
 				}
 		}
 });
@@ -449,7 +508,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 		$scope.state = {costcenter_id: $stateParams.costcenter_id};
 		$scope.cost_center = null;
 		$scope.lab_products = [];
-		$scope._lab_products = [];
+		$scope.reagents = [];
 		$scope.batches = [];
 
 		$scope.samples = {};
@@ -498,32 +557,25 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 						selectedEstimatedCost: $scope.cost_center.location,
 						selectedLabProducts: $scope.cost_center.remarks!==''?JSON.parse($scope.cost_center.remarks):$scope.cost_center.remarks,
 					};
-					var counter = 0;
+
+
 
 					if ($scope.cost_center.remarks !== '{}') {
-						_.each(_.keys(JSON.parse($scope.cost_center.remarks)), function(id) {
+					    var remarks = JSON.parse($scope.cost_center.remarks)
+						_.each(_.keys(remarks), function(id) {
 							this.params = {'id': id};
 							$scope.checked_list.push(id);
 							BikaService.getLabProducts(this.params).success(function (data, status, header, config){
-								$scope.lab_products.push(data.result.objects[0]);
-								counter++;
-								if (counter === _.size(JSON.parse($scope.cost_center.remarks))) {
-									this.params = {'sort_on': 'title', Subject: 'active'};
-									BikaService.getLabProducts(this.params).success(function (data, status, header, config){
-										this.result = data.result.objects;
-										_.each(this.result, function (obj){
-											if (_.findWhere($scope.lab_products, {'id': obj['id']}) === undefined ){
-												 $scope._lab_products.push(obj);
-											}
-										});
-									});
-								}
+								this.reagent = data.result.objects[0];
+								this.reagent['to_use'] = remarks[id];
+								$scope.reagents.push(reagent);
+
 							});
 						});
 					}
 					else {
 
-					    this.params = {'sort_on': 'title', Subject: 'active'};
+					    this.params = {'sort_on': 'title', Subject: 'loaded'};
 						BikaService.getLabProducts(this.params).success(function (data, status, header, config){
 					        this.result = data.result.objects;
 							$scope._lab_products = this.result;
@@ -533,11 +585,50 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
         		});
         	}
 
+		$scope.getStorageLocations =
+			function() {
+				this.params = {};
+				BikaService.getStorageLocations(this.params).success(function (data, status, header, config){
+					$scope.storage_locations = data.result.objects;
+				});
+			}
+
+		$scope.getPurchaseOrders =
+			function() {
+				this.params = {};
+				BikaService.getPurchaseOrders(this.params).success(function (data, status, header, config){
+					$scope.purchase_orders = data.result.objects;
+				});
+			}
+
+		 // :: function :: getLabProducts)=
+        $scope.getLabProducts =
+			function() {
+				this.params = {'Subject': 'active'};
+				this.params = {};
+				BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+					$scope.lab_products = data.result.objects;
+				});
+			}
+
+        $scope.getReagents =
+		    function() {
+		        this.params = {'Subject': 'loaded'};
+				BikaService.getLabProducts(this.params).success(function (data, status, header, config){
+					$scope._reagents = data.result.objects;
+				});
+		    }
+
 		$scope.init =
 			function(costcenter_id) {
 			this.params = {};
 			$scope.clients = [];
 			$scope.loading_search.show();
+			$scope.getStorageLocations();
+			$scope.getPurchaseOrders();
+			$scope.getLabProducts();
+			$scope.getReagents();
+
             BikaService.getClients(this.params).success(function (data, status, header, config){
             	$scope.clients = data.result.objects;
             	$scope.getCostCenter($scope.state.costcenter_id);
@@ -582,6 +673,27 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 				return '';
 			}
 
+        this.get_order_number =
+			function(id) {
+				purchase_order = _.findWhere($scope.purchase_orders, {id: id});
+				if (purchase_order === undefined) {return "";}
+
+				return purchase_order.order_number;
+			}
+
+		this.get_storage_location =
+			function(id) {
+				storage_location = _.findWhere($scope.storage_locations, {id: id});
+				if (storage_location === undefined) {return "";}
+
+				return storage_location.title;
+			}
+
+		this.get_labproduct_title = function(id) {
+            this.lab_product = _.findWhere($scope.lab_products, {'id': id});
+            return this.lab_product.title;
+        }
+
 		this.format_date =
 			function(date) {
 				return Utility.format_date(date);
@@ -620,6 +732,15 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
 		this.edit =
 			function(costcenter_params) {
+                var error = false;
+			    _.each(costcenter_params.selectedLabProducts, function(value){
+
+			        if (parseInt(value) < 0 || parseInt(value) > 1) {
+			            Utility.alert({title:'Error', content: 'Reagents use must be in range [0..1]', alertType:'danger'});
+			            error = true;
+			        }
+			    });
+			    if (error) {return;}
 				this.params = {
 					'obj_path': $scope.cost_center.path,
 					'OrderDate': Utility.format_date(costcenter_params.selectedOrderDate),
@@ -631,6 +752,9 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 					'expirationDate': Utility.format_date(costcenter_params.selectedExpirationDate),
 					'Remarks': JSON.stringify(costcenter_params.selectedLabProducts),
 				}
+//				console.log($scope.checked_list);
+//				console.log(this.params); return;
+
 				$scope.loading_update.show();
 				BikaService.updateSupplyOrder(this.params).success(function (data, status, header, config){
 					this.result = data.result;
