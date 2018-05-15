@@ -102,6 +102,10 @@
                                        data-ng-click="ctrl.toggle_all()">
                             </div>
                         </th>
+                        <th ng-click="sort('title')">ID
+                            <span class="glyphicon sort-icon" ng-show="sortKey=='rights'"
+                                  ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                        </th>
                         <th ng-click="sort('title')">Title
                             <span class="glyphicon sort-icon" ng-show="sortKey=='title'"
                                   ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -140,6 +144,12 @@
                                        data-ng-checked="checked_list.indexOf(row.id) > -1"
                                        data-ng-click="ctrl.toggle(row.id)">
                             </div>
+                        </td>
+                        <td>
+                            <a class="pull-left" ui-sref="lab_product({labproduct_id: row.id})"
+                               style="text-decoration: none;">
+                                <span>{{row.rights}}</span>
+                            </a>
                         </td>
                         <td>
                             <a class="pull-left" ui-sref="lab_product({labproduct_id: row.id})"
