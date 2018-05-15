@@ -566,10 +566,10 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 					if (this.result['success'] === 'True') {
 					    Utility.alert({title:'Success', content: 'Purchase Order '+$scope.purchase_order.title+' has been updated', alertType:'success'});
 						this.lab_products = JSON.parse($scope.purchase_order.remarks);
-
+                        var counter = {};
                         _.each(remarks, function(k,v){
                             this.lab_product = _.findWhere($scope._lab_products, {id: v});
-                            var counter = 0;
+                            counter[v] = 0;
                             for (var i=0; i<k; i++) {
 
                                 this.reagents_params = {
@@ -594,13 +594,13 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 //                                        console.log(this._params)
 
 						                BikaService.deactivateLabProduct(this._params).success(function (data, status, header, config){
-//						                    console.log(data);
 						                    console.log('ok');
-						                    if (counter === k-1) {
+						                    counter[v]++;
+						                    if (parseInt(counter[v]) === parseInt(k)) {
 
                                                 $state.go('purchase_order',{'id': $scope.purchase_order.id},{reload: true});
                                             }
-                                            counter++;
+
 						                });
                                     }
                                     else {
@@ -686,24 +686,28 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 			this.params = {f: $scope._get_review_params(reagent_id)};
 			BikaService.activateLabProduct(this.params).success(function (data, status, header, config){
                 this.params = {input_values: $scope._get_input_values(reagent_id,'loaded', $scope.reagents_params)};
-//                console.log(this.params);
+
                 BikaService.updateLabProducts(this.params).success(function (data, status, header, config){
 //                    console.log(data);
-                    var products = _.indexBy($scope._lab_products, 'id');
+//                    var products = _.indexBy($scope._lab_products, 'id');
                     var i = 0;
                     _.each(reagent_id, function(id) {
-                        i++;
+
                         this.reagent = _.findWhere($scope.reagents, {'id': id});
                         this.labproduct_id = this.reagent.title;
-                        this.lab_product = products[this.labproduct_id];
+                        objIndex = $scope._lab_products.findIndex((obj => obj.id === this.labproduct_id));
+                        $scope._lab_products[objIndex].unit = parseInt($scope._lab_products[objIndex].unit) + 1;
+
+                        this.lab_product = $scope._lab_products[objIndex];
                         this.params = {
 							obj_path: this.lab_product.path,
-                            Unit: parseInt(this.lab_product.unit)+1,
+                            Unit: this.lab_product.unit,
                         }
                         BikaService.updateLabProduct(this.params).success(function (data, status, header, config){
 
                             if ( data.result['success'] === 'True') {
-                                products[this.labproduct_id].unit++;
+                                i++;
+                                //products[this.labproduct_id].unit++;
 								Utility.alert({title:'Success', content: 'LabProduct '+ id + ' has been successfully loaded', alertType:'success', duration:3000});
 							}
 							else {
@@ -711,9 +715,9 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 								return;
 							}
 
-                            //if (i === reagent_id.length) {
+                            if (i === reagent_id.length) {
                              $state.go('purchase_order',{'id': $scope.state.purchaseorder_id},{reload: true});
-                            //}
+                            }
                         });
                     });
                 });
@@ -735,21 +739,25 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 //                console.log(this.params);
                 BikaService.updateLabProducts(this.params).success(function (data, status, header, config){
 //                    console.log(data);
-                    var products = _.indexBy($scope._lab_products, 'id');
+//                    var products = _.indexBy($scope._lab_products, 'id');
                     var i = 0;
                     _.each(reagent_id, function(id) {
-                        i++;
+
                         this.reagent = _.findWhere($scope.reagents, {'id': id});
                         this.labproduct_id = this.reagent.title;
-                        this.lab_product = products[this.labproduct_id];
+                        objIndex = $scope._lab_products.findIndex((obj => obj.id === this.labproduct_id));
+                        $scope._lab_products[objIndex].unit = parseInt($scope._lab_products[objIndex].unit) - 1;
+
+                        this.lab_product = $scope._lab_products[objIndex];
                         this.params = {
 							obj_path: this.lab_product.path,
-                            Unit: parseInt(this.lab_product.unit)-1,
+                            Unit: this.lab_product.unit,
                         }
                         BikaService.updateLabProduct(this.params).success(function (data, status, header, config){
 
                             if ( data.result['success'] === 'True') {
-                                products[this.labproduct_id].unit--;
+                                i++;
+//                                products[this.labproduct_id].unit--;
 								Utility.alert({title:'Success', content: 'LabProduct '+ id + ' has been successfully unloaded', alertType:'success', duration:3000});
 							}
 							else {
