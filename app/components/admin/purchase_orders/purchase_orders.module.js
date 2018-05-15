@@ -596,17 +596,18 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 						                BikaService.deactivateLabProduct(this._params).success(function (data, status, header, config){
 //						                    console.log(data);
 						                    console.log('ok');
+						                    if (counter === k-1) {
+
+                                                $state.go('purchase_order',{'id': $scope.purchase_order.id},{reload: true});
+                                            }
+                                            counter++;
 						                });
                                     }
                                     else {
                                         Utility.alert({title:'Error while importing...', content: this.result['message'], alertType:'danger'});
                                         return;
                                     }
-                                    if (counter === k-1) {
 
-                                        $state.go('purchase_order',{'id': $scope.purchase_order.id},{reload: true});
-                                    }
-                                    counter++;
                                 });
                             }
                         });
@@ -710,9 +711,9 @@ purchase_orders_module.controller('PurchaseOrderDetailsCtrl',
 								return;
 							}
 
-                            if (i === reagent_id.length) {
-                                $state.go('purchase_order',{'id': $scope.state.purchaseorder_id},{reload: true});
-                            }
+                            //if (i === reagent_id.length) {
+                             $state.go('purchase_order',{'id': $scope.state.purchaseorder_id},{reload: true});
+                            //}
                         });
                     });
                 });
