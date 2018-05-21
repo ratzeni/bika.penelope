@@ -385,7 +385,12 @@ arimport_module.controller('ARImportCtrl',
                 $scope.clients = [];
                 params = {};
                 BikaService.getClients(params).success(function (data, status, header, config){
-                    $scope.clients = data.result.objects;
+                    _.each(data.result.objects, function(c) {
+                        if (c.subject !== 'purchase_order') {
+                            $scope.clients.push(c);
+                        }
+
+                    });
                 });
             };
 

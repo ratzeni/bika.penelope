@@ -45,6 +45,25 @@ main_module.config(function($stateProvider, $urlRouterProvider, USER_ROLES) {
                   authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
             }
         })
+        .state('targets', {
+            url: '/targets',
+            templateUrl: 'app/components/admin/targets/targets.home.view.html',
+
+            data: {
+                 authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+
+        })
+        .state('target', {
+            url: '/target/:target_id',
+            templateUrl: 'app/components/admin/targets/target.home.view.html',
+           	controller: function($stateParams) {
+				$stateParams.target_id
+			},
+           	data: {
+                  authorizedRoles: [USER_ROLES.admin, USER_ROLES.manager]
+            }
+        })
         .state('deliveries', {
             url: '/deliveries',
             templateUrl: 'app/components/deliveries/deliveries.home.view.html',

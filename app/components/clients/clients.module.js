@@ -51,7 +51,12 @@ clients_module.controller('ClientsCtrl',
                 	page_nr: $scope.pagination.page_nr, page_size: $scope.pagination.page_size};
 
                 BikaService.getClients(this.params).success(function (data, status, header, config){
-                    $scope.clients = data.result.objects;
+                   _.each(data.result.objects, function(c) {
+                        if (c.subject !== 'purchase_order') {
+                            $scope.clients.push(c);
+                        }
+
+                    });
                     //console.log($scope.clients);
                     $scope.pagination.total = data.result.total;
                     $scope.pagination.last = data.result.last;

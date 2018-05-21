@@ -74,6 +74,7 @@
     <script src="./app/components/admin/purchase_orders/purchase_orders.module.js"></script>
     <script src="./app/components/admin/lab_products/lab_products.module.js"></script>
     <script src="./app/components/admin/runs/runs.module.js"></script>
+    <script src="./app/components/admin/targets/targets.module.js"></script>
     <script src="./app/components/dashboard/dashboard.module.js"></script>
     <script src="./app/components/browser/browser.module.js"></script>
     <script src="./app/app.module.js"></script>
@@ -158,6 +159,10 @@
                                     role="presentation"  ng-class="getClass('clients')">
                                     <a ui-sref="clients">Clients</a>
                                 </li>
+                                <li data-ng-if="currentUser.role=='Site Administrator' || currentUser.role=='LabManager'"
+                                    role="presentation"  ng-class="getClass('targets')">
+                                    <a ui-sref="targets">Targets</a>
+                                </li>
                                 <li role="presentation"  ng-class="getClass('cost_centers')">
                                     <a role="menuitem" tabindex="-1" ui-sref="cost_centers">Cost Centers</a>
                                 </li>
@@ -179,6 +184,7 @@
                                 <!--<li role="presentation"  ng-class="getClass('browser')">-->
                                     <!--<a role="menuitem" tabindex="-1" ui-sref="browser">Browser</a>-->
                                 <!--</li>-->
+
                             </ul>
                         </li>
 
