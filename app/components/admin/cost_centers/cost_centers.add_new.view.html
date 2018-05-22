@@ -150,6 +150,7 @@
                                 <span class="glyphicon sort-icon" ng-show="sortKey=='price'"
                                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                             </th>
+                             <th>Used</th>
                             <th>To use</th>
                         </tr>
                         </thead>
@@ -170,6 +171,7 @@
                             <td>{{ctrl.format_date(row.effective_date)}}</td>
                             <td>{{ctrl.format_review_state(row.review_state)}}</td>
                             <td>{{row.price}}</td>
+                            <td>{{ctrl.get_consumption(row.id)}}</td>
                             <td>
                                 <div class="input-inline col-sm-12">
                                     <input type="text" data-ng-required="true"

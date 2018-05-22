@@ -936,6 +936,19 @@ lab_products_module.controller('LabProductDetailsCtrl',
 				this.params = {};
 				BikaService.getPurchaseOrders(this.params).success(function (data, status, header, config){
 					$scope.purchase_orders = data.result.objects;
+					$scope.cost_centers = [];
+					_.each($scope.purchase_orders, function(obj) {
+					    if (obj.review_state === 'pending' || obj.review_state === 'dispatched') {
+					        if (obj.remarks.length > 4) {
+					            obj.remarks = JSON.parse(obj.remarks);
+					            console.log(obj);
+					            $scope.cost_centers.push(obj);
+					        }
+
+
+					    }
+					});
+//					console.log($scope.cost_centers);
 				});
 			}
 
@@ -946,6 +959,7 @@ lab_products_module.controller('LabProductDetailsCtrl',
 					$scope.manufacturers = data.result.objects;
 					$scope.getStorageLocations();
 					$scope.getPurchaseOrders();
+
                     $scope.getLabProduct($scope.state.labproduct_id);
                     $scope.getLabProducts($scope.state.labproduct_id, $scope.review_state);
 				});
@@ -1031,6 +1045,17 @@ lab_products_module.controller('LabProductDetailsCtrl',
             this.manufacturer = _.findWhere($scope.manufacturers, {id: id});
             this.title = this.manufacturer !== undefined ? this.manufacturer.title : '';
             return this.title;
+        }
+
+        this.get_consumption = function (id) {
+            consumption = 0;
+            _.each($scope.cost_centers,function(obj) {
+                if (_.has(obj.remarks, id)) {
+                    consumption += parseFloat(obj.remarks[id]);
+                }
+            });
+
+            return consumption;
         }
 
 

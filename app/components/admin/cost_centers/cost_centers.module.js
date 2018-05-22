@@ -331,6 +331,16 @@ cost_centers_module.controller('AddCostCenterCtrl',
 				this.params = {};
 				BikaService.getPurchaseOrders(this.params).success(function (data, status, header, config){
 					$scope.purchase_orders = data.result.objects;
+					$scope.cost_centers = [];
+					_.each($scope.purchase_orders, function(obj) {
+					    if (obj.review_state === 'pending' || obj.review_state === 'dispatched') {
+					        if (obj.remarks.length > 4) {
+					            obj.remarks = JSON.parse(obj.remarks);
+					            console.log(obj);
+					            $scope.cost_centers.push(obj);
+					        }
+					    }
+				    });
 				});
 			}
 
@@ -444,6 +454,17 @@ cost_centers_module.controller('AddCostCenterCtrl',
         		});
 
         	}
+
+        this.get_consumption = function (id) {
+            consumption = 0;
+            _.each($scope.cost_centers,function(obj) {
+                if (_.has(obj.remarks, id)) {
+                    consumption += parseFloat(obj.remarks[id]);
+                }
+            });
+
+            return consumption;
+        }
 
         this.get_order_number =
 			function(id) {

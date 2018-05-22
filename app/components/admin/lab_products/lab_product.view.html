@@ -84,6 +84,8 @@
                     <th ng-click="sort('expiration_date')">Expiration
                         <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
+                    <th>Use
+                    </th>
                     <th ng-click="sort('creation_date')">Created
                         <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
@@ -110,6 +112,7 @@
                         <td> <a class="pull-left" ui-sref="purchase_order({purchaseorder_id: row.rights})" style="text-decoration: none;">{{ctrl.get_order_number(row.rights)}}</a></td>
                         <td>{{ctrl.get_storage_location(row.location)}}</td>
                         <td>{{ctrl.format_date(row.expiration_date)}}</td>
+                        <td>{{ctrl.get_consumption(row.id)}}</td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{ctrl.format_date(row.date)}}</td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
