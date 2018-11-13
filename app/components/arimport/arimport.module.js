@@ -4,12 +4,6 @@ arimport_module.run(function($rootScope){
   $rootScope._ = _;
 });
 
-//arimport_module.service('WorksheetService', function(BikaService, Utility, $scope) {
-//   this.create_worksheet =
-//        function(arimport_params, outcome) {
-//            this.params =
-//   }
-//});
 
 arimport_module.controller('ARImportCtrl',
 			   function(BikaService, Utility, config, $state, $scope, $timeout) {
@@ -226,10 +220,9 @@ arimport_module.controller('ARImportCtrl',
 									if (outcome.arequest_ids.length === arimport_params.client_samples.length) {
 										Utility.alert({title:'Success', content: 'Your Batch has been successfully created.', alertType:'success'});
 										if (!arimport_params.createWorksheets) {
-//											arimport_params.selectedSampleType.prefix !== 'POOL'
 											$state.go('batch',{batch_id: outcome.batch_id});
 										}
-										else {
+										if (arimport_params.createWorksheets){
 										    this.worksheets_params = {
 										       title: arimport_params.selectedBatch,
 					                           description: arimport_params.textDescription,
@@ -245,13 +238,12 @@ arimport_module.controller('ARImportCtrl',
 					                           client_id: arimport_params.selectedClient.id,
 					                           client_keyword: arimport_params.selectedClient.client_id,
 										    };
-//										    console.log(this.worksheets_params);
 
 										    $scope.createWorksheets(this.worksheets_params);
 										}
 									}
 								}
-								else {
+								if (result['success'] === 'False') {
 									console.log(result);
 									console.log(result['message']);
 									$scope.loading_import.hide();
