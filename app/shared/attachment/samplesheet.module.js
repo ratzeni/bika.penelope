@@ -191,16 +191,21 @@ samplesheet_module.controller('Link2RunCtrl',
 	 	$scope.link_samplesheet =
 	 		function(samplesheet_params, ars) {
 
-	 			function get_input_values(ars, running_folder) {
+	 			function get_input_params(ars, running_folder) {
 					var input_values = {};
+					var f = [];
 					_.each(ars, function(ar) {
 						if (_.indexOf(ar.runs, running_folder) == -1) {
 
 							ar.runs.push(running_folder)
 							input_values[ar.path] = {Sampler: ar.runs}
+							if (ar.review_state === 'sample_due') {
+							    input_values[ar.path]['subject'] = 'sample_received'
+							    f.push(ar.path);
+							}
 						}
 					});
-					return JSON.stringify(input_values);
+					return {input_values: JSON.stringify(input_values), f: JSON.stringify(f)};
 	 			}
 
 				this.params = {
@@ -229,9 +234,14 @@ samplesheet_module.controller('Link2RunCtrl',
 				IrodsService.putSamplesheet(this.params).success(function (data, status, header, config){
 
 					if (data.result.success === 'True') {
-						this.params = {input_values: get_input_values(ars, samplesheet_params.run_folder.running_folder)};
+					    this.input_params = get_input_params(ars, samplesheet_params.run_folder.running_folder);
+						this.params_update = {input_values: this.input_params.input_values};
+                        this.params_receive = {f: this.input_params.f};
 
-						BikaService.updateAnalysisRequests(this.params).success(function (data, status, header, config){
+                        BikaService.receiveSample(this.params_receive).success(function (data, status, header, config){
+                            Utility.alert({title:'Success', content: 'Samples set as received', alertType:'success'});
+                        });
+						BikaService.updateAnalysisRequests(this.params_update).success(function (data, status, header, config){
 							Utility.alert({title:'Success', content: 'Samplesheet has been successfully imported', alertType:'success'});
 						});
 					}
