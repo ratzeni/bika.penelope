@@ -2,6 +2,7 @@
     <div class="panel-body">
         <form class="form-inline">
             <div class="col-sm-12 controls" >
+                <ng-include src="'app/components/batches/batchbook.btns.html'" class="pull-left"></ng-include>
                 <label title="published" ng-if="pagination.total > 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.last}}/{{pagination.total}}</label>
                 <label title="published" ng-if="pagination.total == 0" class="btn btn-success  pull-right" style="margin-left:10px;">{{pagination.total}}</label>
                 <input type="text" ng-model="search" data-ng-show="pagination.total > 0" class="form-control pull-right" placeholder="Search...">

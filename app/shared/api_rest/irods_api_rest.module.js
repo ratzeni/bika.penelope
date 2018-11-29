@@ -75,4 +75,13 @@ irods_api_rest_module.service('IrodsService', function(IrodsApiRestService, init
         return IrodsApiRestService.call('read', this.method, this.params);
     }
 
+    this.syncBatchbook = function(params) {
+
+		this.params = (params !== undefined)?params:{}
+        _.extend(this.params,init.sshApiRest);
+
+    	this.method = config.irodsApiRest.methods.sync_batchbook;
+        return IrodsApiRestService.call('read', this.method, this.params);
+    }
+
 });

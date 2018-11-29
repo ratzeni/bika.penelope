@@ -120,6 +120,7 @@ angular
         		get_running_folders: '/irods/get/running',
         		get_runs: '/irods/get/runs',
         		check_runs: '/irods/check/runs',
+        		sync_batchbook: '/irods/sync/batchbook',
         		put_samplesheet: '/irods/put/samplesheet',
         		get_samplesheet: '/irods/get/samplesheet',
         	}

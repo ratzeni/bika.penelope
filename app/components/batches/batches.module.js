@@ -782,7 +782,7 @@ batches_module.controller('BatchDetailsCtrl',
 });
 
 batches_module.controller('BatchBookCtrl',
-	function(BikaService, Utility, ngCart, $stateParams, $state, config, $scope, $modal, $rootScope) {
+	function(BikaService, IrodsService, Utility, ngCart, $stateParams, $state, config, $scope, $modal, $rootScope) {
 
 		//$scope.batch = [];
 		$scope.analyses = [];
@@ -971,6 +971,24 @@ batches_module.controller('BatchBookCtrl',
 				});
 
 		}
+
+		this.sync_batchbook =
+		    function(batch_id) {
+
+            	$scope.loading_change_review_state('synchronizing').show();
+
+                this.params = {batch_id: batch_id};
+				IrodsService.syncBatchbook(this.params).success(function (data, status, header, config){
+				    console.log(data);
+                    this.params = {batch_id: batch_id};
+                    IrodsService.syncBatchbook(this.params).success(function (data, status, header, config){
+				       console.log(data);
+					   $scope.loading_change_review_state('synchronizing').hide();
+					   $scope.getAnalysisRequests($stateParams.batch_id);
+					});
+                });
+
+		    };
 
 		$scope.submit =
 			function(request_id, analysis_id) {
