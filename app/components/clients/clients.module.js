@@ -27,7 +27,7 @@ clients_module.controller('ClientsCtrl',
 
 		$scope.pagination= {
 			page_nr: 0,
-			page_size: 10,
+			page_size: 50,
 			total: 0,
 			current: 1,
 			last: 0,
