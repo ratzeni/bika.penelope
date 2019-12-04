@@ -353,7 +353,7 @@ arimport_module.controller('ARImportCtrl',
 				     $scope.create_worksheet(worksheets_params, as, labanalyst);
 				});
 				_.each(worksheets_params.analysis.bioinfo, function(as) {
-				    bioanalyst = as.keyword === 'full-analysis'  ? 'puva' : 'ratzeni';
+				    bioanalyst = as.keyword === 'full-analysis'  ? 'm.massidda' : 'ratzeni';
 				    $scope.create_worksheet(worksheets_params, as, bioanalyst);
 				});
 
