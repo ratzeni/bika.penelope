@@ -44,10 +44,6 @@
                 <span class="glyphicon sort-icon" ng-show="sortKey=='description'"
                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
             </th>
-            <th ng-click="sort('client')">Client
-                <span class="glyphicon sort-icon" ng-show="sortKey=='client'"
-                      ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
             <th ng-click="sort('rights')">Amount
                 <span class="glyphicon sort-icon" ng-show="sortKey=='rights'"
                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
@@ -101,8 +97,6 @@
 
             </td>
             <td>{{row.description}}</td>
-            <!--<a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>-->
-            <td>{{ctrl.get_client(row.client_id)}}</td>
             <td>{{row.rights}}</td>
             <td>{{row.location}}</td>
             <td>{{ctrl.format_date(row.order_date)}}</td>
