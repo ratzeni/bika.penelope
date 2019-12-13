@@ -89,7 +89,10 @@ cost_centers_module.controller('CostCentersCtrl',
                 });
 		}
 
-
+        $scope.sort = function(keyname){
+			$scope.sortKey = keyname;   //set the sortKey to the param passed
+			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
+		}
 		$scope.init($scope.review_state);
 
 		this.get_client =
@@ -484,7 +487,12 @@ cost_centers_module.controller('AddCostCenterCtrl',
 
 		this.get_labproduct_title = function(id) {
             this.lab_product = _.findWhere($scope.lab_products, {'id': id});
-            return this.lab_product.title;
+            if (this.lab_product !== undefined) {
+                return this.lab_product.title;
+            }
+            else {
+                return '';
+            }
         }
 
         this.format_date =

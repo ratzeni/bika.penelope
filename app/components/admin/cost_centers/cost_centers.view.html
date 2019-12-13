@@ -63,8 +63,8 @@
                     </thead>
                     <tbody ng-if="supply_orders.length > 0">
                     <tr dir-paginate="row in supply_orders | orderBy:sortKey:reverse|filter:search|itemsPerPage:pagination.page_size"
-                        total-items="pagination.total" current-page="pagination.current"
-                        ng-class="{'alert alert-warning': ctrl.check_transitions('activate', row.transitions)}">
+                        total-items="pagination.total" current-page="pagination.current">
+<!--                        ng-class="{'alert alert-warning': ctrl.check_transitions('activate', row.transitions)}">-->
                         <td>
                             <div style="padding-left:10px;">
                                 <input type="checkbox"  value="{{row.id}}"
