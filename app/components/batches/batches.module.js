@@ -442,7 +442,6 @@ batches_module.controller('BatchDetailsCtrl',
 		// :: function :: getBatch()
         $scope.getBatch =
             function(batch_id) {
-            	$scope.loading_batch.show();
                 this.params = {sort_on: 'Date', sort_order: 'descending', id: batch_id};
                 BikaService.getBatches(this.params).success(function (data, status, header, config){
                     $scope.batch = data.result.objects[0];
@@ -457,7 +456,25 @@ batches_module.controller('BatchDetailsCtrl',
 			$scope.reverse = !$scope.reverse; //if true make it false and vice versa
 		}
 
-		$scope.getBatch($stateParams.batch_id);
+		$scope.init =
+		    function() {
+            	$scope.loading_batch.show();
+                BikaService.getClients(this.params_clients).success(function (data, status, header, config){
+                    $scope.clients = data.result.objects;
+                    $scope.getBatch($stateParams.batch_id);
+                });
+		}
+
+        $scope.init()
+
+        this.get_client_id =
+            function(client_title, clients){
+                this.client = _.findWhere(clients, {title: client_title});
+                if (this.client !== undefined) {
+                	return this.client.id;
+                }
+				return '';
+            }
 
 		this.format_date =
 			function(date) {

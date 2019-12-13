@@ -17,7 +17,19 @@
                     </tr>
                     <tr>
                         <td>Client:</td>
-                        <td>{{batch.client}}</td>
+                        <td>
+                            <a class="pull-left" ui-sref="client({client_id: ctrl.get_client_id(batch.client, clients)})" style="text-decoration: none;">
+                                {{batch.client}}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cost Center:</td>
+                       <td>
+                            <a class="pull-left" ui-sref="cost_center({costcenter_id: batch.cost_center})" style="text-decoration: none;">
+                                <span>{{batch.cost_center}}</span>
+                            </a>
+                        </td>
                     </tr>
                     <tr>
                         <td>Export Mode:</td>
