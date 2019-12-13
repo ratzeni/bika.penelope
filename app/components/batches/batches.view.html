@@ -72,9 +72,21 @@
                             </a>
 
                         </td>
-                        <td><a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>
-                        <td>{{row.client}}</td>
-                        <td>{{row.cost_center}}</td>
+                        <td>
+                            <a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
+                                <span>{{row.description}}</span>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="pull-left" ui-sref="client({client_id: ctrl.get_client_id(row.client)})" style="text-decoration: none;">
+                                <span>{{row.client}}</span>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="pull-left" ui-sref="cost_center({costcenter_id: row.cost_center})" style="text-decoration: none;">
+                                <span>{{row.cost_center}}</span>
+                            </a>
+                        </td>
                         <td>{{ctrl.format_date(row.creation_date)}}</td>
                         <td>{{samples[row.id]}}
                             <div  style="margin-top:10px"

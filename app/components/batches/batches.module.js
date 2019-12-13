@@ -81,6 +81,8 @@ batches_module.controller('BatchesCtrl',
 			});
 		}
 
+
+
         $scope.closeBatch =
 			function(batch_id) {
 				$scope.loading_change_review_state('closing batches').show();
@@ -185,9 +187,24 @@ batches_module.controller('BatchesCtrl',
 		}
 
 
-		$scope.getBatches($scope.review_state);
+        $scope.init =
+			function() {
+			    this.params = {};
+			    $scope.clients = [];
+			    $scope.loading_search.show();
+                 BikaService.getClients(this.params).success(function (data, status, header, config){
+                    $scope.clients = data.result.objects;
+                    $scope.getBatches($scope.review_state);
+                });
+	    }
 
+	    $scope.init();
 
+        this.get_client_id =
+			function(client_title) {
+				this.client = _.findWhere($scope.clients, {title: client_title});
+				return this.client.id;
+        }
 
 		this.format_date =
 			function(date) {
