@@ -59,7 +59,6 @@
                             <span class="glyphicon sort-icon" ng-show="sortKey=='review_state'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                         </th>
                         <th><span class="fic glyphicon glyphicon-wrench" ></span></th>
-                        <!--<th><span class="fic glyphicon glyphicon-blackboard" ></span></th>-->
                     </tr>
                     </thead>
                     <tbody ng-if="supply_orders.length > 0">
@@ -79,15 +78,13 @@
                             </a>
 
                         </td>
-                        <td>{{row.order_number}}</td>
-                        <td>{{row.title}}
-                            <!--<a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;">
-                                <span>{{row.title}}</span>
-                            </a>-->
-
+                        <td>
+                            <a class="pull-left" ui-sref="client({costcenter_id: row.id})" style="text-decoration: none;">
+                                <span>{{row.order_number}}</span>
+                            </a>
                         </td>
+                        <td>{{row.title}}</td>
                         <td>{{row.description}}</td>
-                            <!--<a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>-->
                         <td>
                             <a class="pull-left" ui-sref="client({client_id: row.client_id})" style="text-decoration: none;">
                                 <span>{{ctrl.get_client(row.client_id)}}</span>
@@ -100,7 +97,6 @@
                         <td>{{ctrl.format_date(row.dispatched_date)}}</td>
                         <td>{{ctrl.format_review_state(row.review_state)}}</td>
                         <td><ng-include src="'app/shared/review_state/supply_orders.btns.mini.html'"></ng-include></td>
-                        <!--<td><ng-include src="'app/shared/blackboard/toggle.btns.mini.html'"></ng-include></td>-->
                     </tr>
                     </tbody>
                 </table>
