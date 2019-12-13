@@ -531,6 +531,7 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 		$scope.lab_products = [];
 		$scope.reagents = [];
 		$scope.batches = [];
+		$scope.clients = [];
 
 		$scope.samples = {};
 		$scope.checked_list = [];
@@ -642,15 +643,14 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
 		$scope.init =
 			function(costcenter_id) {
-			this.params = {};
-			$scope.clients = [];
 			$scope.loading_search.show();
 			$scope.getStorageLocations();
 			$scope.getPurchaseOrders();
 			$scope.getLabProducts();
 			$scope.getReagents();
 
-            BikaService.getClients(this.params).success(function (data, status, header, config){
+            this.params_clients = {};
+            BikaService.getClients(this.params_clients).success(function (data, status, header, config){
             	$scope.clients = data.result.objects;
             	$scope.getCostCenter($scope.state.costcenter_id);
             	this.params = {};
@@ -676,18 +676,18 @@ cost_centers_module.controller('CostCenterDetailsCtrl',
 
 		$scope.init($scope.state.costcenter_id);
 
-		this.get_client =
-			function(client_id) {
-				this.client = _.findWhere($scope.clients, {id: client_id});
+		this.get_client_name =
+			function(client_id, clients) {
+				this.client = _.findWhere(clients, {id: client_id});
                 if (this.client !== undefined) {
                 	return this.client.title;
                 }
 				return '';
 			}
 
-		$scope.get_client =
-			function(client_id) {
-				this.client = _.findWhere($scope.clients, {id: client_id});
+		$scope.get_client_name =
+			function(client_id, clients) {
+				this.client = _.findWhere(clients, {id: client_id});
 				if (this.client !== undefined) {
                 	return this.client.title;
                 }

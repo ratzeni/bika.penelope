@@ -47,9 +47,13 @@
                         <td>Dispatched Date:</td>
                         <td>{{ctrl.format_date(cost_center.dispatched_date)}}</td>
                     </tr>
-                    <tr data-ng-if="cost_center!=null">
+                    <tr ng-show="clients">
                         <td>Client:</td>
-                        <td>{{ctrl.get_client(cost_center.client_id)}}</td>
+                        <td ng-if="clients">
+                            <a class="pull-left" ui-sref="client({client_id: cost_center.client_id})" style="text-decoration: none;">
+                                {{ ctrl.get_client_name(cost_center.client_id, clients) }}
+                            </a>
+                        </td>
                     </tr>
                 </table>
             </div>
