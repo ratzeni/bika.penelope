@@ -88,7 +88,11 @@
                         </td>
                         <td>{{row.description}}</td>
                             <!--<a class="pull-left" ui-sref="batch({batch_id: row.id})" style="text-decoration: none;"><span>{{row.description}}</span></a></td>-->
-                        <td>{{ctrl.get_client(row.client_id)}}</td>
+                        <td>
+                            <a class="pull-left" ui-sref="client({client_id: row.client_id})" style="text-decoration: none;">
+                                <span>{{ctrl.get_client(row.client_id)}}</span>
+                            </a>
+                        </td>
                         <td>{{row.rights}}</td>
                         <td>{{row.location}}</td>
                         <td>{{ctrl.format_date(row.order_date)}}</td>
